@@ -5,6 +5,7 @@
 
 #include <smlib>
 #include <smlib/general>
+#include <smlib/teams>
 #include <smlib/weapons>
 
 // Hud Element hiding flags (possibly outdated)
@@ -68,11 +69,11 @@ stock bool:Client_IsIngame(client)
 	if (!Client_IsValid(client, false)) {
 		return false;
 	}
-	
+
 	if (!IsClientInGame(client)) {
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -87,11 +88,11 @@ stock bool:Client_IsIngameAuthorized(client)
 	if (!Client_IsIngame(client, false)) {
 		return false;
 	}
-	
+
 	if (!IsClientAuthorized(client)) {
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -153,27 +154,249 @@ stock Client_FindByName(const String:name[], bool:partOfName=true, bool:caseSens
 	return -1;
 }
 
+// Spectator Movement modes
+enum Obs_Mode
+{
+	OBS_MODE_NONE = 0,	// not in spectator mode
+	OBS_MODE_DEATHCAM,	// special mode for death cam animation
+	OBS_MODE_FREEZECAM,	// zooms to a target, and freeze-frames on them
+	OBS_MODE_FIXED,		// view from a fixed camera position
+	OBS_MODE_IN_EYE,	// follow a player in first person view
+	OBS_MODE_CHASE,		// follow a player in third person view
+	OBS_MODE_ROAMING,	// free roaming
+
+	NUM_OBSERVER_MODES
+};
+
+// Force Camera Restrictions with mp_forcecamera
+enum Obs_Allow
+{
+	OBS_ALLOW_ALL = 0,	// allow all modes, all targets
+	OBS_ALLOW_TEAM,		// allow only own team & first person, no PIP
+	OBS_ALLOW_NONE,		// don't allow any spectating after death (fixed & fade to black)
+
+	OBS_ALLOW_NUM_MODES,
+};
+
 /**
-* Puts the specified client into thirdperson or back to firstperson when false
-* This doesn't work correctly in all games, it works in CS:S and DOD:S and some other games
-*
-* @param client 		Client Index.
-* @param enable			If true client will be put into thirdperson, false otherwise will put him into firstperson.
-* @noreturn
-*/
+ * Gets the client's  observer mode (Obs_Mode).
+ * 
+ * @param client		Client Index.
+ * @return				The current observer mode (ObsMode).
+ */
+stock Obs_Mode:Client_GetObserverMode(client)
+{
+	return Obs_Mode:GetEntProp(client, Prop_Send, "m_iObserverMode");
+}
+
+
+/**
+ * Sets the client's observer mode.
+ * Use a value of the Obs_Mode enum.
+ * This is a rewrite of CBasePlayer::SetObserverMode().
+ * 
+ * @param client		Client Index.
+ * @param mode			New Observer mode value (Obs_Mode).
+ * @noreturn
+ */
+stock bool:Client_SetObserverMode(client, Obs_Mode:mode)
+{
+	if (mode < OBS_MODE_NONE || mode >= NUM_OBSERVER_MODES) {
+		return false;
+	}
+	
+	// check mp_forcecamera settings for dead players
+	if (mode > OBS_MODE_FIXED && GetClientTeam(client) > TEAM_SPECTATOR)
+	{
+		new Handle:mp_forcecamera = FindConVar("mp_forcecamera");
+
+		if (mp_forcecamera != INVALID_HANDLE) {
+			switch (GetConVarInt(mp_forcecamera))
+			{
+				case OBS_ALLOW_TEAM: {
+					mode = OBS_MODE_IN_EYE;
+				}
+				case OBS_ALLOW_NONE: {
+					mode = OBS_MODE_FIXED; // don't allow anything
+				}
+			}
+		}
+	}
+
+	new Obs_Mode:observerMode = Client_GetObserverMode(client);
+	if (observerMode > OBS_MODE_DEATHCAM) {
+		// remember mode if we were really spectating before
+		Client_SetObserverLastMode(client, observerMode);
+	}
+
+	SetEntProp(client, Prop_Send, "m_iObserverMode", _:mode);
+
+	switch (mode) {
+		case OBS_MODE_NONE, OBS_MODE_FIXED, OBS_MODE_DEATHCAM: {
+			Client_SetFOV(client, 0);	// Reset FOV
+			SetEntityMoveType(client, MOVETYPE_NONE);
+		}
+		case OBS_MODE_CHASE, OBS_MODE_IN_EYE: {
+			// udpate FOV and viewmodels
+			Client_SetViewOffset(client, NULL_VECTOR);
+			SetEntityMoveType(client, MOVETYPE_OBSERVER);
+		}
+		case OBS_MODE_ROAMING: {
+			Client_SetFOV(client, 0);	// Reset FOV
+			Client_SetViewOffset(client, NULL_VECTOR);
+			SetEntityMoveType(client, MOVETYPE_OBSERVER);
+		}
+	}
+
+	return true;
+}
+
+/**
+ * Gets the client's last oberserver mode
+ * 
+ * @param client		Client Index.
+ * @return				Last Observer mode
+ */
+stock Obs_mode:Client_GetObserverLastMode(client)
+{
+	return Obs_mode:GetEntProp(client, Prop_Data, "m_iObserverLastMode");
+}
+
+/**
+ * Sets the client's last oberserver mode
+ * 
+ * @param client		Client Index.
+ * @param mode			Last Observer mode
+ * @noreturn
+ */
+stock Client_SetObserverLastMode(client, Obs_Mode:mode)
+{
+	SetEntProp(client, Prop_Data, "m_iObserverLastMode", _:mode);
+}
+
+/**
+ * Gets the client's view offset.
+ * This is the position relative to the client itself.
+ * 
+ * @param client		Client Index.
+ * @param vec			Vector Buffer.
+ * @noreturn
+ */
+stock Client_GetViewOffset(client, Float:vec[3])
+{
+	GetEntPropVector(client, Prop_Data, "m_vecViewOffset", vec);
+}
+
+/**
+ * Sets the client's view offset.
+ * This is the position relative to the client itself.
+ * 
+ * @param client		Client Index.
+ * @param vec			Vector buffer.
+ * @noreturn
+ */
+stock Client_SetViewOffset(client, Float:vec[3])
+{
+	SetEntPropVector(client, Prop_Data, "m_vecViewOffset", vec);
+}
+
+/**
+ * Gets the client's current observer target entity.
+ * 
+ * @param client		Client Index.
+ * @return				Observed Entity Index.
+ */
+stock Client_GetObserverTarget(client)
+{
+	return GetEntPropEnt(client, Prop_Send, "m_hObserverTarget");
+}
+
+/**
+ * Sets the client's current observer target entity.
+ * 
+ * @param client		Client Index.
+ * @param entity		Observed Entity Index.
+ * @param resetFOV		If to reset the client's field of view.
+ * @noreturn
+ */
+stock Client_SetObserverTarget(client, entity, bool:resetFOV=true)
+{
+	SetEntPropEnt(client, Prop_Send, "m_hObserverTarget", entity);
+	
+	if (resetFOV) {
+		Client_SetFOV(client, 0);
+	}
+}
+
+/**
+ * Gets the client's Field Of View.
+ * 
+ * @param client		Client Index.
+ * @return				Field Of View
+ */
+stock Client_GetFOV(client)
+{
+	return GetEntProp(client, Prop_Send, "m_iFOV");
+}
+
+/**
+ * Sets the client's Field Of View.
+ * 
+ * @param client		Client Index.
+ * @param value			Field Of View
+ * @noreturn
+ */
+stock Client_SetFOV(client, value)
+{
+	SetEntProp(client, Prop_Send, "m_iFOV", value);
+}
+
+/**
+ * Checks if the client's View Model is drawn for the client.
+ * 
+ * @param client		Client Index.
+ * @return				True if the viewmodel is drawn, false otherwise.
+ */
+stock bool:Client_DrawViewModel(client)
+{
+	return bool:GetEntProp(client, Prop_Send, "m_bDrawViewmodel");
+}
+
+/**
+ * Sets if to draw the client's view model for the client.
+ * 
+ * @param client		Client Index.
+ * @param drawViewModel	Set to true if to draw, false otherwise.
+ * @noreturn
+ */
+stock Client_SetDrawViewModel(client, bool:drawViewModel)
+{
+	SetEntProp(client, Prop_Send, "m_bDrawViewmodel", drawViewModel);
+}
+
+/**
+ * Puts the specified client into thirdperson or back to firstperson when false
+ * This doesn't work correctly in all games, it works in CS:S and DOD:S and some other games.
+ * Todo: Enhance this
+ *
+ * @param client 		Client Index.
+ * @param enable			If set to true, the client will be put into thirdperson mode,
+ * 						if false the client will be put in firstperson mode.
+ * @noreturn
+ */
 stock Client_SetThirdPersonMode(client, enable=true)
 {
 	if (enable) {
-		SetEntPropEnt(	client, Prop_Send, "m_hObserverTarget",	0); 
-		SetEntProp(		client, Prop_Send, "m_iObserverMode",	1);
-		SetEntProp(		client, Prop_Send, "m_bDrawViewmodel",	0);
-		SetEntProp(		client, Prop_Send, "m_iFOV",			120);
+		Client_SetObserverTarget(client, 0);
+		Client_SetObserverMode(client, OBS_MODE_DEATHCAM);
+		Client_SetDrawViewModel(client, false);
+		Client_SetFOV(client, 120);
 	}
 	else {
-		SetEntPropEnt(	client, Prop_Send, "m_hObserverTarget",	-1);
-		SetEntProp(		client, Prop_Send, "m_iObserverMode",	0);
-		SetEntProp(		client, Prop_Send, "m_bDrawViewmodel",	1);
-		SetEntProp(		client, Prop_Send, "m_iFOV",			90);
+		Client_SetObserverTarget(client, -1);
+		Client_SetObserverMode(client, OBS_MODE_NONE);
+		Client_SetDrawViewModel(client, true);
+		Client_SetFOV(client, 90);
 	}
 }
 
@@ -1062,6 +1285,20 @@ stock Client_GetWeapon(client, const String:className[])
 }
 
 /**
+ * Gets the weapon of a client by slot number.
+ * Note: This is incompatible to games that have multiple
+ * weapons in one slot (eg.: hl2dm).
+ *
+ * @param client 		Client Index.
+ * @param slot			Slot Index.
+ * @return				Entity index on success or INVALID_ENT_REFERENCE.
+ */
+stock Client_GetWeaponBySlot(client, slot)
+{
+	return GetPlayerWeaponSlot(client, slot);
+}
+
+/**
  * Gets the clients default weapon (Entity Index).
  *
  * @param client 		Client Index.
@@ -1408,4 +1645,46 @@ stock Client_PrintKeyHintTextToAll(const String:format[], ...)
 		VFormat(buffer, sizeof(buffer), format, 2);
 		Client_PrintHintText(client, buffer);
 	}
+}
+
+#define	SHAKE_START					0			// Starts the screen shake for all players within the radius.
+#define	SHAKE_STOP					1			// Stops the screen shake for all players within the radius.
+#define	SHAKE_AMPLITUDE				2			// Modifies the amplitude of an active screen shake for all players within the radius.
+#define	SHAKE_FREQUENCY				3			// Modifies the frequency of an active screen shake for all players within the radius.
+#define	SHAKE_START_RUMBLEONLY		4			// Starts a shake effect that only rumbles the controller, no screen effect.
+#define	SHAKE_START_NORUMBLE		5			// Starts a shake that does NOT rumble the controller.
+
+/*
+ * Shakes a client's screen with the specified amptitude,
+ * frequency & duration.
+ * 
+ * @param client		Client Index.
+ * @param command		Shake Mode, use one of the SHAKE_ definitions.
+ * @param amplitude		Shake magnitude/amplitude.
+ * @param frequency		Shake noise frequency.
+ * @param duration		Shake lasts this long.
+ * return				True on success, false otherwise.
+ */
+stock bool:Client_Shake(client, command=SHAKE_START, Float:amplitude=50.0, Float:frequency=150.0, Float:duration=3.0)
+{
+	new Handle:userMessage = StartMessageOne("Shake", client);
+	
+	if (userMessage == INVALID_HANDLE) {
+		return false;
+	}
+	
+	if (command == SHAKE_STOP) {
+		amplitude = 0.0;
+	}
+	else if (amplitude <= 0.0) {
+		return false;
+	}
+	
+	BfWriteByte(userMessage,	command);	// Shake Command
+	BfWriteFloat(userMessage,	amplitude);	// shake magnitude/amplitude
+	BfWriteFloat(userMessage,	frequency);	// shake noise frequency
+	BfWriteFloat(userMessage,	duration);	// shake lasts this long
+	EndMessage();
+	
+	return true;
 }

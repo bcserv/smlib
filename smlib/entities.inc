@@ -1165,23 +1165,23 @@ stock Entity_UnLock(entity)
 }
 
 /**
-* Gets the health of an entity.
-*
-* @param entity			entity index.
-* @return				current health points
-*/
+ * Gets the health of an entity.
+ *
+ * @param entity			entity index.
+ * @return				current health points
+ */
 stock Entity_GetHealth(entity)
 {	
 	return GetEntProp(entity, Prop_Data, "m_iHealth");
 }
 
 /**
-* Sets the health of an entity.
-*
-* @param entity			entity index.
-* @param value			health to set (anything above 511 will overload)
-* @noreturn
-*/
+ * Sets the health of an entity.
+ *
+ * @param entity			entity index.
+ * @param value			health to set (anything above 511 will overload)
+ * @noreturn
+ */
 stock Entity_SetHealth(entity, value, ignoreMax=false, kill=true)
 {
 	new health = value;
@@ -1208,11 +1208,11 @@ stock Entity_SetHealth(entity, value, ignoreMax=false, kill=true)
 }
 
 /**
-* Get the max health of an entity
-*
-* @param entity			entity index
-* @return				max health points
-*/
+ * Get the max health of an entity
+ *
+ * @param entity			entity index
+ * @return				max health points
+ */
 stock Entity_GetMaxHealth(entity)
 {	
 	return GetEntProp(entity, Prop_Data, "m_iMaxHealth");
@@ -1220,12 +1220,12 @@ stock Entity_GetMaxHealth(entity)
 
 
 /**
-* Set the max health of an entity.
-*
-* @param entity			entity index
-* @param value			max health to set (anything above 511 will overload)
-* @noreturn
-*/
+ * Set the max health of an entity.
+ *
+ * @param entity			entity index
+ * @param value			max health to set (anything above 511 will overload)
+ * @noreturn
+ */
 stock Entity_SetMaxHealth(entity, value)
 {	
 	SetEntProp(entity, Prop_Data, "m_iMaxHealth", value);
@@ -1233,12 +1233,12 @@ stock Entity_SetMaxHealth(entity, value)
 }
 
 /**
-* Add health to an entity
-*
-* @param entity			entity index
-* @param value			health to add
-* @return				returns the new health value set
-*/
+ * Add health to an entity
+ *
+ * @param entity			entity index
+ * @param value			health to add
+ * @return				returns the new health value set
+ */
 stock Entity_AddHealth(entity, value, ignoreMax=false, kill=true)
 {
 	new health = Entity_GetHealth(entity);
@@ -1249,13 +1249,13 @@ stock Entity_AddHealth(entity, value, ignoreMax=false, kill=true)
 }
 
 /**
-* Checks if the given 2 entitys are within a given range.
-*
-* @param entity			entity index.
-* @param target			target entity index.
-* @param dist			max float distance value. if -1.0 its always true;
-* @return				returns true if the given entities are closer than the given distance value, false otherwise.
-*/
+ * Checks if the given 2 entitys are within a given range.
+ *
+ * @param entity			entity index.
+ * @param target			target entity index.
+ * @param dist			max float distance value. if -1.0 its always true;
+ * @return				returns true if the given entities are closer than the given distance value, false otherwise.
+ */
 stock bool:Entity_InRange(entity, target, Float:distance)
 {
 	if (dist == -1.0) {
@@ -1276,37 +1276,60 @@ stock bool:Entity_InRange(entity, target, Float:distance)
 }
 
 /**
-* Freezes an entity
-*
-* @param entity			Entity index.
-* @return				True on success, false otherwise
-*/
-stock bool:Entity_Freeze(entity)
+ * Enables the motion of an entity.
+ *
+ * @param entity		Entity index.
+ * @return				True on success, false otherwise
+ */
+stock bool:Entity_EnableMotion(entity)
 {	
 	return AcceptEntityInput(entity, "disablemotion");
 }
 
 /**
-* Unfreezes an entity
-*
-* @param entity			Entity index.
-* @return 				True on success, false otherwise
-*/
-stock bool:Entity_UnFreeze(entity)
+ * Disables the motion of an entity.
+ *
+ * @param entity		Entity index.
+ * @return 				True on success, false otherwise
+ */
+stock bool:Entity_DisableMotion(entity)
 {
 	return AcceptEntityInput(entity, "enablemotion");
 }
 
 /**
-* This function points an entity to another with the targetname
-* and name. Useful for allot of entities like trigger_teleport.
-* If the name is not specified it will be generated automatically.
-*
-* @param entity			Entity index.
-* @param target			Target entity index.
-* @param				Optional: target name
-* @noreturn
-*/
+ * Freezes an entity by setting the FL_FROZEN flag.
+ *
+ * @param entity		Entity index.
+ * @return				True on success, false otherwise
+ */
+stock Entity_Freeze(entity)
+{
+	Entity_AddFlags(entity, FL_FROZEN);
+}
+
+/**
+ * Unfreezes an entity by removing the FL_FROZEN flag.
+ *
+ * @param entity		Entity index.
+ * @return 				True on success, false otherwise
+ */
+stock Entity_UnFreeze(entity)
+{
+	Entity_RemoveFlags(entity, FL_FROZEN);
+}
+
+
+/**
+ * This function points an entity to another with the targetname
+ * and name. Useful for allot of entities like trigger_teleport.
+ * If the name is not specified it will be generated automatically.
+ *
+ * @param entity			Entity index.
+ * @param target			Target entity index.
+ * @param				Optional: target name
+ * @noreturn
+ */
 stock Entity_PointAtTarget(entity, target, const String:name[]="")
 {
 	decl String:targetName[128];
@@ -1333,15 +1356,15 @@ stock Entity_PointAtTarget(entity, target, const String:name[]="")
 }
 
 /**
-* This function points a point_hurt entity to another damage target entity..
-* and name. Useful for allot of entities like trigger_teleport.
-* If the name is not specified it will be generated automatically.
-*
-* @param entity			Entity index.
-* @param target			Target entity index.
-* @param				Optional: target name
-* @noreturn
-*/
+ * This function points a point_hurt entity to another damage target entity..
+ * and name. Useful for allot of entities like trigger_teleport.
+ * If the name is not specified it will be generated automatically.
+ *
+ * @param entity			Entity index.
+ * @param target			Target entity index.
+ * @param				Optional: target name
+ * @noreturn
+ */
 stock Entity_PointHurtAtTarget(entity, target, const String:name[]="")
 {
 	decl String:targetName[128];
@@ -1368,13 +1391,13 @@ stock Entity_PointHurtAtTarget(entity, target, const String:name[]="")
 }
 
 /**
-* Checks if an entity is a player or not.
-* No checks are done if the entity is actually valid,
-* the player is connected or ingame.
-*
-* @param entity			Entity index.
-* @return 				True if the entity is a player, false otherwise.
-*/
+ * Checks if an entity is a player or not.
+ * No checks are done if the entity is actually valid,
+ * the player is connected or ingame.
+ *
+ * @param entity			Entity index.
+ * @return 				True if the entity is a player, false otherwise.
+ */
 stock bool:Entity_IsPlayer(entity)
 {
 	if (entity < 1 || entity > MaxClients) {
@@ -1385,12 +1408,12 @@ stock bool:Entity_IsPlayer(entity)
 }
 
 /**
-* Creates an entity by classname.
-*
-* @param className			Classname String.
-* @param ForceEdictIndex	Edict Index to use.
-* @return 					Entity Index or INVALID_ENT_REFERENCE if the slot is already in use.
-*/
+ *  Creates an entity by classname.
+ *
+ * @param className			Classname String.
+ * @param ForceEdictIndex	Edict Index to use.
+ * @return 					Entity Index or INVALID_ENT_REFERENCE if the slot is already in use.
+ */
 stock Entity_Create(const String:className[], ForceEdictIndex=-1)
 {
 	if (ForceEdictIndex != -1 && Entity_IsValid(ForceEdictIndex)) {
@@ -1401,13 +1424,13 @@ stock Entity_Create(const String:className[], ForceEdictIndex=-1)
 }
 
 /**
-* Kills an entity on the next frame (delayed).
-* It is safe to use with entity loops.
-* If the entity is is player ForcePlayerSuicide() is called.
-*
-* @param kenny			Entity index.
-* @return 				True on success, false otherwise
-*/
+ * Kills an entity on the next frame (delayed).
+ * It is safe to use with entity loops.
+ * If the entity is is player ForcePlayerSuicide() is called.
+ *
+ * @param kenny			Entity index.
+ * @return 				True on success, false otherwise
+ */
 stock bool:Entity_Kill(kenny)
 {
 	if (Entity_IsPlayer(kenny)) {
@@ -1420,13 +1443,13 @@ stock bool:Entity_Kill(kenny)
 }
 
 /**
-* Kills all entities with the given networked classname.
-* It is safe to use with entity loops.
-* If the entity is is player ForcePlayerSuicide() is called.
-*
-* @param className		Entity Network Class to search for.
-* @return 				Number of entities killed.
-*/
+ * Kills all entities with the given networked classname.
+ *  It is safe to use with entity loops.
+ * If the entity is is player ForcePlayerSuicide() is called.
+ *
+ * @param className		Entity Network Class to search for.
+ * @return 				Number of entities killed.
+ */
 stock Entity_KillAllByClassName(const String:className[])
 {
 	new x = 0;
@@ -1441,24 +1464,24 @@ stock Entity_KillAllByClassName(const String:className[])
 }
 
 /**
-* Gets the owner of an entity.
-* For example the owner of a weapon entity.
-*
-* @param entity			Entity index.
-* @return 				Ground Entity or -1
-*/
+ * Gets the owner of an entity.
+ * For example the owner of a weapon entity.
+ *
+ * @param entity			Entity index.
+ * @return 				Ground Entity or -1
+ */
 stock Entity_GetOwner(entity)
 {
 	GetEntPropEnt(entity, Prop_Data, "m_hOwnerEntity");
 }
 
 /**
-* Sets the owner of an entity.
-* For example the owner of a weapon entity.
-*
-* @param entity			Entity index.
-* @noreturn
-*/
+ * Sets the owner of an entity.
+ * For example the owner of a weapon entity.
+ *
+ * @param entity			Entity index.
+ * @noreturn
+ */
 stock Entity_SetOwner(entity, newOwner)
 {
 	SetEntPropEnt(entity, Prop_Send, "m_hOwnerEntity", newOwner);
@@ -1524,24 +1547,24 @@ stock Entity_GetGroundEntity(entity)
 #endif
 
 /**
-* Does damage to an entity.
-* This is a powerful function that allows you to specify
-* who the attacker is, the damage type and also what weapon
-* should be displayed in the hud kill message.
-* Note that for entities that fire another entity (RPG's, Crossbow's,
-* you have to pass the bullet's class, not the weapon's class !
-* It hasn't been tested how expensive this function is, as it
-* uses the entity point_hurt.
-* If you need a cheaper function use Entity_RemoveHealth().
-*
-* @param entity			Entity index.
-* @param damage			Amount of damage.
-* @param attacker		Entity Index of the attacker.
-* @param damageType		Use the DMG_ definations.
-* @param fakeClassName	Classname to fake, you can set this if you
-* 						want a specific weapon to be shown in the HUD kill message.
-* @return 				True on success, false otherwise.
-*/
+ * Does damage to an entity.
+ * This is a powerful function that allows you to specify
+ * who the attacker is, the damage type and also what weapon
+ * should be displayed in the hud kill message.
+ * Note that for entities that fire another entity (RPG's, Crossbow's,
+ * you have to pass the bullet's class, not the weapon's class !
+ * It hasn't been tested how expensive this function is, as it
+ * uses the entity point_hurt.
+ * If you need a cheaper function use Entity_RemoveHealth().
+ *
+ * @param entity			Entity index.
+ * @param damage			Amount of damage.
+ * @param attacker		Entity Index of the attacker.
+ * @param damageType		Use the DMG_ definations.
+ * @param fakeClassName	Classname to fake, you can set this if you
+ * 						want a specific weapon to be shown in the HUD kill message.
+ * @return 				True on success, false otherwise.
+ */
 stock bool:Entity_Hurt(entity, damage, attacker=0, damageType=DMG_GENERIC, const String:fakeClassName[]="")
 {
 	static point_hurt = INVALID_ENT_REFERENCE;
