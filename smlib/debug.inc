@@ -1,9 +1,9 @@
-#include <smlib>
-
 #if defined _smlib_debug_included
 	#endinput
 #endif
 #define _smlib_debug_included
+
+#include <smlib>
 
 /**
  * Prints the values of a static Float-Array to the server console.

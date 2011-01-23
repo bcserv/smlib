@@ -1,10 +1,9 @@
-
-#include <smlib>
-
 #if defined _smlib_edicts_included
 	#endinput
 #endif
 #define _smlib_edicts_included
+
+#include <smlib>
 
 /*
  * Finds an edict by it's name

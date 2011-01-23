@@ -1,10 +1,9 @@
-
-#include <smlib>
-
 #if defined _smlib_entities_included
 	#endinput
 #endif
 #define _smlib_entities_included
+
+#include <smlib>
 
 /*
  * Checks if an entity is valid and exists.

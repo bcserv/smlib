@@ -1,9 +1,9 @@
-#include <smlib>
-
 #if defined _smlib_strings_included
-  #endinput
+	#endinput
 #endif
 #define _smlib_strings_included
+
+#include <smlib>
 
 /**
  * Checks if the string is numeric.

@@ -1,9 +1,9 @@
-#include <smlib>
-
 #if defined _smlib_server_included
 	#endinput
 #endif
 #define _smlib_server_included
+
+#include <smlib>
 
 /*
  * Gets the server's IP address.

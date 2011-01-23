@@ -1,9 +1,9 @@
-#include <smlib>
-
 #if defined _smlib_dynarray_included
 	#endinput
 #endif
 #define _smlib_dynarray_included
+
+#include <smlib>
 
 /**
  * Retrieves a cell value from an array.

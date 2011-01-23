@@ -4,9 +4,9 @@
 #define _smlib_client_included
 
 #include <smlib>
-#include <smlib/general>
-#include <smlib/teams>
-#include <smlib/weapons>
+#include <_smlib/general>
+#include <_smlib/teams>
+#include <_smlib/weapons>
 
 // Hud Element hiding flags (possibly outdated)
 #define	HIDEHUD_WEAPONSELECTION		( 1<<0 )	// Hide ammo count & weapon selection
@@ -1687,4 +1687,15 @@ stock bool:Client_Shake(client, command=SHAKE_START, Float:amplitude=50.0, Float
 	EndMessage();
 	
 	return true;
+}
+
+stock bool:Client_IsAdmin(client)
+{
+	new AdminId:adminId = GetUserAdmin(client);
+	
+	if (adminId == INVALID_ADMIN_ID) {
+		return false;
+	}
+	
+	return GetAdminFlag(adminId, Admin_Generic);
 }

@@ -1,11 +1,11 @@
-#include <smlib>
-
 #if defined _smlib_weapons_included
-  #endinput
+	#endinput
 #endif
 #define _smlib_weapons_included
 
 #define MAX_WEAPON_OFFSET 64
+
+#include <smlib>
 
 /**
  * Gives a player a weapon and sets the ammunition values as followed: primary, pripary player, secondary, secondary player ammunition.

@@ -1,9 +1,9 @@
-#include <smlib>
-
 #if defined _smlib_world_included
-  #endinput
+	#endinput
 #endif
 #define _smlib_world_included
+
+#include <smlib>
 
 /*
  * Gets the world max size
