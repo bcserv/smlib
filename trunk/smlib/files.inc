@@ -1,9 +1,9 @@
-#include <smlib>
-
 #if defined _smlib_files_included
 	#endinput
 #endif
 #define _smlib_files_included
+
+#include <smlib>
 
 /**
  * Gets the Base name of a path.

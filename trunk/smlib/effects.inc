@@ -1,9 +1,9 @@
-#include <smlib>
-
 #if defined _smlib_effects_included
 	#endinput
 #endif
 #define _smlib_effects_included
+
+#include <smlib>
 
 /**
  * Dissolves a player

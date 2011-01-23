@@ -1,9 +1,9 @@
-#include <smlib>
-
 #if defined _smlib_array_included
-  #endinput
+	#endinput
 #endif
 #define _smlib_array_included
+
+#include <smlib>
 
 /**
  * Returns the index for the first occurance of the given value.

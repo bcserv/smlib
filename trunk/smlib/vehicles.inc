@@ -1,9 +1,9 @@
-#include <smlib>
-
 #if defined _smlib_vehicles_included
 	#endinput
 #endif
 #define _smlib_vehicles_included
+
+#include <smlib>
 
 /**
  * Returns the vehicle's driver.
@@ -106,4 +106,33 @@ stock bool:Vehicle_IsValid(vehicle)
 	}
 	
 	return Entity_ClassNameMatches(vehicle, "prop_vehicle", true);
+}
+
+/**
+ * Reads the vehicle script from a vehicle.
+ * This script contains all the vehicle settings like its speed
+ * and that stuff.
+ *
+ * @param vehicle			Entity index.
+ * @param buffer			String Buffer.
+ * @param size				String Buffer size.
+ * @noreturn
+ */
+stock bool:Vehicle_GetScript(vehicle, String:buffer[], size)
+{
+	GetEntPropString(vehicle, Prop_Data, "m_vehicleScript", buffer, size);
+}
+
+/**
+ * Sets the script of a vehicle.
+ * This script contains all the vehicle settings like its speed
+ * and that stuff.
+ * 
+ * @param vehicle			Entity index.
+ * @param buffer			Vehicle Script path.
+ * @noreturn
+ */
+stock bool:Vehicle_SetScript(vehicle, String:script[])
+{
+	DispatchKeyValue(vehicle, "vehiclescript", script);
 }

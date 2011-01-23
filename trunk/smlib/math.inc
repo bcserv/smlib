@@ -1,9 +1,9 @@
-#include <smlib>
-
 #if defined _smlib_math_included
-  #endinput
+	#endinput
 #endif
 #define _smlib_math_included
+
+#include <smlib>
 
 enum VecAngle
 {

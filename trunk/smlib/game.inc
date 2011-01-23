@@ -3,6 +3,8 @@
 #endif
 #define _smlib_game_included
 
+#include <smlib>
+
 /*
 * End's the game and displays the scoreboard with intermission time.
 *

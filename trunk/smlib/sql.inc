@@ -1,10 +1,9 @@
-#include <smlib>
-
 #if defined _smlib_sql_included
-  #endinput
+	#endinput
 #endif
 #define _smlib_sql_included
 
+#include <smlib>
 
 /**
  * Executes a threaded SQL Query (See: SQL_TQuery)

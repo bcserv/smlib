@@ -1,9 +1,9 @@
-#include <smlib>
-
 #if defined _smlib_teams_included
 	#endinput
 #endif
 #define _smlib_teams_included
+
+#include <smlib>
 
 // Team Defines
 #define	TEAM_INVALID	-1
