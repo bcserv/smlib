@@ -4,9 +4,9 @@
 #define _smlib_client_included
 
 #include <smlib>
-#include <_smlib/general>
-#include <_smlib/teams>
-#include <_smlib/weapons>
+#include <smlib/general>
+#include <smlib/teams>
+#include <smlib/weapons>
 
 // Hud Element hiding flags (possibly outdated)
 #define	HIDEHUD_WEAPONSELECTION		( 1<<0 )	// Hide ammo count & weapon selection
