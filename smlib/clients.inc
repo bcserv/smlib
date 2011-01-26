@@ -969,7 +969,7 @@ stock Client_SetActiveWeapon(client, weapon)
  * @param className		Weapon Classname.
  * @return				True on success, false on failure.
  */
-stock bool: Client_ChangeWeapon(client, const String:className[])
+stock bool:Client_ChangeWeapon(client, const String:className[])
 {
 	new weapon = Client_GetWeapon(client, className);
 	
