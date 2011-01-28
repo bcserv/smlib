@@ -80,9 +80,9 @@ stock String_Trim(const String:str[], String:output[], size, const String:chrs[]
  * Removes a list of strings from a string.
  *
  * @param buffer			Input/Ourput buffer.
- * @param maxlen			Max size of buffer.
  * @param removeList		A list of strings which should be removed from buffer.
  * @param size				Number of Strings in the List.
+ * @param caseSensitive		If true, comparison is case sensitive. If false (default), comparison is case insensitive.
  * @noreturn
  */
 stock String_RemoveList(String:buffer[], String:removeList[][], size, bool:caseSensitive=false)

@@ -6,7 +6,7 @@
 #include <smlib>
 
 /*
- * Gets the world max size
+ * Gets the world's max size
  *
  * @param vec		Vector buffer
  * @noreturn		

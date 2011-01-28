@@ -5,13 +5,23 @@
 
 #include <smlib>
 
+// Entity Dissolve types
+enum DissolveType
+{
+	DISSOLVE_NORMAL = 0,
+	DISSOLVE_ELECTRICAL,
+	DISSOLVE_ELECTRICAL_LIGHT,
+	DISSOLVE_CORE
+};
+
 /**
  * Dissolves a player
  *
  * @param client		Client Index.
+ * @param dissolveType	Dissolve Type, use the DissolveType enum.
  * @return				True on success, otherwise false.
  */
-stock bool:Effect_DissolveEntity(entity)
+stock bool:Effect_DissolveEntity(entity, DissolveType:dissolveType=DISSOLVE_NORMAL)
 {
 	new env_entity_dissolver = CreateEntityByName("env_entity_dissolver");
 
@@ -20,7 +30,7 @@ stock bool:Effect_DissolveEntity(entity)
 	}
 	
 	Entity_PointAtTarget(env_entity_dissolver, entity);
-	SetEntProp(env_entity_dissolver, Prop_Send, "dissolvetype", 0);
+	SetEntProp(env_entity_dissolver, Prop_Send, "m_nDissolveType", _:dissolveType);
 	AcceptEntityInput(env_entity_dissolver,	"Dissolve");
 	Entity_Kill(env_entity_dissolver);
 
@@ -31,9 +41,10 @@ stock bool:Effect_DissolveEntity(entity)
  * Dissolves a player's Ragdoll
  *
  * @param client		Client Index.
+ * @param dissolveType	Dissolve Type, use the DissolveType enum.
  * @return				True on success, otherwise false.
  */
-stock bool:Effect_DissolvePlayerRagDoll(client)
+stock bool:Effect_DissolvePlayerRagDoll(client, DissolveType:dissolveType=DISSOLVE_NORMAL)
 {    
 	new m_hRagdoll = GetEntPropEnt(client, Prop_Send, "m_hRagdoll");
 
@@ -41,7 +52,7 @@ stock bool:Effect_DissolvePlayerRagDoll(client)
 		return false;
 	}
 	
-	return Effect_DissolveEntity(m_hRagdoll);
+	return Effect_DissolveEntity(m_hRagdoll, dissolveType);
 }
 
 functag EffectCallback public(entity, any:data);
