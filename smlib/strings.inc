@@ -145,3 +145,32 @@ stock String_ToUpper(const String:input[], String:output[])
 	
 	output[x] = '\0';
 }
+
+/**
+ * Strips all color control characters in a string.
+ * The Output buffer can be the same as the input buffer.
+ * Original code by Psychonic, thanks.
+ *
+ * @param input				Input String.
+ * @param output			Output String.
+ * @param size				Max Size of the Output string
+ * @noreturn
+ */
+stock String_StripChatColors(const String:input[], String:output[], size)
+{
+	new x = 0;
+	for (new i=0; input[i] != '\0'; i++) {
+	
+		if (x+1 == size) {
+			break;
+		}
+
+		new char = input[i];
+		
+		if (char > 0x08) {
+			output[x++] = char;
+		}
+	}
+	
+	output[x] = '\0';
+}
