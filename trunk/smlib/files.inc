@@ -177,7 +177,7 @@ stock File_AddToDownloadsTable(const String:path[], bool:recursive=true, const S
 }
 
 
-/**
+/*
  * Adds all files/paths in the given text file to the download table.
  * Recursive mode enabled, see File_AddToDownloadsTable()
  * Comments are allowed ! Supported comment types are ; // #
@@ -225,17 +225,33 @@ stock File_ReadDownloadList(const String:path[])
 	CloseHandle(filex);
 }
 
-stock File_LoadTranslations(const String:path[])
+/*
+ * Attempts to load a translation file and unloads the plugin if the file doesn't exist.
+ *
+ * @param file		Filename of the translations file (eg. <pluginname>.phrases).
+ * @noreturn
+ */
+stock File_LoadTranslations(const String:file[])
 {
-	new String:szTranslationsPath[PLATFORM_MAX_PATH];
-
-	Format(szTranslationsPath,sizeof(szTranslationsPath),"translations/%s",path);
-	BuildPath(Path_SM, szTranslationsPath, sizeof(szTranslationsPath), "translations/connectspectate.phrases.txt");
+	decl String:path[PLATFORM_MAX_PATH];
 	
-	if (FileExists(szTranslationsPath)){
-		LoadTranslations("connectspectate.phrases");
-	} 
-	else {
-		SetFailState("[%s] Unable to locate translation file (%s).",g_sPlugin_Name,szTranslationsPath);
+	Format(path,sizeof(path),"translations/%s",file);
+	
+	BuildPath(Path_SM, path, sizeof(path), path);
+	
+	if (FileExists(path)) {
+		LoadTranslations(file);
+		return;
 	}
+	
+	Format(path,sizeof(path),"%s.txt",path);
+	
+	if (FileExists(path)) {
+		LoadTranslations(file);
+		return;
+	}
+	
+	SetFailState("Unable to locate translation file (%s).",path);
 }
+
+
