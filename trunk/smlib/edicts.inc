@@ -29,10 +29,12 @@ stock Edict_FindByName(const String:name[])
 }
 
 /*
- * Finds an edict by HammerID.
+ * Finds an edict by its HammerID.
+ * The newer version of Valve's Hammer editor
+ * sets a unique ID for each entity in a map.
  * It only finds the first occurence.
  *
- * @param name			Name of the entity you want so search.
+ * @param hammerId		Hammer editor ID
  * @return				Edict Index or INVALID_ENT_REFERENCE if no entity was found.
  */
 stock Edict_FindByHammerId(hammerId)

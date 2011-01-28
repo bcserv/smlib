@@ -16,31 +16,106 @@ stock Entity_IsValid(entity)
 	return IsValidEntity(entity);
 }
 
-/*
- * Finds an entity by it's name.
- * The classname has to be known.
+/**
+ * Finds an entity by its name.
+ * You can optionally specify the classname to search for.
+ * Note: If the classname is specified it uses The Sourcemod native
+ * function FindEntityByClassname() which uses the engine's
+ * linked entity list for finding entities. This might be
+ * cheaper, use this if you call this function very often.
  *
  * @param name			Name of the entity you want so search.
- * @param class			Classname of the entity
+ * @param class			Optional: Classname of the entity
  * @return				Entity index or INVALID_ENT_REFERENCE if not matching entity was found.
  */
-stock Entity_FindByName(const const String:name[], const String:class[])
+stock Entity_FindByName(const const String:name[], const String:class[]="")
 {
-	decl String:entityName[128];
+	if (class[0] == '\0') {
+		// Hack: Double the limit to gets none-networked entities too.
+		new realMaxEntities = GetMaxEntities() * 2;
+		for (new entity=0; entity < realMaxEntities; entity++) {
+			
+			if (!IsValidEntity(entity)) {
+				continue;
+			}
+			
+			if (Entity_NameMatches(entity, name)) {
+				return entity;
+			}
+		}
+	}
+	else {
+		new entity = INVALID_ENT_REFERENCE;
+		while ((entity = FindEntityByClassname(entity, class)) != INVALID_ENT_REFERENCE) {
 
-	new entity = INVALID_ENT_REFERENCE;
-	while ((entity = FindEntityByClassname(entity, class)) != INVALID_ENT_REFERENCE) {
-		Entity_GetName(entity, entityName, sizeof(entityName));
-		
-		if (StrEqual(entityName, name)) {
-			return entity;
+			if (Entity_NameMatches(entity, name)) {
+				return entity;
+			}
 		}
 	}
 
 	return INVALID_ENT_REFERENCE;
 }
 
-/*
+/**
+ * Finds an entity by its HammerID.
+ * The newer version of Valve's Hammer editor
+ * sets a unique ID for each entity in a map.
+ * It only finds the first occurence.
+ * Note: If the classname is specified it uses The Sourcemod native
+ * function FindEntityByClassname() which uses the engine's
+ * linked entity list for finding entities. This might be
+ * cheaper, use this if you call this function very often.
+ *
+ * @param hammerId		Hammer editor ID
+ * @param class			Optional: Classname of the entity
+ * @return				Edict Index or INVALID_ENT_REFERENCE if no entity was found.
+ */
+stock Entity_FindByHammerId(hammerId, const String:class[]="")
+{
+	if (class == '\0') {
+		// Hack: Double the limit to gets none-networked entities too.
+		new realMaxEntities = GetMaxEntities() * 2;
+		for (new entity=0; entity < realMaxEntities; entity++) {
+			
+			if (!IsValidEntity(entity)) {
+				continue;
+			}
+			
+			if (Entity_GetHammerId(entity) == hammerId) {
+				return entity;
+			}
+		}
+	}
+	else {
+		new entity = INVALID_ENT_REFERENCE;
+		while ((entity = FindEntityByClassname(entity, class)) != INVALID_ENT_REFERENCE) {
+			
+			if (Entity_GetHammerId(entity) == hammerId) {
+				return entity;
+			}
+		}
+	}
+
+	return INVALID_ENT_REFERENCE;
+}
+
+/**
+ * Searches for an entity by classname.
+ * This is a wrapper around FindEntityByClassname
+ * and has been added for completion.
+ *
+ * @param startEnt		The entity index after which to begin searching from. Use -1 to start from the first entity.
+ * @param classname		Classname of the entity to find.
+ * @return				Entity index >= 0 if found, -1 otherwise.
+ */
+ 
+stock Entity_FindByClassName(startEntity, const String:className[])
+{
+	return FindEntityByClassname(startEntity, className);
+}
+
+/**
  * Checks if an entity matches a specific entity class.
  *
  * @param entity		Entity Index.
@@ -59,7 +134,7 @@ stock bool:Entity_ClassNameMatches(entity, const String:className[], partialMatc
 	return StrEqual(entity_className, className);
 }
 
-/*
+/**
  * Checks if an entity matches a name
  *
  * @param entity		Entity Index.

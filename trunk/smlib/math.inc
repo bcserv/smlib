@@ -75,11 +75,10 @@ stock any:Math_Clamp(any:value, any:min, any:max)
  * @param value		The value you want to check.
  * @param min		The lower border.
  * @param max		The upper border.
- * @return			True if the value is within bounds (bigger or equal min / smaller or equal max), other wise false.
+ * @return			True if the value is within bounds (bigger or equal min / smaller or equal max), false otherwise.
  */
 stock bool:Math_IsInBounds(any:value, any:min, any:max)
 {
-	
 	if (value < min || value > max) {
 		return false;
 	}
