@@ -124,7 +124,7 @@ stock Weapon_GetSubType(weapon, value)
  */
 stock bool:Weapon_IsReloading(weapon)
 {
-	bool:GetEntProp(weapon, Prop_Data, "m_bInReload");
+	return bool:GetEntProp(weapon, Prop_Data, "m_bInReload");
 }
 
 /*
