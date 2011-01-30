@@ -1545,7 +1545,7 @@ stock Client_SetWeaponAmmo(client, const String:className[], primaryAmmo=-1, sec
  * @param ...			Variable number of format parameters.
  * @return				True on success, false if this usermessage doesn't exist.
  */
-stock bool:Client_PrintHintText(client, const String:format[], ...)
+stock bool:Client_PrintHintText(client, const String:format[], any:...)
 {
 	new Handle:userMessage = StartMessageOne("HintText", client);
 	
@@ -1575,7 +1575,7 @@ stock bool:Client_PrintHintText(client, const String:format[], ...)
  * @param ...			Variable number of format parameters.
  * @noreturn
  */
-stock Client_PrintHintTextToAll(const String:format[], ...)
+stock Client_PrintHintTextToAll(const String:format[], any:...)
 {
 	decl String:buffer[254];
 	
@@ -1601,7 +1601,7 @@ stock Client_PrintHintTextToAll(const String:format[], ...)
  * @param ...			Variable number of format parameters.
  * @return				True on success, false if this usermessage doesn't exist.
  */
-stock bool:Client_PrintKeyHintText(client, const String:format[], ...)
+stock bool:Client_PrintKeyHintText(client, const String:format[], any:...)
 {
 	new Handle:userMessage = StartMessageOne("KeyHintText", client);
 	
@@ -1631,7 +1631,7 @@ stock bool:Client_PrintKeyHintText(client, const String:format[], ...)
  * @param ...			Variable number of format parameters.
  * @noreturn
  */
-stock Client_PrintKeyHintTextToAll(const String:format[], ...)
+stock Client_PrintKeyHintTextToAll(const String:format[], any:...)
 {
 	decl String:buffer[254];
 	
