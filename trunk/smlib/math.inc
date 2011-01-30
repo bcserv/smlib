@@ -169,3 +169,21 @@ stock Math_GetPercentage(value, all) {
 stock Float:Math_GetPercentageFloat(Float:value, Float:all) {
 	return (value / all) * 100.0;
 }
+
+/*
+ * Moves the start vector on a direct line to the end vector by the given scale.
+ * Note: If scale is 0.0 the output will be the same as the start vector and if scale is 1.0 the output vector will be the same as the end vector.
+ * Exmaple usage: Move an entity to another entity but only 12 units: Vector_MoveVector(entity1Origin,entity2Origin,(12.0 / GetVectorDistance(entity1Origin,entity2Origin)),newEntity1Origin); now only teleport your entity to newEntity1Origin.
+ *
+ * @param start			The start vector where the imagined line starts.
+ * @param end			The end vector where the imagined line ends.
+ * @param scale			The position on the line 0.0 is the start 1.0 is the end.
+ * @param output		Output vector
+ * @noreturn
+ */
+stock Math_MoveVector(const Float:start[3], const Float:end[3], Float:scale, Float:output[3])
+{
+	SubtractVectors(end,start,output);
+	ScaleVector(output,scale);
+	AddVectors(start,output,output);
+}
