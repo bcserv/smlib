@@ -1671,3 +1671,41 @@ stock bool:Entity_Hurt(entity, damage, attacker=0, damageType=DMG_GENERIC, const
 	
 	return true;
 }
+
+/*
+ * Gets the parent entity of an entity.
+ * 
+ * @param entity		Entity Index.
+ * @return				Entity Index of the parent.
+ */
+stock Entity_GetParent(entity)
+{
+	return GetEntPropEnt(entity, Prop_Data, "m_pParent");
+}
+
+/*
+ * Clears the parent of an entity.
+ * 
+ * @param entity		Entity Index.
+ * @noreturn
+ */
+stock Entity_RemoveParent(entity)
+{
+	SetVariantString("");
+	AcceptEntityInput(entity, "ClearParent");
+}
+
+/*
+ * Sets the parent entity of an entity.
+ * 
+ * @param entity		Entity Index.
+ * @param parentEntity	Entity Index of the new parent.
+ * @noreturn
+ */
+stock Entity_SetParent(entity, parentEntity)
+{
+	SetVariantString("!activator");
+	AcceptEntityInput(entity, "SetParent", parentEntity);
+}
+
+
