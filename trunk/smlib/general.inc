@@ -3,7 +3,8 @@
 #endif
 #define _smlib_general_included
 
-#include <smlib>
+#include <sourcemod>
+#include <sdktools_stringtables>
 
 #define TIME_TO_TICKS(%1)	( (int)( 0.5 + (float)(%1) / GetTickInterval() ) )
 #define TICKS_TO_TIME(%1)	( GetTickInterval() * %1 )

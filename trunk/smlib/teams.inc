@@ -3,7 +3,8 @@
 #endif
 #define _smlib_teams_included
 
-#include <smlib>
+#include <sourcemod>
+#include <smlib/entities>
 
 // Team Defines
 #define	TEAM_INVALID	-1

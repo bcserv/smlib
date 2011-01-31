@@ -3,7 +3,7 @@
 #endif
 #define _smlib_dynarray_included
 
-#include <smlib>
+#include <sourcemod>
 
 /**
  * Retrieves a cell value from an array.

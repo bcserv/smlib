@@ -3,7 +3,9 @@
 #endif
 #define _smlib_game_included
 
-#include <smlib>
+#include <sourcemod>
+#include <sdktools_functions>
+#include <sdktools_entinput>
 
 /*
 * End's the game and displays the scoreboard with intermission time.

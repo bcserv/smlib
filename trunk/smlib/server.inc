@@ -3,7 +3,7 @@
 #endif
 #define _smlib_server_included
 
-#include <smlib>
+#include <sourcemod>
 
 /*
  * Gets the server's IP address.

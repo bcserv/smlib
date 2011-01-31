@@ -3,7 +3,8 @@
 #endif
 #define _smlib_sql_included
 
-#include <smlib>
+#include <sourcemod>
+#include <dbi>
 
 /**
  * Executes a threaded SQL Query (See: SQL_TQuery)

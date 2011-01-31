@@ -3,7 +3,10 @@
 #endif
 #define _smlib_effects_included
 
-#include <smlib>
+#include <sourcemod>
+#include <sdktools_entinput>
+#include <smlib/effects>
+#include <smlib/entities>
 
 // Entity Dissolve types
 enum DissolveType
@@ -113,22 +116,23 @@ stock Effect_Fade(entity, fadeOut=true, kill=false, fast=true, EffectCallback:ca
 }
 
 /**
+ * Fades the entity in.
  *  A wrapper function around Effect_Fade().
  *
  * @param entity		Entity Index.
  * @param fadeOut		Optional: Fade the entity out (true) or in (false).
- * @param kill			Optional: If to kill the entity when the fade is finished.
  * @param fast			Optional: Fade the entity fast (~0.7 secs) or slow (~3 secs)
  * @param callback		Optional: You can specify a callback Function that will get called when the fade is finished.
  * @param data			Optional: You can pass any data to the callback.
  * @return				True on success, otherwise false.
  */
-stock Effect_FadeIn(entity, kill=false, fast=true, EffectCallback:callback=INVALID_FUNCTION, any:data=0)
+stock Effect_FadeIn(entity, fast=true, EffectCallback:callback=INVALID_FUNCTION, any:data=0)
 {
-	Effect_Fade(entity, false, kill, fast, callback, data);
+	Effect_Fade(entity, false, fast, callback, data);
 }
 	
 /**
+ * Fades the entity out.
  * A wrapper function around Effect_Fade().
  *
  * @param entity		Entity Index.
