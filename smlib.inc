@@ -1,14 +1,7 @@
-
 #if defined _smlib_included
 	#endinput
 #endif
 #define _smlib_included
-
-// Workaround for Pawnstudio
-#if 0 
-	#include <sourcemod>
-	#include <sdktools>
-#endif
 
 #define SMLIB_VERSION "0.9"
 

@@ -3,7 +3,7 @@
 #endif
 #define _smlib_strings_included
 
-#include <smlib>
+#include <sourcemod>
 
 /**
  * Checks if the string is numeric.

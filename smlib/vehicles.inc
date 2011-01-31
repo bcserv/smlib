@@ -3,7 +3,10 @@
 #endif
 #define _smlib_vehicles_included
 
-#include <smlib>
+#include <sourcemod>
+#include <sdktools_entinput>
+#include <sdktools_functions>
+#include <smlib/entities>
 
 /**
  * Returns the vehicle's driver.

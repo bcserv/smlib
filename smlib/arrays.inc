@@ -3,7 +3,7 @@
 #endif
 #define _smlib_array_included
 
-#include <smlib>
+#include <sourcemod>
 
 /**
  * Returns the index for the first occurance of the given value.

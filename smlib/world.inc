@@ -3,7 +3,7 @@
 #endif
 #define _smlib_world_included
 
-#include <smlib>
+#include <sourcemod>
 
 /*
  * Gets the world's max size

@@ -3,7 +3,7 @@
 #endif
 #define _smlib_debug_included
 
-#include <smlib>
+#include <sourcemod>
 
 /**
  * Prints the values of a static Float-Array to the server console.

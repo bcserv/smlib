@@ -3,7 +3,9 @@
 #endif
 #define _smlib_weapons_included
 
-#include <smlib>
+#include <sourcemod>
+#include <sdktools_functions>
+#include <smlib/entities>
 
 #define MAX_WEAPON_OFFSET		64
 #define MAX_WEAPON_SLOTS		6	// hud item selection slots

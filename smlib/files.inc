@@ -3,7 +3,9 @@
 #endif
 #define _smlib_files_included
 
-#include <smlib>
+#include <sourcemod>
+#include <sdktools_stringtables>
+#include <smlib/arrays>
 
 /**
  * Gets the Base name of a path.

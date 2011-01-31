@@ -3,7 +3,9 @@
 #endif
 #define _smlib_entities_included
 
-#include <smlib>
+#include <sourcemod>
+#include <sdktools_entinput>
+#include <sdktools_functions>
 
 /*
  * Checks if an entity is valid and exists.

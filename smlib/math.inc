@@ -3,7 +3,7 @@
 #endif
 #define _smlib_math_included
 
-#include <smlib>
+#include <sourcemod>
 
 enum VecAngle
 {

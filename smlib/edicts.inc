@@ -3,7 +3,8 @@
 #endif
 #define _smlib_edicts_included
 
-#include <smlib>
+#include <sourcemod>
+#include <smlib/entities>
 
 /*
  * Finds an edict by it's name
@@ -20,6 +21,7 @@ stock Edict_FindByName(const String:name[])
 		if (!IsValidEdict(edict)) {
 			continue;
 		}
+
 		if (Entity_NameMatches(edict, name)) {
 			return edict;
 		}

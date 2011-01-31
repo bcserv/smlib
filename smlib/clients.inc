@@ -3,8 +3,11 @@
 #endif
 #define _smlib_client_included
 
-#include <smlib>
+#include <sourcemod>
+#include <entity_prop_stocks>
 #include <smlib/general>
+#include <smlib/edicts>
+#include <smlib/math>
 #include <smlib/teams>
 #include <smlib/weapons>
 
