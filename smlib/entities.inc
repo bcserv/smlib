@@ -554,7 +554,7 @@ stock Entity_ClearSpawnFlags(entity)
  */
 stock bool:Entity_HasSpawnFlags(entity, flags)
 {	
-	return Entity_GetSpawnFlags & flags;
+	return Entity_GetSpawnFlags() & flags;
 }
 
 /*
