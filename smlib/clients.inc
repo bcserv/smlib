@@ -1865,7 +1865,7 @@ stock Client_ClearButtons(client)
  */
 stock bool:Client_HasButtons(client, buttons)
 {
-	return Client_GetButtons(client) & buttons;
+	return bool:(Client_GetButtons(client) & buttons);
 }
 
 /**

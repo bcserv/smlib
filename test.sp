@@ -148,6 +148,13 @@ public OnPluginStart() {
 	Client_IsLookingAtWall(0);
 	Client_GetClass(0);
 	Client_SetClass(0, 0);
+	Client_GetButtons(0);
+	Client_SetButtons(0, 0);
+	Client_AddButtons(0, 0);
+	Client_RemoveButtons(0, 0);
+	Client_ClearButtons(0);
+	Client_HasButtons(0, 0);
+	Client_GetChangedButtons(0);
 
 	// File: debug.inc
 	Debug_FloatArray(vec);
