@@ -1753,7 +1753,7 @@ public bool:_smlib_TraceEntityFilter(entity, contentsMask)
 /**
  * Gets a client's class.
  * Currently supported games are: TF2, Dark Messiah.
- * Other games maybe work too, but not tested.
+ * Other games maybe work too, but are not tested.
  * 
  * @param client		Client Index.
  * @return				Class Index.
@@ -1770,7 +1770,7 @@ stock Client_GetClass(client)
 /**
  * Sets a client's class.
  * Currently supported games are: TF2, Dark Messiah.
- * Other games maybe work too, but not tested.
+ * Other games maybe work too, but are not tested.
  * 
  * @param client		Client Index.
  * @param persistant	If true changes the players desired class so the change stays after death (probably TF2 only).
@@ -1791,7 +1791,7 @@ stock Client_SetClass(client, class, bool:persistant=false)
 }
 
 /**
- * Returns what buttons are pressed by the client.
+ * Returns what buttons are currently pressed by the client.
  * 
  * @param client		Client Index.
  * @return				Buttons as bitflag.
@@ -1816,7 +1816,7 @@ stock Client_SetButtons(client, buttons)
 
 /**
  * Adds buttons to the already pressed buttons.
- * Note: This will only work OnPreThink (sdkhooks) or OnPlayerRunCmd.
+ * Note: This will likely only work OnPreThink (sdkhooks) or OnPlayerRunCmd.
  *
  * @param client		Client Index.
  * @param buttons		Buttons as bitflag.
@@ -1827,18 +1827,6 @@ stock Client_AddButtons(client, buttons)
 	new newButtons = Client_GetButtons(client);
 	newButtons |= buttons;
 	Client_SetButtons(client, newButtons);
-}
-
-/**
- * Clears all buttons.
- * Note: This will only work OnPreThink (sdkhooks) or OnPlayerRunCmd.
- *
- * @param client		Client Index.
- * @noreturn
- */
-stock Client_ClearButtons(client)
-{
-	Client_SetButtons(client,0);
 }
 
 /**
@@ -1857,6 +1845,18 @@ stock Client_RemoveButtons(client, buttons)
 }
 
 /**
+ * Clears all buttons.
+ * Note: This will likely only work OnPreThink (sdkhooks) or OnPlayerRunCmd.
+ *
+ * @param client		Client Index.
+ * @noreturn
+ */
+stock Client_ClearButtons(client)
+{
+	Client_SetButtons(client,0);
+}
+
+/**
  * Returns if the given buttons are pressed by the client or not.
  * 
  * @param client		Client Index.
@@ -1869,7 +1869,7 @@ stock bool:Client_HasButtons(client, buttons)
 }
 
 /**
- * Returns only those buttons, that have changed since the last call of this.
+ * Returns only the buttons that have changed since the last call of this.
  * Example usage: Within OnPlayerRunCmd use this function to call another function only once when a player pressed or released a button.
  * 
  * @param client		Client Index.
@@ -1887,5 +1887,3 @@ stock Client_GetChangedButtons(client)
 	
 	return changedButtons;
 }
-
-
