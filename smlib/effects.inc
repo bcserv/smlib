@@ -48,7 +48,7 @@ stock bool:Effect_DissolveEntity(entity, DissolveType:dissolveType=DISSOLVE_NORM
  * @return				True on success, otherwise false.
  */
 stock bool:Effect_DissolvePlayerRagDoll(client, DissolveType:dissolveType=DISSOLVE_NORMAL)
-{    
+{
 	new m_hRagdoll = GetEntPropEnt(client, Prop_Send, "m_hRagdoll");
 
 	if (m_hRagdoll == -1) {
@@ -120,7 +120,6 @@ stock Effect_Fade(entity, fadeOut=true, kill=false, fast=true, EffectCallback:ca
  *  A wrapper function around Effect_Fade().
  *
  * @param entity		Entity Index.
- * @param fadeOut		Optional: Fade the entity out (true) or in (false).
  * @param fast			Optional: Fade the entity fast (~0.7 secs) or slow (~3 secs)
  * @param callback		Optional: You can specify a callback Function that will get called when the fade is finished.
  * @param data			Optional: You can pass any data to the callback.
@@ -128,7 +127,7 @@ stock Effect_Fade(entity, fadeOut=true, kill=false, fast=true, EffectCallback:ca
  */
 stock Effect_FadeIn(entity, fast=true, EffectCallback:callback=INVALID_FUNCTION, any:data=0)
 {
-	Effect_Fade(entity, false, fast, callback, data);
+	Effect_Fade(entity, false, false, fast, callback, data);
 }
 	
 /**

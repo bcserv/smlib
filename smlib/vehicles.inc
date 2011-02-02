@@ -104,7 +104,7 @@ stock bool:Vehicle_Unlock(vehicle)
  */
 stock bool:Vehicle_IsValid(vehicle)
 {
-	if (!Entity_isValid(vehicle)) {
+	if (!Entity_IsValid(vehicle)) {
 		return false;
 	}
 	

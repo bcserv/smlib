@@ -5,6 +5,8 @@
 
 #include <sourcemod>
 #include <entity_prop_stocks>
+#include <sdktools_engine>
+#include <sdktools_trace>
 #include <smlib/general>
 #include <smlib/edicts>
 #include <smlib/math>
@@ -73,11 +75,7 @@ stock bool:Client_IsIngame(client)
 		return false;
 	}
 
-	if (!IsClientInGame(client)) {
-		return false;
-	}
-
-	return true;
+	return IsClientInGame(client);
 }
 
 /**
@@ -88,15 +86,11 @@ stock bool:Client_IsIngame(client)
 */
 stock bool:Client_IsIngameAuthorized(client)
 {
-	if (!Client_IsIngame(client, false)) {
+	if (!Client_IsIngame(client)) {
 		return false;
 	}
 
-	if (!IsClientAuthorized(client)) {
-		return false;
-	}
-
-	return true;
+	return IsClientAuthorized(client);
 }
 
 #define MAX_STEAMAUTH_LENGTH 21
@@ -404,11 +398,11 @@ stock Client_SetThirdPersonMode(client, enable=true)
 }
 
 /**
-* Checks if the client is in thirdperson mode
-*
-* @param client		client index
-* @return			true if the client is currently in thirdperson mode, false otherwise
-*/
+ * Checks if the client is in thirdperson mode
+ *
+ * @param client		client index
+ * @return			true if the client is currently in thirdperson mode, false otherwise
+ */
 stock Client_IsInThirdPersonMode(client)
 {
 	return GetEntProp(client, Prop_Data, "m_iObserverMode");
@@ -421,46 +415,48 @@ stock Client_IsInThirdPersonMode(client)
 #define FFADE_PURGE			0x0010		// Purges all other fades, replacing them with this one
 
 /**
-* Fades a client's screen to a specified color
-*
-* @param client			player for which to fade the screen
-* @param duration		duration in seconds the effect stays
-* @param mode			fade mode, see FFADE_ defines
-* @param holdtime		holdtime in seconds
-* @param r				red amount
-* @param g				green amount
-* @param b				blue amount
-* @param a				transparency
-* @return				True on success, false otherwise
-*/
+ * Fades a client's screen to a specified color
+ * Your adviced to read the FFADE_ Comments
+ *
+ * @param client			player for which to fade the screen
+ * @param duration		duration in seconds the effect stays
+ * @param mode			fade mode, see FFADE_ defines
+ * @param holdtime		holdtime in seconds
+ * @param r				red amount
+ * @param g				green amount
+ * @param b				blue amount
+ * @param a				transparency
+ * @return				True on success, false otherwise
+ */
 stock bool:Client_ScreenFade(client, duration, mode, holdtime=-1, r=0, g=0, b=0, a=255, bool:reliable=true)
 {
-	new Handle:msg = StartMessageOne("Fade", client, (reliable?USERMSG_RELIABLE:0));
+	new Handle:userMessage = StartMessageOne("Fade", client, (reliable?USERMSG_RELIABLE:0));
 	
-	if (fade == INVALID_MESSAGE_ID) {
+	if (userMessage == INVALID_HANDLE) {
 		return false;
 	}
-	
-	BfWriteShort(msg, duration);	// Fade duration
-	BfWriteShort(msg, holdtime);	// Fade hold time
-	BfWriteShort(msg, mode);		// What to do
-	BfWriteByte(msg, r);			// Color R
-	BfWriteByte(msg, g);			// Color G
-	BfWriteByte(msg, b);			// Color B
-	BfWriteByte(msg, a);			// Color Alpha
+
+	BfWriteShort(userMessage,	duration);	// Fade duration
+	BfWriteShort(userMessage,	holdtime);	// Fade hold time
+	BfWriteShort(userMessage,	mode);		// What to do
+	BfWriteByte(userMessage,	r);			// Color R
+	BfWriteByte(userMessage,	g);			// Color G
+	BfWriteByte(userMessage,	b);			// Color B
+	BfWriteByte(userMessage,	a);			// Color Alpha
 	EndMessage();
 	
 	return true;
 }
 
 /**
-* This function retrieves an array that holds all clones of a client by IP check.
-*
-* @param client			Client index.
-* @param closelist		An array that holds all clones of a client.
-* @return				Returns how many clones a client has.
-*/
-stock Client_GetClones(client, clonelist[])
+ * This function retrieves an array that holds all clones of a client by IP check.
+ * Size of CloneList has to be MaxClients at least, or MAX_PLAYERS
+ *
+ * @param client		Client index.
+ * @param closelist		An array that holds all clones of a client.
+ * @return				Returns how many clones a client has.
+ */
+stock Client_GetClones(client, cloneList[])
 {
 	new x=0;
 	decl String:ip_client[16], String:ip_player[16];
@@ -482,11 +478,11 @@ stock Client_GetClones(client, clonelist[])
 }
 
 /*
-* This function returns true if the client is at a ladder..
-*
-* @param client			Client index.
-* @return				Returns true if the client is on a ladder other wise false.
-*/
+ * This function returns true if the client is at a ladder..
+ *
+ * @param client			Client index.
+ * @return				Returns true if the client is on a ladder other wise false.
+ */
 stock bool:Client_IsOnLadder(client)
 {	
 	new MoveType:movetype = GetEntityMoveType(client);
@@ -508,46 +504,46 @@ enum Water_level
 };
 
 /*
-* This function returns how deep a client is in water.
-*
-* @param client			Client index.
-* @return				Returns 0 if not in water. 1 if feets are in water. 2 if waist is in water. 3 if head is in water.
-*/
+ * This function returns how deep a client is in water.
+ *
+ * @param client			Client index.
+ * @return				Returns 0 if not in water. 1 if feets are in water. 2 if waist is in water. 3 if head is in water.
+ */
 stock Water_Level:Client_GetWaterLevel(client)
 {	
 	return Water_Level:GetEntProp(client, Prop_Send, "m_nWaterLevel");
 }
 
 /*
-* Returns how much suit sprint power a client has left in percent.
-*
-* @param client			Client index.
-* @return				returns the actual power left in percent.
-*/
+ * Returns how much suit sprint power a client has left in percent.
+ *
+ * @param client			Client index.
+ * @return				returns the actual power left in percent.
+ */
 stock Float:Client_GetSuitSprintPower(client)
 {
 	return GetEntPropFloat(client, Prop_Send, "m_flSuitPower");
 }
 
 /*
-* Sets a client suit sprint power in percent.
-*
-* @param client			Client index.
-* @param power			power (0.0 to 100.0)
-* @noreturn
-*/
+ * Sets a client suit sprint power in percent.
+ * 
+ * @param client			Client index.
+ * @param power			power (0.0 to 100.0)
+ * @noreturn
+ */
 stock Client_SetSuitSprintPower(client, Float:power)
 {	
 	SetEntPropFloat(client, Prop_Send, "m_flSuitPower", power);
 }
 
 /*
-* Returns the client count put in the server. 
-*
-* @param inGameOnly		If false connecting players are also counted.
-* @param countBots		If true bots will be counted too.
-* @return				Client count in the server.
-*/
+ * Returns the client count put in the server. 
+ *
+ * @param inGameOnly		If false connecting players are also counted.
+ * @param countBots		If true bots will be counted too.
+ * @return				Client count in the server.
+ */
 stock Client_GetCount(bool:countInGameOnly=true, bool:countFakeClients=false)
 {
 	new numClients = 0;
@@ -573,16 +569,16 @@ stock Client_GetCount(bool:countInGameOnly=true, bool:countFakeClients=false)
 }
 
 /*
-* Returns the ping of a client like it is displayed in the scoreboard.
-* The weird calculation formula is taken from Valve's SDK
-* hl2sdk\game\server\util.cpp: UTIL_GetPlayerConnectionInfo()
-* The Scoreboard uses the goldSource corrected Ping, the net_graph doesn't
-* For Fake Clients 0 is returned.
-*
-* @param inGameOnly		Wether players not ingame yet are also counted
-* @param countBots		If true bots will be counted too.
-* @return				Client's ping or 0 for fake clients
-*/
+ * Returns the ping of a client like it is displayed in the scoreboard.
+ * The weird calculation formula is taken from Valve's SDK
+ * hl2sdk\game\server\util.cpp: UTIL_GetPlayerConnectionInfo()
+ * The Scoreboard uses the goldSource corrected Ping, the net_graph doesn't
+ * For Fake Clients 0 is returned.
+ *
+ * @param inGameOnly		Wether players not ingame yet are also counted
+ * @param countBots		If true bots will be counted too.
+ * @return				Client's ping or 0 for fake clients
+ */
 stock Client_GetFakePing(client, bool:goldSource=true)
 {
 	if (IsFakeClient(client)) {
@@ -711,9 +707,9 @@ stock Client_SetArmor(client, value)
  * @param client			Client's index.
  * @return					Suitpower
  */
-stock Client_GetSuitPower(client)
+stock Float:Client_GetSuitPower(client)
 {
-	return GetEntPropFloat(client, Prop_Data, "m_flSuitPower");
+	return Float:GetEntPropFloat(client, Prop_Data, "m_flSuitPower");
 }
 
 /**
@@ -723,7 +719,7 @@ stock Client_GetSuitPower(client)
  * @param value				Suitpower
  * @noreturn
  */
-stock Client_SetSuitPower(client, value)
+stock Client_SetSuitPower(client, Float:value)
 {
 	SetEntPropFloat(client, Prop_Data, "m_flSuitPower", value);
 }
@@ -767,7 +763,7 @@ stock Float:Client_GetNextDecalTime(client)
  */
 stock bool:Client_CanSprayDecal(client)
 {
-	return Client_GetNextDecalTime <= GetGameTime();
+	return Client_GetNextDecalTime(client) <= GetGameTime();
 }
 
 /**
@@ -837,9 +833,9 @@ stock bool:Client_ExitVehicle(client)
  */
 stock bool:Client_RawAudio(client, const emitter, const String:soundfile[], Float:length = 0.0, pitch = 100)
 {
-    new Handle:message = StartMessageOne("RawAudio", client);
+	new Handle:message = StartMessageOne("RawAudio", client);
 
-    if (message == INVALID_HANDLE) {
+	if (message == INVALID_HANDLE) {
 		return false;
 	}
 
@@ -849,7 +845,7 @@ stock bool:Client_RawAudio(client, const emitter, const String:soundfile[], Floa
 	BfWriteString(message,	soundfile);
 	EndMessage();
 
-    return true;
+	return true;
 }
 
 /**
@@ -865,9 +861,9 @@ stock bool:Client_RawAudio(client, const emitter, const String:soundfile[], Floa
  */
 stock bool:Client_RawAudioToAll(const emitter, const String:soundfile[], Float:length = 0.0, pitch = 100)
 {
-    new Handle:message = StartMessageAll("RawAudio");
+	new Handle:message = StartMessageAll("RawAudio");
 
-    if (message == INVALID_HANDLE) {
+	if (message == INVALID_HANDLE) {
 		return false;
 	}
 
@@ -877,7 +873,7 @@ stock bool:Client_RawAudioToAll(const emitter, const String:soundfile[], Float:l
 	BfWriteString(message,	soundfile);
 	EndMessage();
 
-    return true;
+	return true;
 }
 
 /**
@@ -1692,6 +1688,12 @@ stock bool:Client_Shake(client, command=SHAKE_START, Float:amplitude=50.0, Float
 	return true;
 }
 
+/*
+ * Checks whether the client is a generic admin.
+ *
+ * @param				Client Index.
+ * return				True if the client is a generic admin, false otheriwse.
+ */
 stock bool:Client_IsAdmin(client)
 {
 	new AdminId:adminId = GetUserAdmin(client);
@@ -1701,4 +1703,89 @@ stock bool:Client_IsAdmin(client)
 	}
 	
 	return GetAdminFlag(adminId, Admin_Generic);
+}
+
+/*
+ * Checks if the client is currently looking at the wall in front
+ * of him with the given distance as max value.
+ * 
+ * @param client		Client Index.
+ * @param distance		Max Distance as Float value.
+ * return				True if he is looking at a wall, false otherwise.
+ */
+stock bool:Client_IsLookingAtWall(client, Float:distance=40.0) {
+
+	decl Float:posEye[3], Float:posEyeAngles[3];
+	new bool:isClientLookingAtWall = false;
+	
+	GetClientEyePosition(client,	posEye);
+	GetClientEyeAngles(client,		posEyeAngles);
+	
+	posEyeAngles[0] = 0.0;
+
+	new Handle:trace = TR_TraceRayFilterEx(posEye, posEyeAngles, CONTENTS_SOLID, RayType_Infinite, _smlib_TraceEntityFilter);
+	
+	if (TR_DidHit(trace)) {
+		
+		if (TR_GetEntityIndex(trace) > 0) {
+			return false;
+		}
+		
+		decl Float:posEnd[3];
+
+		TR_GetEndPosition(posEnd, trace);
+		
+		if (GetVectorDistance(posEye, posEnd) <= distance) {
+			isClientLookingAtWall = true;
+		}
+	}
+	
+	CloseHandle(trace);
+	
+	return isClientLookingAtWall;
+}
+
+public bool:_smlib_TraceEntityFilter(entity, contentsMask)
+{
+	return entity == 0;
+}
+
+/*
+ * Gets a client's class.
+ * Currently supported games are: TF2, Dark Messiah.
+ * Other games maybe work too, but not tested.
+ * 
+ * @param client		Client Index.
+ * return				Class Index.
+ */
+stock Client_GetClass(client)
+{
+	if (GuessSDKVersion() == SOURCE_SDK_DARKMESSIAH) {
+		GetEntProp(client, Prop_Send, "m_iPlayerClass");
+	}
+
+	return GetEntProp(client, Prop_Send, "m_iClass");
+}
+
+/*
+ * Sets a client's class.
+ * Currently supported games are: TF2, Dark Messiah.
+ * Other games maybe work too, but not tested.
+ * 
+ * @param client		Client Index.
+ * @param persistant	If true changes the players desired class so the change stays after death (probably TF2 only).
+ * return				Class Index.
+ */
+stock Client_SetClass(client, class, bool:persistant=false)
+{
+	if (GuessSDKVersion() == SOURCE_SDK_DARKMESSIAH) {
+		GetEntProp(client, Prop_Send, "m_iPlayerClass");
+	}
+	else {
+		SetEntProp(client, Prop_Send, "m_iClass", class);
+		
+		if (persistant) {
+			SetEntProp(client, Prop_Send, "m_iDesiredPlayerClass", class);
+		}
+	}
 }

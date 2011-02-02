@@ -128,7 +128,7 @@ stock FindStringIndexByTableName(const String:table[], const String:str[])
 		return INVALID_STRING_INDEX;
 	}
 	
-	return FindStringIndex2(tableIndex, tableIndex);
+	return FindStringIndex2(tableIndex, str);
 }
 
 /*
