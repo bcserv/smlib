@@ -75,7 +75,7 @@ stock Entity_FindByName(const const String:name[], const String:class[]="")
  */
 stock Entity_FindByHammerId(hammerId, const String:class[]="")
 {
-	if (class == '\0') {
+	if (class[0] == '\0') {
 		// Hack: Double the limit to gets none-networked entities too.
 		new realMaxEntities = GetMaxEntities() * 2;
 		for (new entity=0; entity < realMaxEntities; entity++) {
@@ -315,7 +315,7 @@ stock Entity_GetHammerId(entity)
  * @param entity			Entity index.
  * @return					Radius
  */
-stock Entity_GetRadius(entity)
+stock Float:Entity_GetRadius(entity)
 {
 	return GetEntPropFloat(entity, Prop_Data, "m_flRadius");
 }
@@ -515,7 +515,7 @@ stock Entity_SetSpawnFlags(entity, flags)
  */
 stock Entity_AddSpawnFlags(entity, flags)
 {
-	new spawnFlags = Entity_GetSpawnFlags();
+	new spawnFlags = Entity_GetSpawnFlags(entity);
 	spawnFlags |= flags;
 	Entity_SetSpawnFlags(entity, spawnFlags);
 }
@@ -529,7 +529,7 @@ stock Entity_AddSpawnFlags(entity, flags)
  */
 stock Entity_RemoveSpawnFlags(entity, flags)
 {
-	new spawnFlags = Entity_GetSpawnFlags();
+	new spawnFlags = Entity_GetSpawnFlags(entity);
 	spawnFlags &= ~flags;
 	Entity_SetSpawnFlags(entity, spawnFlags);
 }
@@ -554,7 +554,7 @@ stock Entity_ClearSpawnFlags(entity)
  */
 stock bool:Entity_HasSpawnFlags(entity, flags)
 {	
-	return Entity_GetSpawnFlags() & flags;
+	return bool:(Entity_GetSpawnFlags(entity) & flags);
 }
 
 /*
@@ -675,7 +675,7 @@ stock bool:Entity_HasEFlags(entity, Entity_Flags:flags)
 {
 	new Entity_Flags:currentEFlags = Entity_GetEFlags(entity);
 	
-	return currentEFlags & flags;
+	return bool:(currentEFlags & flags);
 }
 
 /**
@@ -730,7 +730,7 @@ stock Entity_SetFlags(entity, flags)
  */
 stock Entity_AddFlags(entity, flags)
 {
-	new setFlags = Edict_GetFlags(entity);
+	new setFlags = Entity_GetFlags(entity);
 	setFlags |= flags;
 	Entity_SetFlags(entity, flags);
 }
@@ -744,7 +744,7 @@ stock Entity_AddFlags(entity, flags)
  */
 stock Entity_RemoveFlags(entity, flags)
 {
-	new setFlags = Edict_GetFlags(entity);
+	new setFlags = Entity_GetFlags(entity);
 	setFlags &= ~flags;
 	Entity_SetFlags(entity, setFlags);
 }
@@ -760,7 +760,7 @@ stock Entity_RemoveFlags(entity, flags)
  */
 stock Entity_ToggleFlag(entity, flag)
 {
-	new setFlag = Edict_GetFlags(entity);
+	new setFlag = Entity_GetFlags(entity);
 	setFlag ^= flag;
 	Entity_SetFlags(entity, setFlag);
 }
@@ -873,11 +873,11 @@ stock Entity_RemoveSolidFlags(entity, SolidFlags_t:flags)
  */
 stock Entity_ClearSolidFlags(entity)
 {
-	Entity_SetSolidFlags(entity, 0);
+	Entity_SetSolidFlags(entity, SolidFlags_t:0);
 }
 
 /**
- * Checks whether certain solid flags are set on th entity.
+ * Checks whether certain solid flags are set on the entity.
  *
  * @param entity			Entity index.
  * @param flags				Solid Flags.
@@ -1037,7 +1037,7 @@ enum Collision_Group_t
  */
 stock Collision_Group_t:Entity_GetCollisionGroup(entity)
 {
-	return GetEntProp(entity, Prop_Data, "m_CollisionGroup");
+	return Collision_Group_t:GetEntProp(entity, Prop_Data, "m_CollisionGroup");
 }
 
 /**
@@ -1284,34 +1284,9 @@ stock Entity_SetHealth(entity, value, ignoreMax=false, kill=true)
 }
 
 /**
- * Get the max health of an entity
- *
- * @param entity			entity index
- * @return				max health points
- */
-stock Entity_GetMaxHealth(entity)
-{	
-	return GetEntProp(entity, Prop_Data, "m_iMaxHealth");
-}
-
-
-/**
- * Set the max health of an entity.
- *
- * @param entity			entity index
- * @param value			max health to set (anything above 511 will overload)
- * @noreturn
- */
-stock Entity_SetMaxHealth(entity, value)
-{	
-	SetEntProp(entity, Prop_Data, "m_iMaxHealth", value);
-	return value;
-}
-
-/**
  * Add health to an entity
  *
- * @param entity			entity index
+ * @param entity		entity index
  * @param value			health to add
  * @return				returns the new health value set
  */
@@ -1325,19 +1300,55 @@ stock Entity_AddHealth(entity, value, ignoreMax=false, kill=true)
 }
 
 /**
+ * Takes health from an entity
+ *
+ * @param entity		entity index
+ * @param value			health to add
+ * @return				returns the new health value set
+ */
+stock Entity_TakeHealth(entity, value, ignoreMax=false, kill=true)
+{
+	new health = Entity_GetHealth(entity);
+	
+	health -= value;
+	
+	return Entity_SetHealth(entity, value, ignoreMax, kill);
+}
+
+/**
+ * Get the max health of an entity
+ *
+ * @param entity		Entity Index
+ * @return				Max health points
+ */
+stock Entity_GetMaxHealth(entity)
+{	
+	return GetEntProp(entity, Prop_Data, "m_iMaxHealth");
+}
+
+
+/**
+ * Set the max health of an entity.
+ *
+ * @param entity		Entity index
+ * @param value			Max health to set (anything above 511 will overload)
+ * @noreturn
+ */
+stock Entity_SetMaxHealth(entity, value)
+{	
+	SetEntProp(entity, Prop_Data, "m_iMaxHealth", value);
+	return value;
+}
+
+/**
  * Checks if the given 2 entitys are within a given range.
  *
- * @param entity			entity index.
- * @param target			target entity index.
- * @param dist			max float distance value. if -1.0 its always true;
+ * @param entity		Entity Index.
+ * @param target		Target Entity Index.
  * @return				returns true if the given entities are closer than the given distance value, false otherwise.
  */
 stock bool:Entity_InRange(entity, target, Float:distance)
 {
-	if (dist == -1.0) {
-		return true;
-	}
-	
 	new Float:entityVec[3];
 	new Float:targetVec[3];
 	

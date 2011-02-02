@@ -115,10 +115,9 @@ stock bool:Team_SetName(index, const String:name[])
 * Don't use this before OnMapStart().
 *
 * @param index			Team Index.
-* @param score			Score value.
 * @return				Team Score or -1 if the team is not valid.
 */
-stock bool:Team_GetScore(index, score)
+stock Team_GetScore(index)
 {
 	new edict = Team_GetEdict(index);
 	

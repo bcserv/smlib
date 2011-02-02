@@ -129,7 +129,7 @@ stock String_ToLower(const String:input[], String:output[], size)
  * @param size				Max Size of the Output string
  * @noreturn
  */
-stock String_ToUpper(const String:input[], String:output[])
+stock String_ToUpper(const String:input[], String:output[], size)
 {
 	size--;
 

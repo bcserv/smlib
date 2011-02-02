@@ -195,36 +195,36 @@ stock File_ReadDownloadList(const String:path[])
 		return;
 	}
 
-	new String:entry[PLATFORM_MAX_PATH];
+	new String:buffer[PLATFORM_MAX_PATH];
 	while (!IsEndOfFile(file)) {
-		ReadFileLine(filex, buffer, sizeof(buffer));
+		ReadFileLine(file, buffer, sizeof(buffer));
 		
 		new pos;
-		pos = StrContains((buffer), "//");
+		pos = StrContains(buffer, "//");
 		if (pos != -1) {
 			buffer[pos] = '\0';
 		}
 		
-		pos = StrContains((buffer), "#");
+		pos = StrContains(buffer, "#");
 		if (pos != -1) {
 			buffer[pos] = '\0';
 		}
 
-		pos = StrContains((buffer), ";");
+		pos = StrContains(buffer, ";");
 		if (pos != -1) {
 			buffer[pos] = '\0';
 		}
 		
 		TrimString(buffer);
 		
-		if (buffer == '\0') {
+		if (buffer[0] == '\0') {
 			continue;
 		}
 
 		File_AddToDownloadsTable(buffer);
 	}
 
-	CloseHandle(filex);
+	CloseHandle(file);
 }
 
 /*
