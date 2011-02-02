@@ -1653,7 +1653,7 @@ stock Client_PrintKeyHintTextToAll(const String:format[], any:...)
 #define	SHAKE_START_RUMBLEONLY		4			// Starts a shake effect that only rumbles the controller, no screen effect.
 #define	SHAKE_START_NORUMBLE		5			// Starts a shake that does NOT rumble the controller.
 
-/*
+/**
  * Shakes a client's screen with the specified amptitude,
  * frequency & duration.
  * 
@@ -1662,7 +1662,7 @@ stock Client_PrintKeyHintTextToAll(const String:format[], any:...)
  * @param amplitude		Shake magnitude/amplitude.
  * @param frequency		Shake noise frequency.
  * @param duration		Shake lasts this long.
- * return				True on success, false otherwise.
+ * @return				True on success, false otherwise.
  */
 stock bool:Client_Shake(client, command=SHAKE_START, Float:amplitude=50.0, Float:frequency=150.0, Float:duration=3.0)
 {
@@ -1688,11 +1688,11 @@ stock bool:Client_Shake(client, command=SHAKE_START, Float:amplitude=50.0, Float
 	return true;
 }
 
-/*
+/**
  * Checks whether the client is a generic admin.
  *
  * @param				Client Index.
- * return				True if the client is a generic admin, false otheriwse.
+ * @return				True if the client is a generic admin, false otheriwse.
  */
 stock bool:Client_IsAdmin(client)
 {
@@ -1705,13 +1705,13 @@ stock bool:Client_IsAdmin(client)
 	return GetAdminFlag(adminId, Admin_Generic);
 }
 
-/*
+/**
  * Checks if the client is currently looking at the wall in front
  * of him with the given distance as max value.
  * 
  * @param client		Client Index.
  * @param distance		Max Distance as Float value.
- * return				True if he is looking at a wall, false otherwise.
+ * @return				True if he is looking at a wall, false otherwise.
  */
 stock bool:Client_IsLookingAtWall(client, Float:distance=40.0) {
 
@@ -1750,13 +1750,13 @@ public bool:_smlib_TraceEntityFilter(entity, contentsMask)
 	return entity == 0;
 }
 
-/*
+/**
  * Gets a client's class.
  * Currently supported games are: TF2, Dark Messiah.
  * Other games maybe work too, but not tested.
  * 
  * @param client		Client Index.
- * return				Class Index.
+ * @return				Class Index.
  */
 stock Client_GetClass(client)
 {
@@ -1767,14 +1767,14 @@ stock Client_GetClass(client)
 	return GetEntProp(client, Prop_Send, "m_iClass");
 }
 
-/*
+/**
  * Sets a client's class.
  * Currently supported games are: TF2, Dark Messiah.
  * Other games maybe work too, but not tested.
  * 
  * @param client		Client Index.
  * @param persistant	If true changes the players desired class so the change stays after death (probably TF2 only).
- * return				Class Index.
+ * @return				Class Index.
  */
 stock Client_SetClass(client, class, bool:persistant=false)
 {
@@ -1789,3 +1789,103 @@ stock Client_SetClass(client, class, bool:persistant=false)
 		}
 	}
 }
+
+/**
+ * Returns what buttons are pressed by the client.
+ * 
+ * @param client		Client Index.
+ * @return				Buttons as bitflag.
+ */
+stock Client_GetButtons(client)
+{	
+	return GetClientButtons(client);
+}
+
+/**
+ * Sets the client buttons.
+ * Note: This will only work OnPreThink (sdkhooks) or OnPlayerRunCmd.
+ * 
+ * @param client		Client Index.
+ * @param buttons		Buttons as bitflag.
+ * @noreturn
+ */
+stock Client_SetButtons(client, buttons)
+{
+	SetEntProp(client, Prop_Data, "m_nButtons", buttons);
+}
+
+/**
+ * Adds buttons to the already pressed buttons.
+ * Note: This will only work OnPreThink (sdkhooks) or OnPlayerRunCmd.
+ *
+ * @param client		Client Index.
+ * @param buttons		Buttons as bitflag.
+ * @noreturn
+ */
+stock Client_AddButtons(client, buttons)
+{
+	new newButtons = Client_GetButtons(client);
+	newButtons |= buttons;
+	Client_SetButtons(client, newButtons);
+}
+
+/**
+ * Clears all buttons.
+ * Note: This will only work OnPreThink (sdkhooks) or OnPlayerRunCmd.
+ *
+ * @param client		Client Index.
+ * @noreturn
+ */
+stock Client_ClearButtons(client)
+{
+	Client_SetButtons(client,0);
+}
+
+/**
+ * Removes buttons from the already pressed buttons.
+ * Note: This will only work OnPreThink (sdkhooks) or OnPlayerRunCmd.
+ *
+ * @param client		Client Index.
+ * @param buttons		Buttons as bitflag.
+ * @noreturn
+ */
+stock Client_RemoveButtons(client, buttons)
+{
+	new newButtons = Client_GetButtons(client);
+	newButtons &= ~buttons;
+	Client_SetButtons(client, newButtons);
+}
+
+/**
+ * Returns if the given buttons are pressed by the client or not.
+ * 
+ * @param client		Client Index.
+ * @param buttons		Buttons as bitflag.
+ * @return				True if the buttons are pressed otherwise false.
+ */
+stock bool:Client_HasButtons(client, buttons)
+{
+	return Client_GetButtons(client) & buttons;
+}
+
+/**
+ * Returns only those buttons, that have changed since the last call of this.
+ * Example usage: Within OnPlayerRunCmd use this function to call another function only once when a player pressed or released a button.
+ * 
+ * @param client		Client Index.
+ * @param buttons		Buttons as bitflag.
+ * @return
+ */
+stock Client_GetChangedButtons(client)
+{
+	static oldButtons[MAXPLAYERS+1] = {0,...};
+	
+	new buttons = Client_GetButtons(client);
+	new changedButtons = buttons | oldButtons[client];
+	
+	oldButtons[client] = buttons;
+	
+	return changedButtons;
+}
+
+
