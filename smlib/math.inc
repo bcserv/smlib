@@ -111,7 +111,7 @@ stock bool:Math_IsInBounds(any:value, any:min, any:max)
 }
 
 /**
- * Returns a random Integer number in the specified range.
+ * Returns a random Integer number in the specified (inclusive) range.
  * This is safe to use multiple times in a function.
  * The seed is set automatically for each plugin.
  * 
@@ -127,7 +127,7 @@ stock Math_GetRandomInt(min, max)
 }
 
 /**
- * Returns a random Float number in the specified range.
+ * Returns a random Float number in the specified (inclusive) range.
  * This is safe to use multiple times in a function.
  * The seed is set automatically for each plugin.
  * 
