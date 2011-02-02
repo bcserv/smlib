@@ -1,3 +1,15 @@
+/**************************************************
+ * 
+ *            SMLIB Testing Suite
+ * 
+ * ************************************************
+ * 
+ * Warning: This plugin is only for testing if all
+ * function stocks are compile-able without any
+ * errors/warnings, do not load this on a production
+ * server or it will likely crash it.
+ * 
+ */
 
 // enforce semicolons after each code statement
 #pragma semicolon 1
