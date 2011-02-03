@@ -629,7 +629,7 @@ stock Client_GetClosestToClient(client)
  */
 stock Client_GetLastPlaceName(client, String:buffer[], size)
 {
-	SetEntPropString(client, Prop_Send, "m_szLastPlaceName", buffer);
+	GetEntPropString(client, Prop_Send, "m_szLastPlaceName", buffer);
 }
 
 /**
