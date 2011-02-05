@@ -192,11 +192,12 @@ stock Obs_Mode:Client_GetObserverMode(client)
  * Use a value of the Obs_Mode enum.
  * This is a rewrite of CBasePlayer::SetObserverMode().
  * 
- * @param client		Client Index.
- * @param mode			New Observer mode value (Obs_Mode).
+ * @param client			Client Index.
+ * @param mode				New Observer mode value (Obs_Mode).
+ * @param updateMoveType	Set to true (default) to allow this function updating the movetype, false otherwise.
  * @noreturn
  */
-stock bool:Client_SetObserverMode(client, Obs_Mode:mode)
+stock bool:Client_SetObserverMode(client, Obs_Mode:mode, bool:updateMoveType=true)
 {
 	if (mode < OBS_MODE_NONE || mode >= NUM_OBSERVER_MODES) {
 		return false;
@@ -231,17 +232,26 @@ stock bool:Client_SetObserverMode(client, Obs_Mode:mode)
 	switch (mode) {
 		case OBS_MODE_NONE, OBS_MODE_FIXED, OBS_MODE_DEATHCAM: {
 			Client_SetFOV(client, 0);	// Reset FOV
-			SetEntityMoveType(client, MOVETYPE_NONE);
+			
+			if (updateMoveType) {
+				SetEntityMoveType(client, MOVETYPE_NONE);
+			}
 		}
 		case OBS_MODE_CHASE, OBS_MODE_IN_EYE: {
 			// udpate FOV and viewmodels
 			Client_SetViewOffset(client, NULL_VECTOR);
-			SetEntityMoveType(client, MOVETYPE_OBSERVER);
+			
+			if (updateMoveType) {
+				SetEntityMoveType(client, MOVETYPE_OBSERVER);
+			}
 		}
 		case OBS_MODE_ROAMING: {
 			Client_SetFOV(client, 0);	// Reset FOV
 			Client_SetViewOffset(client, NULL_VECTOR);
-			SetEntityMoveType(client, MOVETYPE_OBSERVER);
+			
+			if (updateMoveType) {
+				SetEntityMoveType(client, MOVETYPE_OBSERVER);
+			}
 		}
 	}
 
@@ -377,7 +387,7 @@ stock Client_SetDrawViewModel(client, bool:drawViewModel)
  * Todo: Enhance this
  *
  * @param client 		Client Index.
- * @param enable			If set to true, the client will be put into thirdperson mode,
+ * @param enable		If set to true, the client will be put into thirdperson mode,
  * 						if false the client will be put in firstperson mode.
  * @noreturn
  */
@@ -385,13 +395,13 @@ stock Client_SetThirdPersonMode(client, enable=true)
 {
 	if (enable) {
 		Client_SetObserverTarget(client, 0);
-		Client_SetObserverMode(client, OBS_MODE_DEATHCAM);
+		Client_SetObserverMode(client, OBS_MODE_DEATHCAM, false);
 		Client_SetDrawViewModel(client, false);
 		Client_SetFOV(client, 120);
 	}
 	else {
 		Client_SetObserverTarget(client, -1);
-		Client_SetObserverMode(client, OBS_MODE_NONE);
+		Client_SetObserverMode(client, OBS_MODE_NONE, false);
 		Client_SetDrawViewModel(client, true);
 		Client_SetFOV(client, 90);
 	}
@@ -400,7 +410,7 @@ stock Client_SetThirdPersonMode(client, enable=true)
 /**
  * Checks if the client is in thirdperson mode
  *
- * @param client		client index
+ * @param client	Cient Undex
  * @return			true if the client is currently in thirdperson mode, false otherwise
  */
 stock Client_IsInThirdPersonMode(client)
@@ -418,7 +428,7 @@ stock Client_IsInThirdPersonMode(client)
  * Fades a client's screen to a specified color
  * Your adviced to read the FFADE_ Comments
  *
- * @param client			player for which to fade the screen
+ * @param client		Player for which to fade the screen
  * @param duration		duration in seconds the effect stays
  * @param mode			fade mode, see FFADE_ defines
  * @param holdtime		holdtime in seconds
@@ -480,7 +490,7 @@ stock Client_GetClones(client, cloneList[])
 /*
  * This function returns true if the client is at a ladder..
  *
- * @param client			Client index.
+ * @param client		Client index.
  * @return				Returns true if the client is on a ladder other wise false.
  */
 stock bool:Client_IsOnLadder(client)
@@ -506,7 +516,7 @@ enum Water_level
 /*
  * This function returns how deep a client is in water.
  *
- * @param client			Client index.
+ * @param client		Client index.
  * @return				Returns 0 if not in water. 1 if feets are in water. 2 if waist is in water. 3 if head is in water.
  */
 stock Water_Level:Client_GetWaterLevel(client)
@@ -517,7 +527,7 @@ stock Water_Level:Client_GetWaterLevel(client)
 /*
  * Returns how much suit sprint power a client has left in percent.
  *
- * @param client			Client index.
+ * @param client		Client index.
  * @return				returns the actual power left in percent.
  */
 stock Float:Client_GetSuitSprintPower(client)
@@ -528,7 +538,7 @@ stock Float:Client_GetSuitSprintPower(client)
 /*
  * Sets a client suit sprint power in percent.
  * 
- * @param client			Client index.
+ * @param client		Client index.
  * @param power			power (0.0 to 100.0)
  * @noreturn
  */
@@ -540,7 +550,7 @@ stock Client_SetSuitSprintPower(client, Float:power)
 /*
  * Returns the client count put in the server. 
  *
- * @param inGameOnly		If false connecting players are also counted.
+ * @param inGameOnly	If false connecting players are also counted.
  * @param countBots		If true bots will be counted too.
  * @return				Client count in the server.
  */
@@ -575,7 +585,7 @@ stock Client_GetCount(bool:countInGameOnly=true, bool:countFakeClients=false)
  * The Scoreboard uses the goldSource corrected Ping, the net_graph doesn't
  * For Fake Clients 0 is returned.
  *
- * @param inGameOnly		Wether players not ingame yet are also counted
+ * @param inGameOnly	Wether players not ingame yet are also counted
  * @param countBots		If true bots will be counted too.
  * @return				Client's ping or 0 for fake clients
  */
