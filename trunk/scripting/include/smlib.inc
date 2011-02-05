@@ -9,6 +9,7 @@
 
 #include <smlib/arrays>
 #include <smlib/clients>
+#include <smlib/convars>
 #include <smlib/debug>
 #include <smlib/dynarrays>
 #include <smlib/edicts>
