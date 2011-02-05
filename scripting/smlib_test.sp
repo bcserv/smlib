@@ -167,6 +167,11 @@ public OnPluginStart() {
 	Client_ClearButtons(0);
 	Client_HasButtons(0, 0);
 	Client_GetChangedButtons(0);
+	
+	// File: convars.inc
+	Convar_HasFlags(INVALID_HANDLE, 0);
+	Convar_AddFlags(INVALID_HANDLE, 0);
+	Convar_RemoveFlags(INVALID_HANDLE, 0);
 
 	// File: debug.inc
 	Debug_FloatArray(vec);
