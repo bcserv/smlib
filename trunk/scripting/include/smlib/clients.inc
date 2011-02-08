@@ -28,13 +28,13 @@
 #define HIDEHUD_BONUS_PROGRESS		( 1<<11 )	// Hide bonus progress display (for bonus map challenges)
 
 /**
-* Sets the Hud flags of a client
+* Sets the Hide-Hud flags of a client
 *
 * @param client		Client index.
 * @param flags		Flag to set, use one of the HIDEHUD_ hiding constants
 * @noreturn
 */
-stock Client_SetHud(client, flags)
+stock Client_SetHideHud(client, flags)
 {
 	SetEntProp(client, Prop_Send, "m_iHideHUD", flags);
 }
