@@ -342,6 +342,7 @@ public OnPluginStart() {
 	String_ToLower(buf, buf, sizeof(buf));
 	String_ToUpper(buf, buf, sizeof(buf));
 	String_StripChatColors(buf, buf, sizeof(buf));
+	String_GetRandom(buf, sizeof(buf));
 
 	// File: teams.inc
 	Team_HaveAllPlayers();
