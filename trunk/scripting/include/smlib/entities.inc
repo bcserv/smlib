@@ -1370,7 +1370,7 @@ stock bool:Entity_InRange(entity, target, Float:distance)
  */
 stock bool:Entity_EnableMotion(entity)
 {	
-	return AcceptEntityInput(entity, "disablemotion");
+	return AcceptEntityInput(entity, "enablemotion");
 }
 
 /**
@@ -1381,7 +1381,7 @@ stock bool:Entity_EnableMotion(entity)
  */
 stock bool:Entity_DisableMotion(entity)
 {
-	return AcceptEntityInput(entity, "enablemotion");
+	return AcceptEntityInput(entity, "disablemotion");
 }
 
 /**
