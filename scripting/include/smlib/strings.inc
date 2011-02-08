@@ -174,3 +174,42 @@ stock String_StripChatColors(const String:input[], String:output[], size)
 	
 	output[x] = '\0';
 }
+
+/**
+ * Generates a random string.
+ * 
+ *
+ * @param buffer			String Buffer.
+ * @param size				String Buffer size (must be length+1)
+ * @param length			Number of characters being generated.
+ * @param chars				String for specifying the characters used for random character generation.
+ * 							By default it will use all letters of the alphabet (upper and lower) and all numbers.
+ * 							If you pass an empty String, it will use all readable ASCII characters (33 - 126)
+ * @noreturn
+ */
+stock String_GetRandom(String:buffer[], size, length=32, const String:chrs[]="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234556789")
+{
+	new random, len;
+	size--;
+	
+	if (chrs[0] != '\0') {
+		len = strlen(chrs) - 1;
+	}
+
+	new n = 0;
+	while (n < length && n < size) {
+
+		if (chrs[0] == '\0') {
+			random = Math_GetRandomInt(33, 126);
+			buffer[n] = random;
+		}
+		else {
+			random = Math_GetRandomInt(0, len);
+			buffer[n] = chrs[random];
+		}
+		
+		n++;
+	}
+
+	buffer[length] = '\0';
+}
