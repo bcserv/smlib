@@ -6,6 +6,8 @@
 #include <sourcemod>
 #include <smlib/entities>
 
+#define MAX_TEAM_NAME_LENGTH	32		// Max length of a team's name
+
 // Team Defines
 #define	TEAM_INVALID	-1
 #define TEAM_UNASSIGNED	0
@@ -37,9 +39,9 @@ stock bool:Team_HaveAllPlayers(bool:countFakeClients=true) {
 /*
 * Returns the client count of the players in a team
 *
-* @param inGameOnly		If false connecting players are also counted.
-* @param countBots		If true bots will be counted too.
-* @return				Client count in the server.
+* @param team					Team Index.
+* @param countFakeClients		If true bots will be counted too.
+* @return						Client count in the server.
 */
 stock Team_GetClientCount(team, bool:countFakeClients=true)
 {
