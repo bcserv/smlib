@@ -5,6 +5,9 @@
 
 #include <sourcemod>
 
+#define SIZE_OF_INT		2147483647		// without 0
+#define SIZE_OF_FLOAT	2147483647.0	// without 0
+
 enum VecAngle
 {
 	ANG_ALPHA,
@@ -78,7 +81,11 @@ stock any:Math_Max(any:value, any:max)
 }
 
 /**
- * Makes sure a value is within a certain range.
+ * Makes sure a value is within a certain range and
+ * returns the value.
+ * If the value is outside the range it is set to either
+ * min or max, if it is inside the range it will just return
+ * the specified value.
  * 
  * @param value			Value
  * @param min			Min value used as lower border
@@ -114,16 +121,21 @@ stock bool:Math_IsInBounds(any:value, any:min, any:max)
  * Returns a random, uniform Integer number in the specified (inclusive) range.
  * This is safe to use multiple times in a function.
  * The seed is set automatically for each plugin.
+ * Rewritten by MatthiasVance, thanks.
  * 
- * @param value			Value
  * @param min			Min value used as lower border
  * @param max			Max value used as upper border
  * @return				Random Integer number between min and max
  */
 stock Math_GetRandomInt(min, max)
 {
-	new Float:_max = max + 0.9999999999;
-	return RoundToFloor(Math_GetRandomFloat(float(min), _max));
+	new random = GetURandomInt();
+	
+	if (random == 0) {
+		random++;
+	}
+
+	return RoundToCeil(float(random) / (float(SIZE_OF_INT) / float(max - min + 1))) + min - 1;
 }
 
 /**
@@ -131,17 +143,13 @@ stock Math_GetRandomInt(min, max)
  * This is safe to use multiple times in a function.
  * The seed is set automatically for each plugin.
  * 
- * @param value			Value
  * @param min			Min value used as lower border
  * @param max			Max value used as upper border
  * @return				Random Float number between min and max
  */
 stock Float:Math_GetRandomFloat(Float:min, Float:max)
 {
-	new Float:rand = GetURandomFloat();
-	rand = (rand * (max  - min)) + min;
-	
-	return rand;
+	return (GetURandomFloat() * (max  - min)) + min;
 }
 
 /**

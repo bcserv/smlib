@@ -1341,21 +1341,48 @@ stock Entity_SetMaxHealth(entity, value)
 }
 
 /**
+ * Returns the Float distance between an entity
+ * and a vector origin.
+ *
+ * @param entity		Entity Index.
+ * @param target		Vector Origin.
+ * @return				Distance Float value.
+ */
+stock Float:Entity_GetDistanceOrigin(entity, const Float:vec[3])
+{
+	new Float:entityVec[3];
+	Entity_GetAbsOrigin(entity, entityVec);
+	
+	return GetVectorDistance(entityVec, vec);
+}
+
+/**
+ * Returns the Float distance between two entities.
+ * Both entities must be valid.
+ *
+ * @param entity		Entity Index.
+ * @param target		Target Entity Index.
+ * @return				Distance Float value.
+ */
+stock Float:Entity_GetDistance(entity, target)
+{
+	new Float:targetVec[3];
+	Entity_GetAbsOrigin(target, targetVec);
+	
+	return Entity_GetDistanceOrigin(entity, targetVec);
+}
+
+/**
  * Checks if the given 2 entitys are within a given range.
  *
  * @param entity		Entity Index.
  * @param target		Target Entity Index.
- * @return				returns true if the given entities are closer than the given distance value, false otherwise.
+ * @param distance		Max Float distance.
+ * @return				True if the given entities are closer than the given distance value, false otherwise.
  */
 stock bool:Entity_InRange(entity, target, Float:distance)
 {
-	new Float:entityVec[3];
-	new Float:targetVec[3];
-	
-	Entity_GetAbsOrigin(entity, entityVec);
-	Entity_GetAbsOrigin(target, targetVec);
-	
-	if (GetVectorDistance(entityVec, targetVec) > distance) {
+	if (Entity_GetDistance(entity, target) > distance) {
 		return false;
 	}
 	
