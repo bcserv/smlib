@@ -75,7 +75,7 @@ public OnPluginStart() {
 	Array_Fill(arr, sizeof(arr), 0);
 
 	// File: 0s.inc
-	Client_SetHud(0, 0);
+	Client_SetHideHud(0, 0);
 	Client_IsValid(0);
 	Client_IsIngame(0);
 	Client_IsIngameAuthorized(0);
@@ -269,6 +269,8 @@ public OnPluginStart() {
 	Entity_GetMaxHealth(0);
 	Entity_SetMaxHealth(0, 0);
 	Entity_AddHealth(0, 0);
+	Entity_GetDistance(0, 0);
+	Entity_GetDistanceOrigin(0, vec);
 	Entity_InRange(0, 0, 0.0);
 	Entity_EnableMotion(0);
 	Entity_DisableMotion(0);

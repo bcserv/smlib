@@ -12,11 +12,16 @@
  * @param array			Static Array.
  * @param size			Size of the Array.
  * @param value			Value to search for.
- * @return				Array index, or if the value couldn't be found.
+ * @param start			Optional: Offset where to start (0 - (size-1)).
+ * @return				Array index, or -1 if the value couldn't be found.
  */
-stock Array_FindValue(any:array[], size, any:value)
-{	
-	for (new i=0; i < size; i++) {
+stock Array_FindValue(any:array[], size, any:value, start=0)
+{
+	if (start < 0) {
+		start = 0;
+	}
+
+	for (new i=start; i < size; i++) {
 
 		if (array[i] == value) {
 			return i;
@@ -33,11 +38,16 @@ stock Array_FindValue(any:array[], size, any:value)
  * @param array			Static Array.
  * @param size			Size of the Array.
  * @param value			String to search for.
- * @return				Array index, or if the value couldn't be found.
+ * @param start			Optional: Offset where to start(0 - (size-1)).
+ * @return				Array index, or -1 if the value couldn't be found.
  */
-stock Array_FindString(const String:array[][], size, const String:str[], bool:caseSensitive=true)
-{	
-	for (new i=0; i < size; i++) {
+stock Array_FindString(const String:array[][], size, const String:str[], bool:caseSensitive=true, start=0)
+{
+	if (start < 0) {
+		start = 0;
+	}
+
+	for (new i=start; i < size; i++) {
 
 		if (StrEqual(array[i], str, caseSensitive)) {
 			return i;
@@ -48,19 +58,24 @@ stock Array_FindString(const String:array[][], size, const String:str[], bool:ca
 }
 
 /**
- * Returns the index for the Lowest value in the array
+ * Returns the Index of the Lowest value in the array
  *
  * @param array			Static Array.
  * @param size			Size of the Array.
+ * @param start			Optional: Offset where to start (0 - (size-1)).
  * @return				Array index.
  */
-stock Array_FindLowestValue(any:array[], size)
+stock Array_FindLowestValue(any:array[], size, start=0)
 {
-	new any:value = array[0];
+	if (start < 0) {
+		start = 0;
+	}
+
+	new any:value = array[start];
 	new any:tempValue;
-	new x = 0;
+	new x = start;
 	
-	for (new i=0; i < size; i++) {
+	for (new i=start; i < size; i++) {
 		
 		tempValue = array[i];
 		
@@ -75,19 +90,24 @@ stock Array_FindLowestValue(any:array[], size)
 }
 
 /**
- * Returns the index for the Highest value in the array
+ * Returns the Index of the Highest value in the array
  *
  * @param array			Static Array.
  * @param size			Size of the Array.
+ * @param start			Optional: Offset where to start (0 - (size-1)).
  * @return				Array index.
  */
-stock Array_FindHighestValue(any:array[], size)
+stock Array_FindHighestValue(any:array[], size, start=0)
 {
-	new any:value = array[0];
+	if (start < 0) {
+		start = 0;
+	}
+
+	new any:value = array[start];
 	new any:tempValue;
-	new x = 0;
+	new x = start;
 	
-	for (new i=1; i < size; i++) {
+	for (new i=start; i < size; i++) {
 		
 		tempValue = array[i];
 		
@@ -106,19 +126,18 @@ stock Array_FindHighestValue(any:array[], size)
  * You can specify the amount of cells to be written.
  *
  * @param array			Static Array.
- * @param size			Size of the Array.
+ * @param size			Number of cells to write (eg. the array's size)
  * @param value			Fill value.
- * @param num			Max number of cells to write
+ * @param start			Optional: Offset where to start (0 - (size-1)).
  * @noreturn
  */
-stock Array_Fill(any:array[], size, any:value, num=-1)
+stock Array_Fill(any:array[], size, any:value, start=0)
 {
-	for (new i=0; i<size; i++) {
-		
-		if (num != -1 && i >= num) {
-			break;
-		}
+	if (start < 0) {
+		start = 0;
+	}
 
+	for (new i=start; i < size; i++) {
 		array[i] = value;
 	}
 }
