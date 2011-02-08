@@ -1581,12 +1581,12 @@ stock Entity_KillAllByClassName(const String:className[])
  * Gets the owner of an entity.
  * For example the owner of a weapon entity.
  *
- * @param entity			Entity index.
+ * @param entity		Entity index.
  * @return 				Ground Entity or -1
  */
 stock Entity_GetOwner(entity)
 {
-	GetEntPropEnt(entity, Prop_Data, "m_hOwnerEntity");
+	return GetEntPropEnt(entity, Prop_Data, "m_hOwnerEntity");
 }
 
 /**
@@ -1602,14 +1602,14 @@ stock Entity_SetOwner(entity, newOwner)
 }
 
 /**
-* Get's the ground entity this entity stands on.
-*
-* @param entity			Entity index.
-* @return 				Ground Entity or -1
-*/
+ * Get's the ground entity this entity stands on.
+ *
+ * @param entity		Entity index.
+ * @return 				Ground Entity or -1
+ */
 stock Entity_GetGroundEntity(entity)
 {
-	GetEntPropEnt(entity, Prop_Data, "m_hGroundEntity");
+	return GetEntPropEnt(entity, Prop_Data, "m_hGroundEntity");
 }
 
 /*

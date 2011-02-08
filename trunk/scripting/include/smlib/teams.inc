@@ -147,6 +147,7 @@ stock bool:Team_SetScore(index, score)
 	}
 
 	SetEntProp(edict, Prop_Send, "m_iScore", score);
+	
 	ChangeEdictState(edict, GetEntSendPropOffs(edict, "m_iScore", true));
 	
 	return true;
