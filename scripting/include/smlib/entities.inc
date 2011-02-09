@@ -994,7 +994,7 @@ stock Entity_SetModelIndex(entity, index)
 * @param maxspeed	the maximum speed the entity can move
 * @noreturn
 */
-stock Client_SetMaxSpeed(entity, Float:value)
+stock Entity_SetMaxSpeed(entity, Float:value)
 {
 	SetEntPropFloat(entity, Prop_Data, "m_flMaxspeed", value);
 }

@@ -182,7 +182,7 @@ stock String_StripChatColors(const String:input[], String:output[], size)
  * @param buffer			String Buffer.
  * @param size				String Buffer size (must be length+1)
  * @param length			Number of characters being generated.
- * @param chars				String for specifying the characters used for random character generation.
+ * @param chrs				String for specifying the characters used for random character generation.
  * 							By default it will use all letters of the alphabet (upper and lower) and all numbers.
  * 							If you pass an empty String, it will use all readable ASCII characters (33 - 126)
  * @noreturn
