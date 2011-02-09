@@ -167,6 +167,7 @@ public OnPluginStart() {
 	Client_ClearButtons(0);
 	Client_HasButtons(0, 0);
 	Client_GetChangedButtons(0);
+	Client_SetMaxSpeed(0, 0.0);
 	
 	// File: convars.inc
 	Convar_HasFlags(INVALID_HANDLE, 0);
@@ -248,7 +249,7 @@ public OnPluginStart() {
 	Entity_SetModel(0, "");
 	Entity_GetModelIndex(0);
 	Entity_SetModelIndex(0, 0);
-	Client_SetMaxSpeed(0, 0.0);
+	Entity_SetMaxSpeed(0, 0.0);
 	Entity_GetCollisionGroup(0);
 	Entity_SetCollisionGroup(0, Collision_Group_t:0);
 	Entity_GetAbsOrigin(0, vec);

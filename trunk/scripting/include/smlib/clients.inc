@@ -1897,3 +1897,15 @@ stock Client_GetChangedButtons(client)
 	
 	return changedButtons;
 }
+
+/**
+ * Sets the client's maxspeed to the given value (in units per second)
+ *
+ * @param Client		Client index
+ * @param maxspeed	the maximum speed the client can move
+ * @noreturn
+ */
+stock Client_SetMaxSpeed(client, Float:value)
+{
+	Client_SetMaxSpeed(client, value);
+}
