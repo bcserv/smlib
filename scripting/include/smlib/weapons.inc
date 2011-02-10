@@ -286,7 +286,7 @@ stock Weapon_SetClips(weapon, primary, secondary)
  */
 stock Weapon_GetPrimaryAmmoCount(weapon)
 {
-	return GetEntProp(weapon, Prop_Data, "m_iPrimaryAmmoType");
+	return GetEntProp(weapon, Prop_Data, "m_iPrimaryAmmoCount");
 }
 
 /*
@@ -301,7 +301,7 @@ stock Weapon_GetPrimaryAmmoCount(weapon)
  */
 stock Weapon_SetPrimaryAmmoCount(weapon, value)
 {
-	SetEntProp(weapon, Prop_Data, "m_iPrimaryAmmoType", value);
+	SetEntProp(weapon, Prop_Data, "m_iPrimaryAmmoCount", value);
 }
 
 /*
@@ -374,3 +374,4 @@ stock Weapon_SetViewModelIndex(weapon, index)
 	SetEntProp(weapon, Prop_Data, "m_nViewModelIndex", index);
 	ChangeEdictState(weapon, FindDataMapOffs(weapon, "m_nViewModelIndex"));
 }
+

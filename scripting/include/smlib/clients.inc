@@ -935,25 +935,25 @@ stock Client_GetActiveWeapon(client)
 }
 
 /**
- * Gets the classname of the current/active weapon of a client.
+ * Gets the classname and entity index of the current/active weapon of a client.
  *
  * @param client		Client Index.
  * @param buffer		String Buffer to store the weapon's classname.
  * @param size			Max size of String: buffer.
- * @return				True on success or false otherwise.
+ * @return				Weapon Entity Index on success or INVALID_ENT_REFERENCE otherwise 
  */
-stock bool:Client_GetActiveWeaponName(client, String:buffer[], size)
+stock Client_GetActiveWeaponName(client, String:buffer[], size)
 {
 	new weapon = Client_GetActiveWeapon(client);
 	
 	if (weapon == INVALID_ENT_REFERENCE) {
 		buffer[0] = '\0';
-		return false;
+		return INVALID_ENT_REFERENCE;
 	}
 	
 	Entity_GetClassName(weapon, buffer, size);
 	
-	return true;
+	return weapon;
 }
 
 /**

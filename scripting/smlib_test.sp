@@ -396,6 +396,7 @@ public OnPluginStart() {
 	Weapon_SetAmmoCounts(0, 0, 0);
 	Weapon_GetViewModelIndex(0);
 	Weapon_SetViewModelIndex(0, 0);
+	
 
 	// File: world.inc
 	World_GetMaxs(vec);
