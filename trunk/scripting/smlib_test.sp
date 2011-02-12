@@ -173,6 +173,7 @@ public OnPluginStart() {
 	Convar_HasFlags(INVALID_HANDLE, 0);
 	Convar_AddFlags(INVALID_HANDLE, 0);
 	Convar_RemoveFlags(INVALID_HANDLE, 0);
+	Convar_IsValidName("");
 
 	// File: debug.inc
 	Debug_FloatArray(vec);

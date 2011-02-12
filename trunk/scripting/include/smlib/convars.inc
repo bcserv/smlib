@@ -44,3 +44,25 @@ stock Convar_RemoveFlags(Handle:convar, flags)
 	newFlags &= ~flags;
 	SetConVarFlags(convar, newFlags);
 }
+
+/**
+ * Checks if a String is a valid ConVar or
+ * Console Command name.
+ *
+ * @param	name		String Name.
+ * @return				True if the name specified is a valid ConVar or console command name, false otherwise.
+ */
+stock bool:Convar_IsValidName(const String:name[])
+{
+	new n=0;
+	while (name[n] != '\0') {
+		
+		if (!IsValidConVarChar(name[n])) {
+			return false;
+		}
+		
+		n++;
+	}
+	
+	return true;
+}
