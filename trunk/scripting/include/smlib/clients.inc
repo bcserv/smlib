@@ -8,6 +8,7 @@
 #include <sdktools_engine>
 #include <sdktools_trace>
 #include <smlib/general>
+#include <smlib/colors>
 #include <smlib/edicts>
 #include <smlib/math>
 #include <smlib/teams>
@@ -554,7 +555,7 @@ stock Client_SetSuitSprintPower(client, Float:power)
  * @param countBots		If true bots will be counted too.
  * @return				Client count in the server.
  */
-stock Client_GetCount(bool:countInGameOnly=true, bool:countFakeClients=false)
+stock Client_GetCount(bool:countInGameOnly=true, bool:countFakeClients=true)
 {
 	new numClients = 0;
 	
@@ -1656,6 +1657,147 @@ stock Client_PrintKeyHintTextToAll(const String:format[], any:...)
 	}
 }
 
+stock Client_PrintToChatRaw(client, subject, const String:message[])
+{
+	if (client == 0) {
+		decl String:buffer[253];
+		Color_StripFromChatText(message, buffer, sizeof(buffer));
+		return;
+	}
+
+	static sayText2_supported	= true;
+	static sayText2_checked		= false;
+
+	if (!sayText2_checked) {
+
+		if (GetUserMessageId("SayText2") == INVALID_MESSAGE_ID) {
+			sayText2_supported = false;
+		}
+
+		sayText2_checked = true;
+	}
+
+	new Handle:userMessage = INVALID_HANDLE;
+
+	if (sayText2_supported) {
+		userMessage = StartMessageOne("SayText2", client, USERMSG_RELIABLE);
+	}
+	else {
+		userMessage = StartMessageOne("SayText", client, USERMSG_RELIABLE);
+	}
+
+	BfWriteByte(userMessage		, subject);
+	BfWriteByte(userMessage		, true);
+	BfWriteString(userMessage	, message);
+	EndMessage();
+}
+
+/**
+ * Prints a reliable chat message to one client in the chat area.
+ *
+ * @param client		Client Index.
+ * @param format		Formatting rules.
+ * @param ...			Variable number of format parameters.
+ * @noreturn
+ */
+stock Client_PrintToChat(client, const String:format[], any:...)
+{
+	decl
+		String:buffer[253],
+		String:buffer2[253];
+
+	SetGlobalTransTarget(client);
+	VFormat(buffer, sizeof(buffer), format, 3);
+	new subject = Color_ParseChatText(buffer, buffer2, sizeof(buffer2));
+
+	Client_PrintToChatRaw(client, subject, buffer2);
+
+	Color_ChatClearSubject();
+}
+
+/**
+ * Prints a reliable chat message to all clients in the chat area.
+ *
+ * @param format		Formatting rules.
+ * @param ...			Variable number of format parameters.
+ * @noreturn
+ */
+stock Client_PrintToChatAll(const String:format[], any:...)
+{
+	decl
+		String:buffer[253],
+		String:buffer2[253];
+	new
+		subject,
+		language,
+		lastLanguage = -1;
+
+	for (new client=1; client <= MaxClients; client++) {
+
+		if (!IsClientInGame(client)) {
+			continue;
+		}
+
+		language = GetClientLanguage(client);
+
+		if (language != lastLanguage) {
+			SetGlobalTransTarget(client);
+			VFormat(buffer, sizeof(buffer), format, 2);
+			subject = Color_ParseChatText(buffer, buffer2, sizeof(buffer2));
+			
+			lastLanguage = language;
+		}
+
+		Client_PrintToChatRaw(client, subject, buffer2);
+	}
+
+	Color_ChatClearSubject();
+}
+
+/**
+ * Prints a reliable chat message to the specified clients in the chat area.
+ *
+ * @param clients		Client Array.
+ * @param numClients	Number of clients in the client array.
+ * @param format		Formatting rules.
+ * @param ...			Variable number of format parameters.
+ * @noreturn
+ */
+stock Client_PrintToChatEx(clients[], numClients, const String:format[], any:...)
+{
+	decl
+		String:buffer[253];
+		String:buffer2[253];
+	new
+		client,
+		subject,
+		language,
+		lastLanguage = -1;
+
+	for (new i=0; i < numClients; i++) {
+
+		client = clients[i];
+
+		if (!IsClientInGame(client)) {
+			continue;
+		}
+		
+		language = GetClientLanguage(client);
+		
+		if (language != lastLanguage) {
+			SetGlobalTransTarget(client);
+			VFormat(buffer, sizeof(buffer), format, 3);
+			subject = Color_ParseChatText(buffer, buffer2, sizeof(buffer2));
+			
+			lastLanguage = language;
+		}
+		
+		Client_PrintToChatRaw(client, subject, buffer2);
+	}
+
+	Color_ChatClearSubject();
+}
+
 #define	SHAKE_START					0			// Starts the screen shake for all players within the radius.
 #define	SHAKE_STOP					1			// Stops the screen shake for all players within the radius.
 #define	SHAKE_AMPLITUDE				2			// Modifies the amplitude of an active screen shake for all players within the radius.
@@ -1713,6 +1855,23 @@ stock bool:Client_IsAdmin(client)
 	}
 	
 	return GetAdminFlag(adminId, Admin_Generic);
+}
+
+/**
+ * Checks whether a client has certain admin flags
+ *
+ * @param				Client Index.
+ * @return				True if the client has the admin flags, false otherwise.
+ */
+stock bool:Client_HasAdminFlags(client, flags=ADMFLAG_GENERIC)
+{
+	new AdminId:adminId = GetUserAdmin(client);
+	
+	if (adminId == INVALID_ADMIN_ID) {
+		return false;
+	}
+	
+	return bool:(GetAdminFlags(adminId, Access_Effective) & flags);
 }
 
 /**
@@ -1901,11 +2060,48 @@ stock Client_GetChangedButtons(client)
 /**
  * Sets the client's maxspeed to the given value (in units per second)
  *
- * @param Client		Client index
+ * @param Client		Client Index
  * @param maxspeed	the maximum speed the client can move
  * @noreturn
  */
 stock Client_SetMaxSpeed(client, Float:value)
 {
 	Client_SetMaxSpeed(client, value);
+}
+
+/**
+ * Shows a screen overlay tp a client.
+ * There can only be one overlay at a time.
+ * If you want to clear the overlay, pass
+ * an empty string to this function.
+ *
+ * @param Client		Client Index.
+ * @param path			Overlay path (based on the game/materials/ folder) or empty String to not show any overlay.
+ * @noreturn
+ */
+stock Client_SetScreenOverlay(client, const String:path[])
+{
+	ClientCommand(client, "r_screenoverlay \"%s\"", path);
+}
+
+/**
+ * Shows a screen overlay to all clients.
+ * There can only be one overlay at a time.
+ * If you want to clear the overlay, pass
+ * an empty string to this function.
+ *
+ * @param Client		Client Index.
+ * @param path			Overlay path (based on the game/materials/ folder) or empty String to not show any overlay.
+ * @noreturn
+ */
+stock Client_SetScreenOverlayForAll(const String:path[])
+{
+	for (new client=0; client <= MaxClients; client++) {
+		
+		if (!IsClientInGame(client) || IsFakeClient(client)) {
+			continue;
+		}
+
+		Client_SetScreenOverlay(client, path);
+	}
 }

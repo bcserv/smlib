@@ -9,7 +9,9 @@
 
 #include <smlib/arrays>
 #include <smlib/clients>
+#include <smlib/colors>
 #include <smlib/convars>
+#include <smlib/crypt>
 #include <smlib/debug>
 #include <smlib/dynarrays>
 #include <smlib/edicts>

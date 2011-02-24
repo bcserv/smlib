@@ -124,7 +124,8 @@ stock File_GetExtension(const String:path[], String:buffer[], size)
  * This can be a file or directory and also works recursed.
  * You can optionally specify file extensions that should be ignored.
  * Bz2 and ztmp are automatically ignored.
- * It only adds files that actually exist
+ * It only adds files that actually exist.
+ * You can also specify a wildcard * after the ., very useful for models.
  * This forces a client to download the file if they do not already have it.
  *
  * @param path			Path String
@@ -158,23 +159,55 @@ stock File_AddToDownloadsTable(const String:path[], bool:recursive=true, const S
 		AddFileToDownloadsTable(path);
 	}
 	else if (recursive && DirExists(path)) {
-		
-		decl String:dirEntry[PLATFORM_MAX_PATH];
-		decl String:newPath[PLATFORM_MAX_PATH];
 
-		new Handle:dir = OpenDirectory(path);
-		while (ReadDirEntry(dir, dirEntry, sizeof(dirEntry))) {
+		decl String:dirEntry[PLATFORM_MAX_PATH];
+		new Handle:__dir = OpenDirectory(path);
+
+		while (ReadDirEntry(__dir, dirEntry, sizeof(dirEntry))) {
+
 			if (StrEqual(dirEntry, ".") || StrEqual(dirEntry, "..")) {
 				continue;
 			}
 			
-			Format(newPath, sizeof(newPath), "%s/%s", path, dirEntry);
-			File_AddToDownloadsTable(newPath, recursive, ignoreExts, size);
+			Format(dirEntry, sizeof(dirEntry), "%s/%s", path, dirEntry);
+			File_AddToDownloadsTable(dirEntry, recursive, ignoreExts, size);
 		}
 		
-		CloseHandle(dir);
+		CloseHandle(__dir);
 	}
-	
+	else if (FindCharInString(path, '*', true)) {
+		
+		new String:fileExtension[4];
+		File_GetExtension(path, fileExtension, sizeof(fileExtension));
+
+		if (StrEqual(fileExtension, "*")) {
+
+			decl
+				String:dirName[PLATFORM_MAX_PATH],
+				String:fileName[PLATFORM_MAX_PATH],
+				String:dirEntry[PLATFORM_MAX_PATH];
+
+			File_GetDirName(path, dirName, sizeof(dirName));
+			File_GetFileName(path, fileName, sizeof(fileName));
+			StrCat(fileName, sizeof(fileName), ".");
+
+			new Handle:__dir = OpenDirectory(dirName);
+			while (ReadDirEntry(__dir, dirEntry, sizeof(dirEntry))) {
+
+				if (StrEqual(dirEntry, ".") || StrEqual(dirEntry, "..")) {
+					continue;
+				}
+
+				if (strncmp(dirEntry, fileName, strlen(fileName)) == 0) {
+					Format(dirEntry, sizeof(dirEntry), "%s/%s", dirName, dirEntry);
+					File_AddToDownloadsTable(dirEntry, recursive, ignoreExts, size);
+				}
+			}
+
+			CloseHandle(__dir);
+		}
+	}
+
 	return;
 }
 
