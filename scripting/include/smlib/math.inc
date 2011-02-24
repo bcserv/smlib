@@ -195,3 +195,25 @@ stock Math_MoveVector(const Float:start[3], const Float:end[3], Float:scale, Flo
 	ScaleVector(output,scale);
 	AddVectors(start,output,output);
 }
+
+/**
+ * Converts Source Game Units to metric Meters
+ * 
+ * @param units			Float value
+ * @return				Meters as Float value.
+ */
+stock Float:Math_UnitsToMeters(Float:units)
+{
+	return (units / 100.0);
+}
+
+/**
+ * Converts Source Game Units to Meters
+ * 
+ * @param units			Float value
+ * @return				Feet as Float value.
+ */
+stock Float:Math_UnitsToFeet(Float:units)
+{
+	return (units / 30.4799999);
+}
