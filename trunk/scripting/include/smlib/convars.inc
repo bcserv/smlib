@@ -54,6 +54,10 @@ stock Convar_RemoveFlags(Handle:convar, flags)
  */
 stock bool:Convar_IsValidName(const String:name[])
 {
+	if (name[0] == '\0') {
+		return false;
+	}
+
 	new n=0;
 	while (name[n] != '\0') {
 		
@@ -63,6 +67,6 @@ stock bool:Convar_IsValidName(const String:name[])
 		
 		n++;
 	}
-	
+
 	return true;
 }
