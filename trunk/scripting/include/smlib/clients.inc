@@ -1657,6 +1657,14 @@ stock Client_PrintKeyHintTextToAll(const String:format[], any:...)
 	}
 }
 
+/**
+ * Prints a reliable raw chat message to a client in the chat area.
+ *
+ * @param client		Client Index.
+ * @param subject		Client Index/Subject (normally used for teamcolors)
+ * @param message		String Message.
+ * @noreturn
+ */
 stock Client_PrintToChatRaw(client, subject, const String:message[])
 {
 	if (client == 0) {
@@ -1694,9 +1702,11 @@ stock Client_PrintToChatRaw(client, subject, const String:message[])
 
 /**
  * Prints a reliable chat message to one client in the chat area.
+ * Allows up to 253 Characters to be print.
+ * Supports chat color tags (see: colors.inc).
  *
  * @param client		Client Index.
- * @param format		Formatting rules.
+ * @param format		Formatting rules String.
  * @param ...			Variable number of format parameters.
  * @noreturn
  */
@@ -1717,8 +1727,10 @@ stock Client_PrintToChat(client, const String:format[], any:...)
 
 /**
  * Prints a reliable chat message to all clients in the chat area.
- *
- * @param format		Formatting rules.
+ * Allows up to 253 Characters to be print.
+ * Supports chat color tags (see: colors.inc).
+ * 
+ * @param format		Formatting rules String.
  * @param ...			Variable number of format parameters.
  * @noreturn
  */
@@ -1756,6 +1768,8 @@ stock Client_PrintToChatAll(const String:format[], any:...)
 
 /**
  * Prints a reliable chat message to the specified clients in the chat area.
+ * Allows up to 253 Characters to be print.
+ * Supports chat color tags (see: colors.inc).
  *
  * @param clients		Client Array.
  * @param numClients	Number of clients in the client array.
@@ -1766,7 +1780,7 @@ stock Client_PrintToChatAll(const String:format[], any:...)
 stock Client_PrintToChatEx(clients[], numClients, const String:format[], any:...)
 {
 	decl
-		String:buffer[253];
+		String:buffer[253],
 		String:buffer2[253];
 	new
 		client,

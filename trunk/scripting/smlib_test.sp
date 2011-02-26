@@ -155,6 +155,10 @@ public OnPluginStart() {
 	Client_PrintHintTextToAll("");
 	Client_PrintKeyHintText(0, "");
 	Client_PrintKeyHintTextToAll("");
+	Client_PrintToChatRaw(0, 0, "");
+	Client_PrintToChat(0, "");
+	Client_PrintToChatAll("");
+	Client_PrintToChatEx({ 0 }, 0, "");
 	Client_Shake(0);
 	Client_IsAdmin(0);
 	Client_IsLookingAtWall(0);
@@ -174,6 +178,15 @@ public OnPluginStart() {
 	Convar_AddFlags(INVALID_HANDLE, 0);
 	Convar_RemoveFlags(INVALID_HANDLE, 0);
 	Convar_IsValidName("");
+	
+	// File: crypt.inc
+	Crypt_Base64Encode("", buf, sizeof(buf));
+	Crypt_Base64Decode("", buf, sizeof(buf));
+	Crypt_Base64MimeToUrl("", buf, sizeof(buf));
+	Crypt_Base64UrlToMime("", buf, sizeof(buf));
+	Crypt_MD5("", buf, sizeof(buf));
+	Crypt_RC4Encode("", "", buf, sizeof(buf));
+	Crypt_RC4EncodeBinary("", 0, "", buf, sizeof(buf));
 
 	// File: debug.inc
 	Debug_FloatArray(vec);
@@ -181,7 +194,7 @@ public OnPluginStart() {
 	// File: dynarrays.inc
 	DynArray_GetBool(INVALID_HANDLE, 0);
 
-	// File: 0s.inc
+	// File: edicts.inc
 	Edict_FindByName("");
 	Edict_FindByHammerId(0);
 	Edict_GetClosest(vec);
@@ -311,6 +324,9 @@ public OnPluginStart() {
 	IsParticleSystemPrecached("");
 	FindStringIndexByTableName("", "");
 	FindStringIndex2(0, "");
+	LongToIP(0, buf, sizeof(buf));
+	IPToLong("");
+	IsIPLocal(0);
 
 	// File: math.inc
 	Math_Abs(0);
@@ -324,9 +340,12 @@ public OnPluginStart() {
 	Math_GetPercentage(0, 0);
 	Math_GetPercentageFloat(0.0, 0.0);
 	Math_MoveVector(vec, vec, 0.0, vec);
+	Math_UnitsToMeters(0.0);
+	Math_UnitsToFeet(0.0);
 
 	// File: server.inc
-	Server_GetIP(buf, sizeof(buf));
+	Server_GetIP();
+	Server_GetIPString(buf, sizeof(buf));
 	Server_GetPort();
 	Server_GetHostName(buf, sizeof(buf));
 
@@ -343,7 +362,6 @@ public OnPluginStart() {
 	String_RemoveList(buf, twoDimStrArr, sizeof(twoDimStrArr));
 	String_ToLower(buf, buf, sizeof(buf));
 	String_ToUpper(buf, buf, sizeof(buf));
-	String_StripChatColors(buf, buf, sizeof(buf));
 	String_GetRandom(buf, sizeof(buf));
 
 	// File: teams.inc
