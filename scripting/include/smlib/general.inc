@@ -5,6 +5,7 @@
 
 #include <sourcemod>
 #include <sdktools_stringtables>
+#include <smlib/math>
 
 #define TIME_TO_TICKS(%1)	( (int)( 0.5 + (float)(%1) / GetTickInterval() ) )
 #define TICKS_TO_TIME(%1)	( GetTickInterval() * %1 )
@@ -154,4 +155,86 @@ stock FindStringIndex2(tableidx, const String:str[])
 	}
 	
 	return INVALID_STRING_INDEX;
+}
+
+/*
+ * Converts a long IP to a dotted format String.
+ * 
+ * @param ip			IP Long
+ * @param buffer		String Buffer (size = 16)
+ * @param size			String Buffer size
+ * @noreturn
+ */
+stock LongToIP(ip, String:buffer[], size)
+{
+	Format(
+		buffer, size,
+		"%d.%d.%d.%d",
+			(ip >> 24)	& 0xFF,
+			(ip >> 16)	& 0xFF,
+			(ip >> 8 )	& 0xFF,
+			ip        	& 0xFF
+		);
+}
+
+/*
+ * Converts a dotted format String IP to a long.
+ * 
+ * @param ip			IP String
+ * @return				Long IP
+ */
+stock IPToLong(const String:ip[])
+{
+	decl String:pieces[4][4];
+
+	if (ExplodeString(ip, ".", pieces, sizeof(pieces), sizeof(pieces[])) != 4) {
+		return 0;
+	}
+
+	return (
+		StringToInt(pieces[0]) << 24	|
+		StringToInt(pieces[1]) << 16	|
+		StringToInt(pieces[2]) << 8		|
+		StringToInt(pieces[3])
+	);
+}
+
+static localIPRanges[] = 
+{
+	10	<< 24,				// 10.
+	127	<< 24 | 1		,	// 127.0.0.1
+	127	<< 24 | 16	<< 16,	// 127.16.
+	192	<< 24 | 168	<< 16,	// 192.168.
+};
+
+/*
+ * Checks whether an IP is a private/internal IP
+ * 
+ * @param ip			IP Long
+ * @return				True if the IP is local, false otherwise.
+ */
+stock bool:IsIPLocal(ip)
+{
+	new range, bits, move, bool:matches;
+
+	for (new i=0; i < sizeof(localIPRanges); i++) {
+
+		range = localIPRanges[i];
+		matches = true;
+
+		for (new j=0; j < 4; j++) {
+			move = j * 8;
+			bits = (range >> move) & 0xFF;
+
+			if (bits && bits != ((ip >> move) & 0xFF)) {
+				matches = false;
+			}
+		}
+
+		if (matches) {
+			return true;
+		}
+	}
+
+	return false;
 }

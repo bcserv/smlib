@@ -6,7 +6,11 @@
 #include <sourcemod>
 
 #define SIZE_OF_INT		2147483647		// without 0
-#define SIZE_OF_FLOAT	2147483647.0	// without 0
+
+#define GAMEUNITS_TO_METERS	0.01905
+#define METERS_TO_GAMEUNITS	52.49343832020997
+#define METERS_TO_FEET		3.2808399
+#define FEET_TO_METERS		0.3048
 
 enum VecAngle
 {
@@ -204,7 +208,7 @@ stock Math_MoveVector(const Float:start[3], const Float:end[3], Float:scale, Flo
  */
 stock Float:Math_UnitsToMeters(Float:units)
 {
-	return (units / 100.0);
+	return (units * GAMEUNITS_TO_METERS);
 }
 
 /**
@@ -215,5 +219,5 @@ stock Float:Math_UnitsToMeters(Float:units)
  */
 stock Float:Math_UnitsToFeet(Float:units)
 {
-	return (units / 30.4799999);
+	return (Math_UnitsToMeters(units) * METERS_TO_FEET);
 }

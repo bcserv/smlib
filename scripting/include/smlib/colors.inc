@@ -82,7 +82,155 @@ static Handle:mp_teamplay			= INVALID_HANDLE;
 static bool:isSayText2_supported	= true;
 static chatSubject = CHATCOLOR_NOSUBJECT;
 
-stock Color_ChatInitialize()
+/**
+ * Sets the subject (a client) for the chat color parser.
+ * Call this before Color_ParseChatText() or Client_PrintToChat().
+ *
+ * @param client			Client Index/Subject
+ * @noreturn
+ */
+stock Color_ChatSetSubject(client)
+{
+	chatSubject = client;
+}
+
+/**
+ * Clears the subject used for the chat color parser.
+ * Call this after Color_ParseChatText().
+ *
+ * @noreturn
+ */
+stock Color_ChatClearSubject()
+{
+	chatSubject = CHATCOLOR_NOSUBJECT;
+}
+
+/**
+ * Parses a chat string and converts all color tags to color codes.
+ * This is a very powerful function that works recursively over the color information
+ * table. The support colors are hardcoded, but can be overriden for each game by
+ * creating the file gamedata/smlib_colors.games.txt.
+ *
+ * @param str				Chat String.
+ * @param subject			Output Buffer
+ * @param size				Output Buffer size
+ * return
+ */
+stock Color_ParseChatText(const String:str[], String:buffer[], size)
+{
+	new
+		bool:inBracket = false,
+		x = 0, x_buf = 0, x_tag = 0,
+		currentColor = '\x01', // Initialize with normal color
+		code = -1,
+		subject = CHATCOLOR_NOSUBJECT;
+		
+	decl String:sTag[4] = "";
+
+	size--;
+	buffer[x_buf++] = '\x01';
+
+	while (str[x] != '\0') {
+
+		if (size == x_buf) {
+			break;
+		}
+
+		new char = str[x++];
+		
+		if (inBracket) {
+			if (char == '}' || x_tag > 2) {
+				inBracket = false;
+				sTag[x_tag] = '\0';
+				x_tag = 0;
+				
+				if (char == '}') {
+					code = Color_TagToCode(sTag, subject);
+					if (code == 0) {
+						buffer[x_buf+1] = '\0';
+						x_buf = Format(buffer, size, "%s{%s}", buffer, sTag);
+						continue;
+					}
+					else if (code != currentColor) {
+						buffer[x_buf++] = code;
+						currentColor = code;
+					}
+				}
+				else {
+					buffer[x_buf+1] = '\0';
+					x_buf = Format(buffer, size, "%s{%s%c", buffer, sTag, char);
+				}
+			}
+			else if (char == '{' && !x_tag) {
+				buffer[x_buf++] = '{';
+				inBracket = false;
+			}
+			else {
+				sTag[x_tag++] = char;
+			}
+		}
+		else if (char == '{') {
+			inBracket = true;
+		}
+		else {
+			buffer[x_buf++] = char;
+		}
+	}
+
+	buffer[x_buf] = '\0';
+	
+	return subject;
+}
+
+/**
+ * Converts a chat color tag to its code character.
+ *
+ * @param tag				Color Tag String.
+ * @param subject			Subject variable to pass
+ * @return					Chat Color Code char or 0 if the tag couldn't be found.
+ */
+stock Color_TagToCode(const String:tag[], &subject=-1){
+	new n = Array_FindString(chatColorTags, sizeof(chatColorTags), tag);
+
+	if (n == -1) {
+		return 0;
+	}
+
+	Color_GetChatColorInfo(n, subject);
+
+	return chatColorInfo[n][ChatColorInfo_Code];
+}
+
+/**
+ * Strips all color control characters in a string.
+ * The Output buffer can be the same as the input buffer.
+ * Original code by Psychonic, thanks.
+ *
+ * @param input				Input String.
+ * @param output			Output String.
+ * @param size				Max Size of the Output string
+ * @noreturn
+ */
+stock Color_StripFromChatText(const String:input[], String:output[], size)
+{
+	new x = 0;
+	for (new i=0; input[i] != '\0'; i++) {
+	
+		if (x+1 == size) {
+			break;
+		}
+
+		new char = input[i];
+		
+		if (char > 0x08) {
+			output[x++] = char;
+		}
+	}
+	
+	output[x] = '\0';
+}
+
+static stock Color_ChatInitialize()
 {
 	static initialized = false;
 	
@@ -191,95 +339,7 @@ stock Color_ChatInitialize()
 	mp_teamplay = FindConVar("mp_teamplay");
 }
 
-stock Color_ChatSetSubject(client)
-{
-	chatSubject = client;
-}
-
-stock Color_ChatClearSubject()
-{
-	chatSubject = CHATCOLOR_NOSUBJECT;
-}
-
-stock Color_ParseChatText(const String:str[], String:buffer[], size)
-{
-	new
-		bool:inBracket = false,
-		x = 0, x_buf = 0, x_tag = 0,
-		currentColor = '\x01', // Initialize with normal color
-		code = -1,
-		subject = CHATCOLOR_NOSUBJECT;
-		
-	decl String:sTag[4] = "";
-
-	size--;
-	buffer[x_buf++] = '\x01';
-
-	while (str[x] != '\0') {
-
-		if (size == x_buf) {
-			break;
-		}
-
-		new char = str[x++];
-		
-		if (inBracket) {
-			if (char == '}' || x_tag > 2) {
-				inBracket = false;
-				sTag[x_tag] = '\0';
-				x_tag = 0;
-				
-				if (char == '}') {
-					code = Color_TagToCode(sTag, subject);
-					if (code == 0) {
-						buffer[x_buf+1] = '\0';
-						x_buf = Format(buffer, size, "%s{%s}", buffer, sTag);
-						continue;
-					}
-					else if (code != currentColor) {
-						buffer[x_buf++] = code;
-						currentColor = code;
-					}
-				}
-				else {
-					buffer[x_buf+1] = '\0';
-					x_buf = Format(buffer, size, "%s{%s%c", buffer, sTag, char);
-				}
-			}
-			else if (char == '{' && !x_tag) {
-				buffer[x_buf++] = '{';
-				inBracket = false;
-			}
-			else {
-				sTag[x_tag++] = char;
-			}
-		}
-		else if (char == '{') {
-			inBracket = true;
-		}
-		else {
-			buffer[x_buf++] = char;
-		}
-	}
-
-	buffer[x_buf] = '\0';
-	
-	return subject;
-}
-
-stock Color_TagToCode(const String:tag[], &subject=-1){
-	new n = Array_FindString(chatColorTags, sizeof(chatColorTags), tag);
-
-	if (n == -1) {
-		return 0;
-	}
-
-	Color_GetChatColorInfo(n, subject);
-
-	return chatColorInfo[n][ChatColorInfo_Code];
-}
-
-stock Color_GetChatColorInfo(&index, &subject=CHATCOLOR_NOSUBJECT)
+static stock Color_GetChatColorInfo(&index, &subject=CHATCOLOR_NOSUBJECT)
 {
 	Color_ChatInitialize();
 
@@ -351,33 +411,4 @@ stock Color_GetChatColorInfo(&index, &subject=CHATCOLOR_NOSUBJECT)
 	}
 	
 	return newSubject;
-}
-
-/**
- * Strips all color control characters in a string.
- * The Output buffer can be the same as the input buffer.
- * Original code by Psychonic, thanks.
- *
- * @param input				Input String.
- * @param output			Output String.
- * @param size				Max Size of the Output string
- * @noreturn
- */
-stock Color_StripFromChatText(const String:input[], String:output[], size)
-{
-	new x = 0;
-	for (new i=0; input[i] != '\0'; i++) {
-	
-		if (x+1 == size) {
-			break;
-		}
-
-		new char = input[i];
-		
-		if (char > 0x08) {
-			output[x++] = char;
-		}
-	}
-	
-	output[x] = '\0';
 }
