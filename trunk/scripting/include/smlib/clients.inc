@@ -1661,11 +1661,12 @@ stock Client_PrintKeyHintTextToAll(const String:format[], any:...)
  * Prints a reliable raw chat message to a client in the chat area.
  *
  * @param client		Client Index.
- * @param subject		Client Index/Subject (normally used for teamcolors)
  * @param message		String Message.
+ * @param subject		Client Index/Subject (normally used for teamcolors)
+ * @param isChat		Tells the game to handle the chat as normal (false) or chat message (true, plays a sound), only works if SayText2 is supported.
  * @noreturn
  */
-stock Client_PrintToChatRaw(client, subject, const String:message[])
+stock Client_PrintToChatRaw(client, const String:message[], subject=0, bool:isChat=false)
 {
 	if (client == 0) {
 		decl String:buffer[253];
@@ -1689,14 +1690,20 @@ stock Client_PrintToChatRaw(client, subject, const String:message[])
 
 	if (sayText2_supported) {
 		userMessage = StartMessageOne("SayText2", client, USERMSG_RELIABLE);
+		
+		BfWriteByte(userMessage		, subject);
+		BfWriteByte(userMessage		, isChat);
+		BfWriteString(userMessage	, message);
 	}
 	else {
 		userMessage = StartMessageOne("SayText", client, USERMSG_RELIABLE);
+
+		BfWriteByte(userMessage		, subject);
+		BfWriteString(userMessage	, message);
+		// For DoD:S nickname coloring
+		BfWriteByte(userMessage		, -1);
 	}
 
-	BfWriteByte(userMessage		, subject);
-	BfWriteByte(userMessage		, true);
-	BfWriteString(userMessage	, message);
 	EndMessage();
 }
 
@@ -1706,21 +1713,22 @@ stock Client_PrintToChatRaw(client, subject, const String:message[])
  * Supports chat color tags (see: colors.inc).
  *
  * @param client		Client Index.
+ * @param isChat		Tells the game to handle the chat as normal (false) or chat message (true, plays a sound), only works if SayText2 is supported.
  * @param format		Formatting rules String.
  * @param ...			Variable number of format parameters.
  * @noreturn
  */
-stock Client_PrintToChat(client, const String:format[], any:...)
+stock Client_PrintToChat(client, bool:isChat, const String:format[], any:...)
 {
 	decl
 		String:buffer[253],
 		String:buffer2[253];
 
 	SetGlobalTransTarget(client);
-	VFormat(buffer, sizeof(buffer), format, 3);
+	VFormat(buffer, sizeof(buffer), format, 4);
 	new subject = Color_ParseChatText(buffer, buffer2, sizeof(buffer2));
 
-	Client_PrintToChatRaw(client, subject, buffer2);
+	Client_PrintToChatRaw(client, buffer2, subject, isChat);
 
 	Color_ChatClearSubject();
 }
@@ -1730,11 +1738,12 @@ stock Client_PrintToChat(client, const String:format[], any:...)
  * Allows up to 253 Characters to be print.
  * Supports chat color tags (see: colors.inc).
  * 
+ * @param isChat		Tells the game to handle the chat as normal (false) or chat message (true, plays a sound), only works if SayText2 is supported.
  * @param format		Formatting rules String.
  * @param ...			Variable number of format parameters.
  * @noreturn
  */
-stock Client_PrintToChatAll(const String:format[], any:...)
+stock Client_PrintToChatAll(bool:isChat, const String:format[], any:...)
 {
 	decl
 		String:buffer[253],
@@ -1754,13 +1763,13 @@ stock Client_PrintToChatAll(const String:format[], any:...)
 
 		if (language != lastLanguage) {
 			SetGlobalTransTarget(client);
-			VFormat(buffer, sizeof(buffer), format, 2);
+			VFormat(buffer, sizeof(buffer), format, 3);
 			subject = Color_ParseChatText(buffer, buffer2, sizeof(buffer2));
 			
 			lastLanguage = language;
 		}
 
-		Client_PrintToChatRaw(client, subject, buffer2);
+		Client_PrintToChatRaw(client, buffer2, subject, isChat);
 	}
 
 	Color_ChatClearSubject();
@@ -1773,11 +1782,12 @@ stock Client_PrintToChatAll(const String:format[], any:...)
  *
  * @param clients		Client Array.
  * @param numClients	Number of clients in the client array.
+ * @param isChat		Tells the game to handle the chat as normal (false) or chat message (true, plays a sound), only works if SayText2 is supported.
  * @param format		Formatting rules.
  * @param ...			Variable number of format parameters.
  * @noreturn
  */
-stock Client_PrintToChatEx(clients[], numClients, const String:format[], any:...)
+stock Client_PrintToChatEx(clients[], numClients, bool:isChat, const String:format[], any:...)
 {
 	decl
 		String:buffer[253],
@@ -1800,13 +1810,13 @@ stock Client_PrintToChatEx(clients[], numClients, const String:format[], any:...
 		
 		if (language != lastLanguage) {
 			SetGlobalTransTarget(client);
-			VFormat(buffer, sizeof(buffer), format, 3);
+			VFormat(buffer, sizeof(buffer), format, 5);
 			subject = Color_ParseChatText(buffer, buffer2, sizeof(buffer2));
 			
 			lastLanguage = language;
 		}
 		
-		Client_PrintToChatRaw(client, subject, buffer2);
+		Client_PrintToChatRaw(client, buffer2, subject, isChat);
 	}
 
 	Color_ChatClearSubject();

@@ -201,7 +201,7 @@ stock Team_EdictIsValid(edict)
 stock Team_GetEdict(index)
 {
 	static teams[MAX_TEAMS] = { INVALID_ENT_REFERENCE, ... };
-	
+
 	if (index < 0 || index > MAX_TEAMS) {
 		return -1;
 	}
@@ -217,22 +217,22 @@ stock Team_GetEdict(index)
 		if (!IsValidEntity(entity)) {
 			continue;
 		}
-		
+
 		if (!Entity_ClassNameMatches(entity, "team_manager", true)) {
 			return -1;
 		}
-		
+
 		new num = Team_EdictGetNum(entity);
-		
+
 		if (num >= 0 && num <= MAX_TEAMS) {
 			teams[num] = EntIndexToEntRef(entity);
 		}
-		
+
 		if (num == index) {
 			return entity;
 		}
 	}
-	
+
 	return -1;
 }
 

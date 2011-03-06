@@ -155,10 +155,10 @@ public OnPluginStart() {
 	Client_PrintHintTextToAll("");
 	Client_PrintKeyHintText(0, "");
 	Client_PrintKeyHintTextToAll("");
-	Client_PrintToChatRaw(0, 0, "");
-	Client_PrintToChat(0, "");
-	Client_PrintToChatAll("");
-	Client_PrintToChatEx({ 0 }, 0, "");
+	Client_PrintToChatRaw(0, "");
+	Client_PrintToChat(0, false, "");
+	Client_PrintToChatAll(false, "");
+	Client_PrintToChatEx({ 0 }, 0, false, "");
 	Client_Shake(0);
 	Client_IsAdmin(0);
 	Client_IsLookingAtWall(0);
@@ -172,13 +172,18 @@ public OnPluginStart() {
 	Client_HasButtons(0, 0);
 	Client_GetChangedButtons(0);
 	Client_SetMaxSpeed(0, 0.0);
-	
+
+	// File: convars.inc
+	ConCommand_HasFlags("", 0);
+	ConCommand_AddFlags("", 0);
+	ConCommand_RemoveFlags("", 0);
+
 	// File: convars.inc
 	Convar_HasFlags(INVALID_HANDLE, 0);
 	Convar_AddFlags(INVALID_HANDLE, 0);
 	Convar_RemoveFlags(INVALID_HANDLE, 0);
 	Convar_IsValidName("");
-	
+
 	// File: crypt.inc
 	Crypt_Base64Encode("", buf, sizeof(buf));
 	Crypt_Base64Decode("", buf, sizeof(buf));
