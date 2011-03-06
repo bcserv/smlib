@@ -10,6 +10,7 @@
 #include <smlib/arrays>
 #include <smlib/clients>
 #include <smlib/colors>
+#include <smlib/concommands>
 #include <smlib/convars>
 #include <smlib/crypt>
 #include <smlib/debug>

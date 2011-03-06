@@ -32,7 +32,7 @@ enum ChatColorInfo
 enum ChatColor
 {
 	ChatColor_Normal,
-	ChatColor_Yellow,
+	ChatColor_Orange,
 	ChatColor_Red,
 	ChatColor_RedBlue,
 	ChatColor_Blue,
@@ -47,7 +47,7 @@ enum ChatColor
 
 static String:chatColorTags[][] = {
 	"N",	// Normal
-	"Y",	// Yellow
+	"O",	// Orange
 	"R",	// Red
 	"RB",	// Red, Blue
 	"B",	// Blue
@@ -56,15 +56,30 @@ static String:chatColorTags[][] = {
 	"L",	// Light green
 	"GRA",	// GRAy 
 	"G",	// Green
-	"O",	// Olive green
+	"OG",	// Olive green
 	"BLA"	// BLAck
+};
+
+static String:chatColorNames[][] = {
+	"normal",		// Normal
+	"orange",		// Orange
+	"red",			// Red
+	"redblue",		// Red, Blue
+	"blue",			// Blue
+	"bluered",		// Blue, Red
+	"team",			// Team
+	"lightgreen",	// Light green
+	"gray",			// GRAy 
+	"green",		// Green
+	"olivegreen",	// Olive green
+	"black"			// BLAck
 };
 
 static chatColorInfo[][ChatColorInfo] =
 {
 	// Code , alternative	, Is Supported?	Chat color subject type 		   Color name
 	{ '\x01', -1/* None	 */	, true,			ChatColorSubjectType_none,	},	// Normal
-	{ '\x01', 0	/* None	 */	, true,			ChatColorSubjectType_none,	},	// Yellow
+	{ '\x01', 0	/* None	 */	, true,			ChatColorSubjectType_none,	},	// Orange
 	{ '\x03', 9	/* Green */	, true,			ChatColorSubjectType:2		},	// Red
 	{ '\x03', 4	/* Blue	 */	, true,			ChatColorSubjectType:2		},	// Red, Blue
 	{ '\x03', 9	/* Green */	, true,			ChatColorSubjectType:3		},	// Blue
@@ -77,10 +92,10 @@ static chatColorInfo[][ChatColorInfo] =
 	{ '\x06', 9	/* Green */	, true,			ChatColorSubjectType_none	}	// BLAck
 };
 
-static bool:CheckTeamPlay			= false;
+static bool:checkTeamPlay			= false;
 static Handle:mp_teamplay			= INVALID_HANDLE;
 static bool:isSayText2_supported	= true;
-static chatSubject = CHATCOLOR_NOSUBJECT;
+static chatSubject					= CHATCOLOR_NOSUBJECT;
 
 /**
  * Sets the subject (a client) for the chat color parser.
@@ -124,7 +139,7 @@ stock Color_ParseChatText(const String:str[], String:buffer[], size)
 		currentColor = '\x01', // Initialize with normal color
 		code = -1,
 		subject = CHATCOLOR_NOSUBJECT;
-		
+
 	decl String:sTag[4] = "";
 
 	size--;
@@ -233,11 +248,11 @@ stock Color_StripFromChatText(const String:input[], String:output[], size)
 static stock Color_ChatInitialize()
 {
 	static initialized = false;
-	
+
 	if (initialized) {
 		return;
 	}
-	
+
 	initialized = true;
 
 	decl String:gameFolderName[32];
@@ -250,6 +265,11 @@ static stock Color_ChatInitialize()
 		chatColorInfo[ChatColor_Lightgreen][ChatColorInfo_Supported]= false;
 		chatColorInfo[ChatColor_Gray][ChatColorInfo_Supported]		= false;
 	}
+	else if (strncmp(gameFolderName, "left4dead", 9, false) == 0) {
+		chatColorInfo[ChatColor_Green][ChatColorInfo_Code]			= '\x05';
+	}
+
+	chatColorInfo[ChatColor_Black][ChatColorInfo_Supported]		= false;
 
 	if (strncmp(gameFolderName, "left4dead", 9, false) == 0) {
 		chatColorInfo[ChatColor_Red][ChatColorInfo_SubjectType]		= ChatColorSubjectType:3;
@@ -264,14 +284,16 @@ static stock Color_ChatInitialize()
 		chatColorInfo[ChatColor_RedBlue][ChatColorInfo_SubjectType]	= ChatColorSubjectType:3;
 		chatColorInfo[ChatColor_Blue][ChatColorInfo_SubjectType]	= ChatColorSubjectType:2;
 		chatColorInfo[ChatColor_BlueRed][ChatColorInfo_SubjectType]	= ChatColorSubjectType:2;
+		chatColorInfo[ChatColor_Black][ChatColorInfo_Supported]		= true;
 
-		CheckTeamPlay												= true;
+		checkTeamPlay												= true;
 	}
 	else if (StrEqual(gameFolderName, "dod", false)) {
 		chatColorInfo[ChatColor_Gray][ChatColorInfo_Code]			= '\x01';
 		chatColorInfo[ChatColor_Gray][ChatColorInfo_SubjectType]	= ChatColorSubjectType_none;
-		
-		chatColorInfo[ChatColor_Yellow][ChatColorInfo_Supported]	= false;
+
+		chatColorInfo[ChatColor_Black][ChatColorInfo_Supported]		= true;
+		chatColorInfo[ChatColor_Orange][ChatColorInfo_Supported]	= false;
 	}
 
 	if (GetUserMessageId("SayText2") == INVALID_MESSAGE_ID) {
@@ -286,50 +308,33 @@ static stock Color_ChatInitialize()
 		
 		if ((gamedata = LoadGameConfigFile(SMLIB_COLORS_GAMEDATAFILE)) != INVALID_HANDLE) {
 
-			decl String:buffer[6];
+			decl String:keyName[32], String:buffer[6];
 			
-			if (GameConfGetKeyValue(gamedata, "yellow", buffer, sizeof(buffer))) {
-				chatColorInfo[ChatColor_Yellow][ChatColorInfo_Supported]		= StrEqual(buffer, "true");
+			for (new i=0; i < sizeof(chatColorNames); i++) {
+
+				Format(keyName, sizeof(keyName), "%s_code",			chatColorNames[i]);
+				if (GameConfGetKeyValue(gamedata, keyName, buffer, sizeof(buffer))) {
+					chatColorInfo[i][ChatColorInfo_Code]			= StringToInt(buffer);
+				}
+
+				Format(keyName, sizeof(keyName), "%s_alternative",	chatColorNames[i]);
+				if (GameConfGetKeyValue(gamedata, keyName, buffer, sizeof(buffer))) {
+					chatColorInfo[i][ChatColorInfo_Alternative]		= buffer[0];
+				}
+
+				Format(keyName, sizeof(keyName), "%s_supported",	chatColorNames[i]);
+				if (GameConfGetKeyValue(gamedata, keyName, buffer, sizeof(buffer))) {
+					chatColorInfo[i][ChatColorInfo_Supported]		= StrEqual(buffer, "true");
+				}
+
+				Format(keyName, sizeof(keyName), "%s_subjecttype",	chatColorNames[i]);
+				if (GameConfGetKeyValue(gamedata, keyName, buffer, sizeof(buffer))) {
+					chatColorInfo[i][ChatColorInfo_SubjectType]		= ChatColorSubjectType:StringToInt(buffer);
+				}
 			}
-			
-			if (GameConfGetKeyValue(gamedata, "red", buffer, sizeof(buffer)	)) {
-				chatColorInfo[ChatColor_Red][ChatColorInfo_Supported]			= StrEqual(buffer, "true");
-			}
-			
-			if (GameConfGetKeyValue(gamedata, "redblue", buffer, sizeof(buffer))) {
-				chatColorInfo[ChatColor_RedBlue][ChatColorInfo_Supported]		= StrEqual(buffer, "true");
-			}
-			
-			if (GameConfGetKeyValue(gamedata, "blue", buffer, sizeof(buffer))) {
-				chatColorInfo[ChatColor_Blue][ChatColorInfo_Supported]			= StrEqual(buffer, "true");
-			}
-			
-			if (GameConfGetKeyValue(gamedata, "bluered", buffer, sizeof(buffer))) {
-				chatColorInfo[ChatColor_BlueRed][ChatColorInfo_Supported]		= StrEqual(buffer, "true");
-			}
-			
-			if (GameConfGetKeyValue(gamedata, "team", buffer, sizeof(buffer))) {
-				chatColorInfo[ChatColor_Team][ChatColorInfo_Supported]			= StrEqual(buffer, "true");
-			}
-			
-			if (GameConfGetKeyValue(gamedata, "lightgreen", buffer, sizeof(buffer))) {
-				chatColorInfo[ChatColor_Lightgreen][ChatColorInfo_Supported]	= StrEqual(buffer, "true");
-			}
-			
-			if (GameConfGetKeyValue(gamedata, "gray", buffer, sizeof(buffer))) {
-				chatColorInfo[ChatColor_Gray][ChatColorInfo_Supported]			= StrEqual(buffer, "true");
-			}
-			
-			if (GameConfGetKeyValue(gamedata, "green", buffer, sizeof(buffer))) {
-				chatColorInfo[ChatColor_Green][ChatColorInfo_Supported]			= StrEqual(buffer, "true");
-			}
-			
-			if (GameConfGetKeyValue(gamedata, "olivegreen", buffer, sizeof(buffer))) {
-				chatColorInfo[ChatColor_Olivegreen][ChatColorInfo_Supported]	= StrEqual(buffer, "true");
-			}
-			
-			if (GameConfGetKeyValue(gamedata, "black", buffer, sizeof(buffer))) {
-				chatColorInfo[ChatColor_Black][ChatColorInfo_Supported]			= StrEqual(buffer, "true");
+
+			if (GameConfGetKeyValue(gamedata, "checkteamplay", buffer, sizeof(buffer))) {
+				checkTeamPlay = StrEqual(buffer, "true");
 			}
 
 			CloseHandle(gamedata);
@@ -381,7 +386,7 @@ static stock Color_GetChatColorInfo(&index, &subject=CHATCOLOR_NOSUBJECT)
 		}
 		default: {
 
-			if (!CheckTeamPlay || GetConVarBool(mp_teamplay)) {
+			if (!checkTeamPlay || GetConVarBool(mp_teamplay)) {
 
 				if (subject > 0 && subject <= MaxClients) {
 
@@ -400,7 +405,9 @@ static stock Color_GetChatColorInfo(&index, &subject=CHATCOLOR_NOSUBJECT)
 		}
 	}
 
-	if (type > ChatColorSubjectType_none && (newSubject == CHATCOLOR_NOSUBJECT || !isSayText2_supported)) {
+	if (type > ChatColorSubjectType_none &&
+		((subject != CHATCOLOR_NOSUBJECT && subject != newSubject) || newSubject == CHATCOLOR_NOSUBJECT || !isSayText2_supported))
+	{
 		index = chatColorInfo[index][ChatColorInfo_Alternative];
 		newSubject = Color_GetChatColorInfo(index, subject);
 	}
