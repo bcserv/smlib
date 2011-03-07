@@ -258,6 +258,8 @@ static stock Color_ChatInitialize()
 	decl String:gameFolderName[32];
 	GetGameFolderName(gameFolderName, sizeof(gameFolderName));
 
+	chatColorInfo[ChatColor_Black][ChatColorInfo_Supported]		= false;
+
 	if (strncmp(gameFolderName, "left4dead", 9, false) != 0 &&
 		!StrEqual(gameFolderName, "cstrike", false) &&
 		!StrEqual(gameFolderName, "tf", false))
@@ -265,18 +267,20 @@ static stock Color_ChatInitialize()
 		chatColorInfo[ChatColor_Lightgreen][ChatColorInfo_Supported]= false;
 		chatColorInfo[ChatColor_Gray][ChatColorInfo_Supported]		= false;
 	}
-	else if (strncmp(gameFolderName, "left4dead", 9, false) == 0) {
-		chatColorInfo[ChatColor_Green][ChatColorInfo_Code]			= '\x05';
+
+	if (StrEqual(gameFolderName, "tf", false)) {
+		chatColorInfo[ChatColor_Black][ChatColorInfo_Supported]		= true;
+
+		chatColorInfo[ChatColor_Gray][ChatColorInfo_Code]			= '\x01';
+		chatColorInfo[ChatColor_Gray][ChatColorInfo_SubjectType]	= ChatColorSubjectType_none;
 	}
-
-	chatColorInfo[ChatColor_Black][ChatColorInfo_Supported]		= false;
-
-	if (strncmp(gameFolderName, "left4dead", 9, false) == 0) {
+	else if (strncmp(gameFolderName, "left4dead", 9, false) == 0) {
 		chatColorInfo[ChatColor_Red][ChatColorInfo_SubjectType]		= ChatColorSubjectType:3;
 		chatColorInfo[ChatColor_RedBlue][ChatColorInfo_SubjectType]	= ChatColorSubjectType:3;
 		chatColorInfo[ChatColor_Blue][ChatColorInfo_SubjectType]	= ChatColorSubjectType:2;
 		chatColorInfo[ChatColor_BlueRed][ChatColorInfo_SubjectType]	= ChatColorSubjectType:2;
-		
+
+		chatColorInfo[ChatColor_Orange][ChatColorInfo_Code]			= '\x04';
 		chatColorInfo[ChatColor_Green][ChatColorInfo_Code]			= '\x05';
 	}
 	else if (StrEqual(gameFolderName, "hl2mp", false)) {

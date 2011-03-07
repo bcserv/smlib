@@ -15,15 +15,15 @@
  * 	"blue",				// Blue
  * 	"bluered",			// Blue, Red
  * 	"team",				// Team
- * 	"lightgreen",		// Light green
+ * 	"lightgreen",			// Light green
  * 	"gray",				// GRAy 
  * 	"green",			// Green
- * 	"olivegreen",		// Olive green
+ * 	"olivegreen",			// Olive green
  * 	"black"				// BLAck
  *
  * Valid keyvalues are:
  *
- * 	color_code			Color Code (1 - 8)
+ * 	color_code		Color Code (1 - 8)
  * 	color_alternative	Defines the index of alternative color (see the chatColorInfo array in colors.inc)
  * 	color_supported		Set to "true" if the color is supported, "false" otherwise.
  * 	color_subjecttype	(see ChatColorSubjectType enum in colors.inc, any value higher than 0 defines a team color)
@@ -59,6 +59,10 @@
 		{
 			"lightgreen_supported"	"true"
 			"gray_supported"		"true"
+			"black_supported"		"true"
+
+			"gray_code"			"1"
+			"gray_subjecttype"		"-3"
 		}
 	}
 
@@ -70,6 +74,7 @@
 			"lightgreen_supported"	"true"
 			"gray_supported"		"true"
 			"black_supported"		"true"
+
 			"red_subjecttype"		"3"
 			"redblue_subjecttype"	"3"
 			"blue_subjecttype"		"2"
@@ -96,6 +101,8 @@
 		{
 			"lightgreen_supported"	"true"
 			"gray_supported"		"false"
+
+			"orange_code"			"4"
 			"green_code"			"5"
 		}
 	}
@@ -107,6 +114,8 @@
 		{
 			"lightgreen_supported"	"true"
 			"gray_supported"		"true"
+
+			"orange_code"			"4"
 			"green_code"			"5"
 		}
 	}
