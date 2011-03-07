@@ -1,0 +1,122 @@
+/**
+ * SMLib Colors Definitions (used by smlib/colors.inc)
+ * http://www.sourcemodplugins.org/pages/smlib/
+ *
+ * Note: This file is only needed if you need to have to override the default color settings
+ * and doesn't need to be distributed
+ * The settings below are already hardcoded into smlib.
+ *
+ * Valid colors are:
+ *
+ * 	"normal",			// Normal
+ * 	"orange",			// Orange
+ * 	"red",				// Red
+ * 	"redblue",			// Red, Blue
+ * 	"blue",				// Blue
+ * 	"bluered",			// Blue, Red
+ * 	"team",				// Team
+ * 	"lightgreen",			// Light green
+ * 	"gray",				// GRAy 
+ * 	"green",			// Green
+ * 	"olivegreen",			// Olive green
+ * 	"black"				// BLAck
+ *
+ * Valid keyvalues are:
+ *
+ * 	color_code		Color Code (1 - 8)
+ * 	color_alternative	Defines the index of alternative color (see the chatColorInfo array in colors.inc)
+ * 	color_supported		Set to "true" if the color is supported, "false" otherwise.
+ * 	color_subjecttype	(see ChatColorSubjectType enum in colors.inc, any value higher than 0 defines a team color)
+ */
+
+"Games"
+{
+	/* Default */
+	"#default"
+	{
+		"Keys"
+		{
+			"lightgreen_supported"	"false"
+			"gray_supported"		"false"
+			"black_supported"		"false"
+		}
+	}
+
+	/* Counter-Strike: Source */
+	"cstrike"
+	{
+		"Keys"
+		{
+			"lightgreen_supported"	"true"
+			"gray_supported"		"true"
+		}
+	}
+
+	/* Team Fortress 2 */
+	"tf"
+	{
+		"Keys"
+		{
+			"lightgreen_supported"	"true"
+			"gray_supported"		"true"
+			"black_supported"		"true"
+
+			"gray_code"			"1"
+			"gray_subjecttype"		"-3"
+		}
+	}
+
+	/* Half Life 2: Deathmatch */
+	"hl2dm"
+	{
+		"Keys"
+		{
+			"lightgreen_supported"	"true"
+			"gray_supported"		"true"
+			"black_supported"		"true"
+
+			"red_subjecttype"		"3"
+			"redblue_subjecttype"	"3"
+			"blue_subjecttype"		"2"
+			"bluered_subjecttype"	"2"
+		}
+	}
+
+	/* Day of Defeat: Source */
+	"dod"
+	{
+		"Keys"
+		{
+			"lightgreen_supported"	"true"
+			"gray_supported"		"true"
+			"black_supported"		"true"
+			// Team colors are automatically recognized as unsupported if there is no SayText2
+		}
+	}
+
+	/* Left 4 Dead */
+	"left4dead"
+	{
+		"Keys"
+		{
+			"lightgreen_supported"	"true"
+			"gray_supported"		"false"
+
+			"orange_code"			"4"
+			"green_code"			"5"
+		}
+	}
+
+	/* Left 4 Dead 2 */
+	"left4dead2"
+	{
+		"Keys"
+		{
+			"lightgreen_supported"	"true"
+			"gray_supported"		"true"
+
+			"orange_code"			"4"
+			"green_code"			"5"
+		}
+	}
+}
