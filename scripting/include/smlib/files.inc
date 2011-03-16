@@ -156,7 +156,11 @@ stock File_AddToDownloadsTable(const String:path[], bool:recursive=true, const S
 			return;
 		}
 
-		AddFileToDownloadsTable(path);
+		decl String:path_new[PLATFORM_MAX_PATH];
+		strcopy(path_new, sizeof(path_new), path);
+		ReplaceString(path_new, sizeof(path_new), "//", "/");
+
+		AddFileToDownloadsTable(path_new);
 	}
 	else if (recursive && DirExists(path)) {
 

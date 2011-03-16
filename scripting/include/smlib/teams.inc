@@ -4,6 +4,7 @@
 #define _smlib_teams_included
 
 #include <sourcemod>
+#include <smlib/clients>
 #include <smlib/entities>
 
 #define MAX_TEAMS				32	// Max number of teams in a game
@@ -38,32 +39,54 @@ stock bool:Team_HaveAllPlayers(bool:countFakeClients=true) {
 }
 
 /*
- * Returns the client count of the players in a team
+ * Returns the client count of the players in a team.
  *
  * @param team					Team Index.
- * @param countFakeClients		If true bots will be counted too.
+ * @param flags					Client Filter Flags (Use the CLIENTFILTER_ constants).
  * @return						Client count in the server.
  */
-stock Team_GetClientCount(team, bool:countFakeClients=true)
+stock Team_GetClientCount(team, flags=0)
 {
 	new numClients = 0;
-	
 	for (new client=1; client <= MaxClients; client++) {
-		
-		if (!IsClientInGame(client)) {
+
+		if (!Client_MatchesFilter(client, flags)) {
 			continue;
 		}
-		
-		if (!countFakeClients && IsFakeClient(client)) {
-			continue;
-		}
-		
+
 		if (GetClientTeam(client) == team) {
 			numClients++;
 		}
 	}
 
 	return numClients;
+}
+
+/*
+ * Returns the client counts of the first two teams (eg.: Terrorists - Counter).
+ * Use this function for optimization if you have to get the counts of both teams,
+ * otherwise use Team_GetClientCount().
+ *
+ * @param team1					Pass an integer variable by reference
+ * @param team2					Pass an integer variable by reference
+ * @param flags					Client Filter Flags (Use the CLIENTFILTER_ constants).
+ * @noreturn
+ */
+stock Team_GetClientCounts(&team1=0, &team2=0, flags=0)
+{
+	for (new client=1; client <= MaxClients; client++) {
+
+		if (!Client_MatchesFilter(client, flags)) {
+			continue;
+		}
+
+		if (GetClientTeam(client) == TEAM_ONE) {
+			team1++;
+		}
+		else if (GetClientTeam(client) == TEAM_TWO) {
+			team2++;
+		}
+	}
 }
 
 /*
@@ -239,7 +262,7 @@ stock Team_GetEdict(index)
 /*
  * Trys to find a client in the specified team.
  * This function is NOT random, it returns the first
- * or the cached player.
+ * or the cached player (Use Client_GetRandom() instead).
  *
  * @param index			Team Index.
  * @return				Client Index or -1 if no client was found in the specified team.

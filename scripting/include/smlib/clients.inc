@@ -7,6 +7,7 @@
 #include <entity_prop_stocks>
 #include <sdktools_engine>
 #include <sdktools_trace>
+#include <sdktools_voice>
 #include <smlib/general>
 #include <smlib/colors>
 #include <smlib/edicts>
@@ -1653,12 +1654,13 @@ stock Client_PrintKeyHintTextToAll(const String:format[], any:...)
 
 		SetGlobalTransTarget(client);
 		VFormat(buffer, sizeof(buffer), format, 2);
-		Client_PrintHintText(client, buffer);
+		Client_PrintKeyHintText(client, buffer);
 	}
 }
 
 /**
  * Prints a reliable raw chat message to a client in the chat area.
+ * If the client == 0, the message will printed to server console.
  *
  * @param client		Client Index.
  * @param message		String Message.
@@ -1671,6 +1673,7 @@ stock Client_PrintToChatRaw(client, const String:message[], subject=0, bool:isCh
 	if (client == 0) {
 		decl String:buffer[253];
 		Color_StripFromChatText(message, buffer, sizeof(buffer));
+		PrintToServer(buffer);
 		return;
 	}
 
@@ -1709,7 +1712,7 @@ stock Client_PrintToChatRaw(client, const String:message[], subject=0, bool:isCh
 
 /**
  * Prints a reliable chat message to one client in the chat area.
- * Allows up to 253 Characters to be print.
+ * Allows up to 253 Characters (including \0) to be printed.
  * Supports chat color tags (see: colors.inc).
  *
  * @param client		Client Index.
@@ -1721,7 +1724,7 @@ stock Client_PrintToChatRaw(client, const String:message[], subject=0, bool:isCh
 stock Client_PrintToChat(client, bool:isChat, const String:format[], any:...)
 {
 	decl
-		String:buffer[253],
+		String:buffer[512],
 		String:buffer2[253];
 
 	SetGlobalTransTarget(client);
@@ -1733,9 +1736,22 @@ stock Client_PrintToChat(client, bool:isChat, const String:format[], any:...)
 	Color_ChatClearSubject();
 }
 
+static printToChat_excludeclient = -1;
+
+/**
+ * Exclude a client from the next call to a Client_PrintToChat function.
+ * 
+ * @param client		Client Index.
+ * @noreturn
+ */
+stock Client_PrintToChatExclude(client)
+{
+	printToChat_excludeclient = client;
+}
+
 /**
  * Prints a reliable chat message to all clients in the chat area.
- * Allows up to 253 Characters to be print.
+ * Allows up to 253 Characters (including \0) to be printed.
  * Supports chat color tags (see: colors.inc).
  * 
  * @param isChat		Tells the game to handle the chat as normal (false) or chat message (true, plays a sound), only works if SayText2 is supported.
@@ -1746,7 +1762,7 @@ stock Client_PrintToChat(client, bool:isChat, const String:format[], any:...)
 stock Client_PrintToChatAll(bool:isChat, const String:format[], any:...)
 {
 	decl
-		String:buffer[253],
+		String:buffer[512],
 		String:buffer2[253];
 	new
 		subject,
@@ -1756,6 +1772,11 @@ stock Client_PrintToChatAll(bool:isChat, const String:format[], any:...)
 	for (new client=1; client <= MaxClients; client++) {
 
 		if (!IsClientInGame(client)) {
+			continue;
+		}
+
+		if (client == printToChat_excludeclient) {
+			printToChat_excludeclient = -1;
 			continue;
 		}
 
@@ -1777,7 +1798,7 @@ stock Client_PrintToChatAll(bool:isChat, const String:format[], any:...)
 
 /**
  * Prints a reliable chat message to the specified clients in the chat area.
- * Allows up to 253 Characters to be print.
+ * Allows up to 253 Characters (including \0) to be print.
  * Supports chat color tags (see: colors.inc).
  *
  * @param clients		Client Array.
@@ -1790,7 +1811,7 @@ stock Client_PrintToChatAll(bool:isChat, const String:format[], any:...)
 stock Client_PrintToChatEx(clients[], numClients, bool:isChat, const String:format[], any:...)
 {
 	decl
-		String:buffer[253],
+		String:buffer[512],
 		String:buffer2[253];
 	new
 		client,
@@ -1805,7 +1826,12 @@ stock Client_PrintToChatEx(clients[], numClients, bool:isChat, const String:form
 		if (!IsClientInGame(client)) {
 			continue;
 		}
-		
+
+		if (client == printToChat_excludeclient) {
+			printToChat_excludeclient = -1;
+			continue;
+		}
+
 		language = GetClientLanguage(client);
 		
 		if (language != lastLanguage) {
@@ -1820,6 +1846,108 @@ stock Client_PrintToChatEx(clients[], numClients, bool:isChat, const String:form
 	}
 
 	Color_ChatClearSubject();
+}
+
+enum ClientHudPrint {
+	ClientHudPrint_Notify = 1,
+	ClientHudPrint_Console,
+	ClientHudPrint_Talk,
+	Client_HudPrint_Center
+};
+
+/**
+ * Prints a relieable message to the client's console.
+ * Allows up to 254 Characters (including \0) to be print (253 for talk).
+ * Supports chat color tags (see: colors.inc, only available in Left 4 Dead (2) or higher).
+ * Chat colors are stripped automatically if not supported.
+ *
+ * @param clients		Client Array.
+ * @param format		Formatting rules.
+ * @param ...			Variable number of format parameters.
+ * @noreturn
+ */
+stock Client_PrintToConsole(client, const String:format[], any:...)
+{
+	decl String:buffer[512];
+	
+	SetGlobalTransTarget(client);
+	VFormat(buffer, sizeof(buffer), format, 3);
+
+	Client_Print(client, ClientHudPrint_Console, buffer);
+}
+
+/**
+ * Prints a relieable message to the client's console.
+ * Allows up to 254 Characters (including \0) to be print.
+ * Supports chat color tags in chat & console (see: colors.inc).
+ * Chat colors are stripped automatically if not supported in the destination.
+ *
+ * @param clients		Client Array.
+ * @param destination	Destination place (use onf of the ClientHudPrint_)
+ * @param format		Formatting rules.
+ * @param ...			Variable number of format parameters.
+ * @noreturn
+ */
+stock Client_Print(client, ClientHudPrint:destination, const String:format[], any:...)
+{
+	decl String:buffer[512], String:buffer2[254];
+
+	SetGlobalTransTarget(client);
+	VFormat(buffer, sizeof(buffer), format, 4);
+
+	new subject = Color_ParseChatText(buffer, buffer2, sizeof(buffer2));
+
+	if (destination == ClientHudPrint_Talk) {
+		Client_PrintToChatRaw(client, buffer2, subject, false);
+		return;
+	}
+
+	if (client == 0 ||
+		(destination != ClientHudPrint_Console) ||
+		(destination == ClientHudPrint_Console && GuessSDKVersion() < SOURCE_SDK_LEFT4DEAD))
+	{
+		Color_StripFromChatText(buffer, buffer2, sizeof(buffer2));
+		strcopy(buffer, sizeof(buffer), buffer2);
+
+		if (client == 0) {
+			PrintToServer(buffer2);
+			return;
+		}
+	}
+
+	new Handle:userMessage = INVALID_HANDLE;
+	userMessage = StartMessageOne("TextMsg", client, USERMSG_RELIABLE);
+
+	BfWriteByte(userMessage		, _:ClientHudPrint_Console);
+	BfWriteString(userMessage	, buffer);
+
+	EndMessage();
+}
+
+/**
+ * Replies to a message in a command.
+ * A client index of 0 will use PrintToServer().
+ * If the command was from the console, Client_PrintToConsole() is used.
+ * If the command was from chat, Client_PrintToChat() is used. 
+ *
+ * @param client		Client Index.
+ * @param format		Formatting rules String.
+ * @param ...			Variable number of format parameters.
+ * @noreturn
+ */
+stock Client_Reply(client, const String:format[], any:...)
+{
+	decl String:buffer[255];
+	
+	SetGlobalTransTarget(client);
+	VFormat(buffer, sizeof(buffer), format, 3);
+
+	if (GetCmdReplySource() == SM_REPLY_TO_CONSOLE) {
+		Client_PrintToConsole(client, buffer);
+	}
+	else {
+		Client_PrintToChat(client, false, buffer);
+	}
 }
 
 #define	SHAKE_START					0			// Starts the screen shake for all players within the radius.
@@ -1860,7 +1988,7 @@ stock bool:Client_Shake(client, command=SHAKE_START, Float:amplitude=50.0, Float
 	BfWriteFloat(userMessage,	frequency);	// shake noise frequency
 	BfWriteFloat(userMessage,	duration);	// shake lasts this long
 	EndMessage();
-	
+
 	return true;
 }
 
@@ -1896,6 +2024,48 @@ stock bool:Client_HasAdminFlags(client, flags=ADMFLAG_GENERIC)
 	}
 	
 	return bool:(GetAdminFlags(adminId, Access_Effective) & flags);
+}
+
+/**
+ * Returns whether a player is in a specific admin group.
+ *
+ * @param client        Client Index.
+ * @param groupName     Admin group name to check.
+ * @param caseSensitive	True if the group check has to be case sensitive, false otherwise.
+ * @return              True if the client is in the admin group, false otherwise.
+ */
+stock bool:Client_IsInAdminGroup(client, const String:groupName[], bool:caseSensitive=true)
+{
+	new AdminId:adminId = GetUserAdmin(client);
+
+	// Validate id.
+	if (adminId == INVALID_ADMIN_ID) {
+		return false;
+	}
+
+	// Get number of groups.
+	new count = GetAdminGroupCount(adminId);
+
+	// Validate number of groups.
+	if (count == 0) {
+		return false;
+	}
+
+	decl String:groupname[64];
+
+	// Loop through each group.
+	for (new i = 0; i < count; i++) {
+		// Get group name.
+		GetAdminGroup(adminId, i, groupname, sizeof(groupname));
+		
+		// Compare names.
+		if (StrEqual(groupName, groupname, caseSensitive)) {
+			return true;
+		}
+	}
+
+	// No match.
+	return false;
 }
 
 /**
@@ -2128,4 +2298,208 @@ stock Client_SetScreenOverlayForAll(const String:path[])
 
 		Client_SetScreenOverlay(client, path);
 	}
+}
+
+/**
+ * Mutes a client's voice
+ *
+ * @param Client		Client Index.
+ * @noreturn
+ */
+stock Client_Mute(client)
+{
+	SetClientListeningFlags(client, VOICE_MUTED);
+}
+
+/**
+ * UnMutes a client's voice
+ * Code copied from  basecomm.sp
+ *
+ * @param Client		Client Index.
+ * @noreturn
+ */
+stock Client_UnMute(client)
+{
+	static Handle:cvDeadTalk = INVALID_HANDLE;
+
+	if (cvDeadTalk == INVALID_HANDLE) {
+		cvDeadTalk = FindConVar("sm_deadtalk");
+	}
+
+	if (cvDeadTalk == INVALID_HANDLE) {
+		SetClientListeningFlags(client, VOICE_NORMAL);
+	}
+	else {
+		if (GetConVarInt(cvDeadTalk) == 1 && !IsPlayerAlive(client)) {
+			SetClientListeningFlags(client, VOICE_LISTENALL);
+		}
+		else if (GetConVarInt(cvDeadTalk) == 2 && !IsPlayerAlive(client)) {
+			SetClientListeningFlags(client, VOICE_TEAM);
+		}
+		else {
+			SetClientListeningFlags(client, VOICE_NORMAL);
+		}
+	}
+}
+
+/**
+ * Checks if a client's voice is muted
+ *
+ * @param Client		Client Index.
+ * @return				True if the client is muted, false otherwise.
+ */
+stock bool:Client_IsMuted(client)
+{
+	return bool:(GetClientListeningFlags(client) & VOICE_MUTED);
+}
+
+#define CLIENTFILTER_ALL				0		// No filtering
+#define CLIENTFILTER_BOTS			( 1	<< 0 )	// Fake clients
+#define CLIENTFILTER_NOBOTS			( 2	<< 0 )	// No fake clients
+#define CLIENTFILTER_ADMINS			( 3	<< 0 )	// Generic Admins (or higher)
+#define CLIENTFILTER_NOADMINS		( 4	<< 0 )	// No generic admins
+// All flags below require ingame checking (optimization)
+#define CLIENTFILTER_INGAME			( 5	<< 0 )	// Ingame
+#define CLIENTFILTER_NOTINGAME		( 6 << 0 )	// Not ingame (currently connecting)
+#define CLIENTFILTER_ALIVE			( 7	<< 0 )	// Alive
+#define CLIENTFILTER_DEAD			( 8	<< 0 )	// Dead
+#define CLIENTFILTER_SPECTATORS		( 9 << 0 )	// Spectators
+#define CLIENTFILTER_NOSPECTATORS	( 10<< 0 )	// No Spectators
+#define CLIENTFILTER_OBSERVERS		( 9 << 0 )	// Observers
+#define CLIENTFILTER_NOOBSERVERS	( 10<< 0 )	// No Observers
+#define CLIENTFILTER_TEAMONE		( 11<< 0 )	// First Team (Terrorists, ...)
+#define CLIENTFILTER_TEAMTWO		( 12<< 0 )	// Second Team (Counter-Terrorists, ...)
+
+/**
+ * Checks if a client matches the specified flag filter.
+ * Use one of the CLIENTFILTER_ constants.
+ * Note that this already checks if the client is ingame or connected
+ * so you don't have to do that yourself.
+ * This function is optimized to make as less native calls as possible :)
+ *
+ * @param Client		Client Index.
+ * @param flags			Client Filter Flags (Use the CLIENTFILTER_ constants).
+ * @return				True if the client if the client matches, false otherwise.
+ */
+stock bool:Client_MatchesFilter(client, flags)
+{
+	new bool:isIngame = false;
+
+	if (flags >= CLIENTFILTER_INGAME) {
+		isIngame = IsClientInGame(client);
+
+		if (isIngame) {
+			if (flags & CLIENTFILTER_NOTINGAME) {
+				return false;
+			}
+		}
+		else {
+			return false;
+		}
+	}
+	else if (!IsClientConnected(client)) {
+		return false;
+	}
+
+	if (!flags) {
+		return true;
+	}
+
+	if (flags & CLIENTFILTER_BOTS && !IsFakeClient(client)) {
+		return false;
+	}
+
+	if (flags & CLIENTFILTER_NOBOTS && IsFakeClient(client)) {
+		return false;
+	}
+
+	if (flags & CLIENTFILTER_ADMINS && !Client_IsAdmin(client)) {
+		return false;
+	}
+
+	if (flags & CLIENTFILTER_NOADMINS && Client_IsAdmin(client)) {
+		return false;
+	}
+
+	if (isIngame) {
+
+		if (flags & CLIENTFILTER_ALIVE && !IsPlayerAlive(client)) {
+			return false;
+		}
+
+		if (flags & CLIENTFILTER_DEAD && IsPlayerAlive(client)) {
+			return false;
+		}
+
+		if (flags & CLIENTFILTER_SPECTATORS && GetClientTeam(client) != TEAM_SPECTATOR) {
+			return false;
+		}
+
+		if (flags & CLIENTFILTER_NOSPECTATORS && GetClientTeam(client) == TEAM_SPECTATOR) {
+			return false;
+		}
+
+		if (flags & CLIENTFILTER_OBSERVERS && !IsClientObserver(client)) {
+			return false;
+		}
+
+		if (flags & CLIENTFILTER_NOOBSERVERS && IsClientObserver(client)) {
+			return false;
+		}
+
+		if (flags & CLIENTFILTER_TEAMONE && GetClientTeam(client) != TEAM_ONE) {
+			return false;
+		}
+
+		if (flags & CLIENTFILTER_TEAMTWO && GetClientTeam(client) != TEAM_TWO) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+/**
+ * Gets all clients matching the specified flags filter.
+ *
+ * @param Client		Client Array, size should be MaxClients or MAXPLAYERS
+ * @param flags			Client Filter Flags (Use the CLIENTFILTER_ constants).
+ * @return				The number of clients stored in the array
+ */
+stock Client_Get(clients[], flags=CLIENTFILTER_ALL)
+{
+	new x=0;
+	for (new client = 1; client <= MaxClients; client++) {
+
+		if (!Client_MatchesFilter(client, flags)) {
+			continue;
+		}
+
+		clients[x++] = client;
+	}
+
+	return x;
+}
+
+/**
+ * Gets a random client matching the specified flags filter.
+ *
+ * @param flags			Client Filter Flags (Use the CLIENTFILTER_ constants).
+ * @return				Client Index or -1 if no client was found
+ */
+stock Client_GetRandom(flags=CLIENTFILTER_ALL)
+{
+	decl clients[MaxClients];
+	new num = Client_Get(clients, flags);
+
+	if (num == 0) {
+		return -1;
+	}
+	else if (num == 1) {
+		return clients[0];
+	}
+
+	new random = Math_GetRandomInt(0, num-1);
+
+	return clients[random];
 }
