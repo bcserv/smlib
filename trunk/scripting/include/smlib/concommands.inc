@@ -4,6 +4,7 @@
 #define _smlib_concommands_included
 
 #include <sourcemod>
+#include <smlib/clients>
 
 /**
  * Checks if a ConCommand has one or more flags set.
@@ -43,4 +44,4 @@ stock ConCommand_RemoveFlags(const String:command[], const flags)
     new newFlags = GetCommandFlags(command);
     newFlags &= ~flags;
     SetCommandFlags(command, newFlags);
-}  
+}

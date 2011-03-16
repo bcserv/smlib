@@ -161,6 +161,8 @@ public OnPluginStart() {
 	Client_PrintToChatEx({ 0 }, 0, false, "");
 	Client_Shake(0);
 	Client_IsAdmin(0);
+	Client_HasAdminFlags(0);
+	Client_IsInAdminGroup(0, "");
 	Client_IsLookingAtWall(0);
 	Client_GetClass(0);
 	Client_SetClass(0, 0);
@@ -172,6 +174,15 @@ public OnPluginStart() {
 	Client_HasButtons(0, 0);
 	Client_GetChangedButtons(0);
 	Client_SetMaxSpeed(0, 0.0);
+	Client_Mute(0);
+	Client_UnMute(0);
+	Client_IsMuted(0);
+	Client_PrintToConsole(0, "");
+	Client_Print(0, ClientHudPrint:0, "");
+	Client_Reply(0, "");
+	Client_MatchesFilter(0, 0);
+	Client_Get({ 0 }, 0);
+	Client_GetRandom(0);
 
 	// File: convars.inc
 	ConCommand_HasFlags("", 0);
