@@ -7,19 +7,22 @@
 #define CLIENTFILTER_ALL				0		// No filtering
 #define CLIENTFILTER_BOTS			( 1	<< 1  )	// Fake clients
 #define CLIENTFILTER_NOBOTS			( 1	<< 2  )	// No fake clients
-#define CLIENTFILTER_ADMINS			( 1	<< 3  )	// Generic Admins (or higher)
-#define CLIENTFILTER_NOADMINS		( 1	<< 4  )	// No generic admins
+#define CLIENTFILTER_AUTHORIZED		( 1 << 3  ) // SteamID validated
+#define CLIENTFILTER_NOTAUTHORIZED  ( 1 << 4  ) // SteamID not validated (yet)
+#define CLIENTFILTER_ADMINS			( 1	<< 5  )	// Generic Admins (or higher)
+#define CLIENTFILTER_NOADMINS		( 1	<< 6  )	// No generic admins
 // All flags below require ingame checking (optimization)
-#define CLIENTFILTER_INGAME			( 1	<< 5  )	// Ingame
-#define CLIENTFILTER_NOTINGAME		( 1 << 6  )	// Not ingame (currently connecting)
-#define CLIENTFILTER_ALIVE			( 1	<< 7  )	// Alive
-#define CLIENTFILTER_DEAD			( 1	<< 8  )	// Dead
-#define CLIENTFILTER_SPECTATORS		( 1 << 9  )	// Spectators
-#define CLIENTFILTER_NOSPECTATORS	( 1 << 10 )	// No Spectators
-#define CLIENTFILTER_OBSERVERS		( 1 << 11 )	// Observers
-#define CLIENTFILTER_NOOBSERVERS	( 1 << 12 )	// No Observers
-#define CLIENTFILTER_TEAMONE		( 1 << 13 )	// First Team (Terrorists, ...)
-#define CLIENTFILTER_TEAMTWO		( 1 << 14 )	// Second Team (Counter-Terrorists, ...)
+#define CLIENTFILTER_INGAME			( 1	<< 7  )	// Ingame
+#define CLIENTFILTER_INGAMEAUTH		( 1 << 8  ) // Ingame & Authorized
+#define CLIENTFILTER_NOTINGAME		( 1 << 9  )	// Not ingame (currently connecting)
+#define CLIENTFILTER_ALIVE			( 1	<< 10 )	// Alive
+#define CLIENTFILTER_DEAD			( 1	<< 11 )	// Dead
+#define CLIENTFILTER_SPECTATORS		( 1 << 12 )	// Spectators
+#define CLIENTFILTER_NOSPECTATORS	( 1 << 13 )	// No Spectators
+#define CLIENTFILTER_OBSERVERS		( 1 << 14 )	// Observers
+#define CLIENTFILTER_NOOBSERVERS	( 1 << 15 )	// No Observers
+#define CLIENTFILTER_TEAMONE		( 1 << 16 )	// First Team (Terrorists, ...)
+#define CLIENTFILTER_TEAMTWO		( 1 << 17 )	// Second Team (Counter-Terrorists, ...)
 
 #include <sourcemod>
 #include <entity_prop_stocks>
@@ -2411,6 +2414,10 @@ stock bool:Client_MatchesFilter(client, flags)
 		return true;
 	}
 
+	if (flags & CLIENTFILTER_INGAMEAUTH) {
+		flags |= CLIENTFILTER_INGAME | CLIENTFILTER_AUTHORIZED;
+	}
+
 	if (flags & CLIENTFILTER_BOTS && !IsFakeClient(client)) {
 		return false;
 	}
@@ -2424,6 +2431,14 @@ stock bool:Client_MatchesFilter(client, flags)
 	}
 
 	if (flags & CLIENTFILTER_NOADMINS && Client_IsAdmin(client)) {
+		return false;
+	}
+
+	if (flags & CLIENTFILTER_AUTHORIZED && !IsClientAuthorized(client)) {
+		return false;
+	}
+
+	if (flags & CLIENTFILTER_NOTAUTHORIZED && IsClientAuthorized(client)) {
 		return false;
 	}
 
