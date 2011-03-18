@@ -62,10 +62,11 @@ public Plugin:myinfo = {
 *****************************************************************/
 
 public OnPluginStart() {
-	
+
 	new arr[1], String:arr_str[1][1];
 	decl Float:vec[3];
 	decl String:buf[1], String:twoDimStrArr[1][1];
+	new var;
 
 	// File: arrays.inc
 	Array_FindValue(arr, sizeof(arr), 1);
@@ -183,6 +184,7 @@ public OnPluginStart() {
 	Client_MatchesFilter(0, 0);
 	Client_Get({ 0 }, 0);
 	Client_GetRandom(0);
+	Client_GetNext(0);
 
 	// File: convars.inc
 	ConCommand_HasFlags("", 0);
@@ -332,6 +334,7 @@ public OnPluginStart() {
 
 	// File: game.inc
 	Game_End();
+	Game_EndRound();
 
 	// File: general.inc
 	PrecacheMaterial("");
@@ -383,6 +386,7 @@ public OnPluginStart() {
 	// File: teams.inc
 	Team_HaveAllPlayers();
 	Team_GetClientCount(0);
+	Team_GetClientCounts(var, var);
 	Team_GetName(0, buf, sizeof(buf));
 	Team_SetName(0, "");
 	Team_GetScore(0);
