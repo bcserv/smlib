@@ -3,6 +3,24 @@
 #endif
 #define _smlib_client_included
 
+// Defined here beacause needed in teams.inc
+#define CLIENTFILTER_ALL				0		// No filtering
+#define CLIENTFILTER_BOTS			( 1	<< 1  )	// Fake clients
+#define CLIENTFILTER_NOBOTS			( 1	<< 2  )	// No fake clients
+#define CLIENTFILTER_ADMINS			( 1	<< 3  )	// Generic Admins (or higher)
+#define CLIENTFILTER_NOADMINS		( 1	<< 4  )	// No generic admins
+// All flags below require ingame checking (optimization)
+#define CLIENTFILTER_INGAME			( 1	<< 5  )	// Ingame
+#define CLIENTFILTER_NOTINGAME		( 1 << 6  )	// Not ingame (currently connecting)
+#define CLIENTFILTER_ALIVE			( 1	<< 7  )	// Alive
+#define CLIENTFILTER_DEAD			( 1	<< 8  )	// Dead
+#define CLIENTFILTER_SPECTATORS		( 1 << 9  )	// Spectators
+#define CLIENTFILTER_NOSPECTATORS	( 1 << 10 )	// No Spectators
+#define CLIENTFILTER_OBSERVERS		( 1 << 11 )	// Observers
+#define CLIENTFILTER_NOOBSERVERS	( 1 << 12 )	// No Observers
+#define CLIENTFILTER_TEAMONE		( 1 << 13 )	// First Team (Terrorists, ...)
+#define CLIENTFILTER_TEAMTWO		( 1 << 14 )	// Second Team (Counter-Terrorists, ...)
+
 #include <sourcemod>
 #include <entity_prop_stocks>
 #include <sdktools_engine>
@@ -14,6 +32,11 @@
 #include <smlib/math>
 #include <smlib/teams>
 #include <smlib/weapons>
+
+
+
+// Very useful macro for iterating all clients
+#define LOOP_CLIENTS(%1,%2) for (new %1=Client_GetNext(%2); %1 >= 1 && %1 <= MaxClients; %1=Client_GetNext(%2, ++%1))
 
 // Hud Element hiding flags (possibly outdated)
 #define	HIDEHUD_WEAPONSELECTION		( 1<<0 )	// Hide ammo count & weapon selection
@@ -2353,23 +2376,6 @@ stock bool:Client_IsMuted(client)
 	return bool:(GetClientListeningFlags(client) & VOICE_MUTED);
 }
 
-#define CLIENTFILTER_ALL				0		// No filtering
-#define CLIENTFILTER_BOTS			( 1	<< 0 )	// Fake clients
-#define CLIENTFILTER_NOBOTS			( 2	<< 0 )	// No fake clients
-#define CLIENTFILTER_ADMINS			( 3	<< 0 )	// Generic Admins (or higher)
-#define CLIENTFILTER_NOADMINS		( 4	<< 0 )	// No generic admins
-// All flags below require ingame checking (optimization)
-#define CLIENTFILTER_INGAME			( 5	<< 0 )	// Ingame
-#define CLIENTFILTER_NOTINGAME		( 6 << 0 )	// Not ingame (currently connecting)
-#define CLIENTFILTER_ALIVE			( 7	<< 0 )	// Alive
-#define CLIENTFILTER_DEAD			( 8	<< 0 )	// Dead
-#define CLIENTFILTER_SPECTATORS		( 9 << 0 )	// Spectators
-#define CLIENTFILTER_NOSPECTATORS	( 10<< 0 )	// No Spectators
-#define CLIENTFILTER_OBSERVERS		( 9 << 0 )	// Observers
-#define CLIENTFILTER_NOOBSERVERS	( 10<< 0 )	// No Observers
-#define CLIENTFILTER_TEAMONE		( 11<< 0 )	// First Team (Terrorists, ...)
-#define CLIENTFILTER_TEAMTWO		( 12<< 0 )	// Second Team (Counter-Terrorists, ...)
-
 /**
  * Checks if a client matches the specified flag filter.
  * Use one of the CLIENTFILTER_ constants.
@@ -2502,4 +2508,16 @@ stock Client_GetRandom(flags=CLIENTFILTER_ALL)
 	new random = Math_GetRandomInt(0, num-1);
 
 	return clients[random];
+}
+
+stock Client_GetNext(flags, start=1)
+{
+	for (new client=start; client <= MaxClients; client++) {
+
+		if (Client_MatchesFilter(client, flags)) {
+			return client;
+		}
+	}
+
+	return -1;
 }

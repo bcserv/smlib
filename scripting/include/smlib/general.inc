@@ -11,9 +11,6 @@
 #define TICKS_TO_TIME(%1)	( GetTickInterval() * %1 )
 #define ROUND_TO_TICKS(%1)	( TICK_INTERVAL * TIME_TO_TICKS( %1 ) )
 
-// Below are very useful macro functions, too bad the compiler gives a stupid indentation warning...
-#define LOOP_CLIENTS(%1) for (new %1=1; %1 <= MaxClients; %1++)
-
 /*
  * Precaches the given model.
  * It's best to call this OnMapStart().
