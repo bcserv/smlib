@@ -47,6 +47,8 @@ stock bool:Team_HaveAllPlayers(bool:countFakeClients=true) {
  */
 stock Team_GetClientCount(team, flags=0)
 {
+	flags |= CLIENTFILTER_INGAME;
+
 	new numClients = 0;
 	for (new client=1; client <= MaxClients; client++) {
 
@@ -74,6 +76,8 @@ stock Team_GetClientCount(team, flags=0)
  */
 stock Team_GetClientCounts(&team1=0, &team2=0, flags=0)
 {
+	flags |= CLIENTFILTER_INGAME;
+
 	for (new client=1; client <= MaxClients; client++) {
 
 		if (!Client_MatchesFilter(client, flags)) {
