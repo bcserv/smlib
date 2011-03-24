@@ -1476,7 +1476,7 @@ stock Entity_PointAtTarget(entity, target, const String:name[]="")
  *
  * @param entity			Entity index.
  * @param target			Target entity index.
- * @param				Optional: target name
+ * @param					Optional: target name
  * @noreturn
  */
 stock Entity_PointHurtAtTarget(entity, target, const String:name[]="")
