@@ -2270,7 +2270,7 @@ stock Client_GetChangedButtons(client)
 	static oldButtons[MAXPLAYERS+1] = {0,...};
 	
 	new buttons = Client_GetButtons(client);
-	new changedButtons = buttons | oldButtons[client];
+	new changedButtons = buttons ^ oldButtons[client];
 	
 	oldButtons[client] = buttons;
 	
