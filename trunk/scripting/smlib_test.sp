@@ -152,6 +152,7 @@ public OnPluginStart() {
 	Client_SetWeaponPlayerAmmo(0, "");
 	Client_SetWeaponPlayerAmmoEx(0, 0);
 	Client_SetWeaponAmmo(0, "");
+	Client_GetNextWeapon(0, var);
 	Client_PrintHintText(0, "");
 	Client_PrintHintTextToAll("");
 	Client_PrintKeyHintText(0, "");
@@ -175,6 +176,8 @@ public OnPluginStart() {
 	Client_HasButtons(0, 0);
 	Client_GetChangedButtons(0);
 	Client_SetMaxSpeed(0, 0.0);
+	Client_SetScreenOverlay(0, "");
+	Client_SetScreenOverlayForAll("");
 	Client_Mute(0);
 	Client_UnMute(0);
 	Client_IsMuted(0);
