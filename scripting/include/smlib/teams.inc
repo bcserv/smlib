@@ -238,10 +238,20 @@ stock Team_GetEdict(index)
 		return edict;
 	}
 
+	new bool:foundTeamManager = false;
+
 	new maxEntities = GetMaxEntities();
 	for (new entity=MaxClients+1; entity < maxEntities; entity++) {
-		
-		if (!IsValidEntity(entity)) {
+
+		if (IsValidEntity(entity)) {
+			foundTeamManager = true;
+		}
+		else {
+			// Do not continue when no team managers are found anymore (for optimization)
+			if (foundTeamManager) {
+				return -1;
+			}
+
 			continue;
 		}
 
