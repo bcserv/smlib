@@ -2356,12 +2356,7 @@ stock Client_SetScreenOverlay(client, const String:path[])
  */
 stock Client_SetScreenOverlayForAll(const String:path[])
 {
-	for (new client=0; client <= MaxClients; client++) {
-		
-		if (!IsClientInGame(client) || IsFakeClient(client)) {
-			continue;
-		}
-
+	LOOP_CLIENTS(client, CLIENTFILTER_INGAME | CLIENTFILTER_NOBOTS) {
 		Client_SetScreenOverlay(client, path);
 	}
 }
