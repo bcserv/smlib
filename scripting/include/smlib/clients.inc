@@ -36,10 +36,23 @@
 #include <smlib/teams>
 #include <smlib/weapons>
 
-
-
-// Very useful macro for iterating all clients
+/**
+ * Very useful macro to iterate all clients
+ * matching the specified flags.
+ *
+ * @param 1		Name of the client index variable (will be only valid in the loop).
+ * @param 2		CLIENTFILTER_ flags to check.
+ */
 #define LOOP_CLIENTS(%1,%2) for (new %1=Client_GetNext(%2); %1 >= 1 && %1 <= MaxClients; %1=Client_GetNext(%2, ++%1))
+
+/**
+ * Very useful macro to iterate all weapons of a client.
+ *
+ * @param 1		Client Index
+ * @param 2		Name of the weapon index variable (will be only valid in the loop).
+ * @param 3		Name of the client's weapon index variable (will be only valid in the loop).
+ */
+#define LOOP_CLIENTWEAPONS(%1,%2,%3) for (new %3, %2=Client_GetNextWeapon(%1, %3); %2 != -1; %2=Client_GetNextWeapon(%1, %3))
 
 // Hud Element hiding flags (possibly outdated)
 #define	HIDEHUD_WEAPONSELECTION		( 1<<0 )	// Hide ammo count & weapon selection
@@ -1573,6 +1586,33 @@ stock Client_SetWeaponAmmo(client, const String:className[], primaryAmmo=-1, sec
 }
 
 /**
+ * Gets the next weapon of a client, starting at start.
+ *
+ * @param client		Client Index (must be a valid client ingame).
+ * @param index			Reference to an index variable, will contain the index of the next weapon to check.
+ * @return				Weapon Index or -1 if no more weapons are found.
+ */
+stock Client_GetNextWeapon(client, &index = 0)
+{
+	new offset = Client_GetWeaponsOffset(client) + (index * 4);
+
+	new weapon;
+	while (index < MAX_WEAPONS) {
+		index++;
+
+		weapon = GetEntDataEnt2(client, offset);
+
+		if (Weapon_IsValid(weapon)) {
+			return weapon;
+		}
+
+		offset += 4;
+	}
+
+	return -1;
+}
+
+/**
  * Prints white text to the bottom center of the screen
  * for one client. Does not work in all games.
  * Line Breaks can be done with "\n".
@@ -2525,6 +2565,13 @@ stock Client_GetRandom(flags=CLIENTFILTER_ALL)
 	return clients[random];
 }
 
+/**
+ * Gets a client matching certain flags starting at start.
+ *
+ * @param flags			Client Filter Flags (Use the CLIENTFILTER_ constants).
+ * @param start			Start Index.
+ * @return				Client Index or -1 if no client was found
+ */
 stock Client_GetNext(flags, start=1)
 {
 	for (new client=start; client <= MaxClients; client++) {
