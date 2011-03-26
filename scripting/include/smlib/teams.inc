@@ -243,7 +243,11 @@ stock Team_GetEdict(index)
 	new maxEntities = GetMaxEntities();
 	for (new entity=MaxClients+1; entity < maxEntities; entity++) {
 
-		if (IsValidEntity(entity)) {
+		if (!IsValidEntity(entity)) {
+			continue;
+		}
+
+		if (Entity_ClassNameMatches(entity, "team_manager", true)) {
 			foundTeamManager = true;
 		}
 		else {
@@ -253,10 +257,6 @@ stock Team_GetEdict(index)
 			}
 
 			continue;
-		}
-
-		if (!Entity_ClassNameMatches(entity, "team_manager", true)) {
-			return -1;
 		}
 
 		new num = Team_EdictGetNum(entity);
