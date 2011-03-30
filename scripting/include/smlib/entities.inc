@@ -1037,7 +1037,7 @@ enum Collision_Group_t
  */
 stock Collision_Group_t:Entity_GetCollisionGroup(entity)
 {
-	return Collision_Group_t:GetEntProp(entity, Prop_Data, "m_CollisionGroup");
+	return Collision_Group_t:Collision_Group_t:GetEntProp(entity, Prop_Data, "m_CollisionGroup");
 }
 
 /**
