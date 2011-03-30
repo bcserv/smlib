@@ -237,7 +237,9 @@ stock Team_GetEdict(index)
 	if (Entity_IsValid(edict)) {
 		return edict;
 	}
-
+	
+	new bool:foundTeamManager = false;
+	
 	new bool:foundTeamManager = false;
 
 	new maxEntities = GetMaxEntities();
@@ -250,12 +252,10 @@ stock Team_GetEdict(index)
 		if (Entity_ClassNameMatches(entity, "team_manager", true)) {
 			foundTeamManager = true;
 		}
+		else if(foundTeamManager) {
+			return -1;
+		}
 		else {
-			// Do not continue when no team managers are found anymore (for optimization)
-			if (foundTeamManager) {
-				return -1;
-			}
-
 			continue;
 		}
 
