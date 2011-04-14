@@ -1197,7 +1197,14 @@ stock Client_GiveWeaponAndAmmo(client, const String:className[], bool:switchTo=t
 		return INVALID_ENT_REFERENCE;
 	}
 
-	Weapon_SetClips(weapon, primaryClip, secondaryClip);
+	if (primaryClip != -1) {
+		Weapon_SetPrimaryClip(weapon, primaryClip);
+	}
+
+	if (secondaryClip != -1) {
+		Weapon_SetSecondaryClip(weapon, secondaryClip);
+	}
+
 	Client_SetWeaponPlayerAmmoEx(client, weapon, primaryAmmo, secondaryAmmo);
 
 	return weapon;
