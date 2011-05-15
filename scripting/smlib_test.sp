@@ -188,6 +188,7 @@ public OnPluginStart() {
 	Client_Get({ 0 }, 0);
 	Client_GetRandom(0);
 	Client_GetNext(0);
+	Client_GetMapTime(0);
 
 	// File: convars.inc
 	ConCommand_HasFlags("", 0);
