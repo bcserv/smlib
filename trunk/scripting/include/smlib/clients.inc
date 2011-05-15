@@ -2333,7 +2333,7 @@ stock Client_GetChangedButtons(client)
  */
 stock Client_SetMaxSpeed(client, Float:value)
 {
-	Client_SetMaxSpeed(client, value);
+	Entity_SetMaxSpeed(client, value);
 }
 
 /**
@@ -2584,4 +2584,18 @@ stock Client_GetNext(flags, start=1)
 	}
 
 	return -1;
+}
+
+/**
+ * Retrieves the time duration a client played on the current map.
+ *
+ * @param client		Client Index.
+ * @return				Time in seconds as Float
+ */
+stock Float:Client_GetMapTime(client)
+{
+	new Float:fClientTime = GetClientTime(client);
+	new Float:fGameTime = GetGameTime();
+
+	return (fClientTime < fGameTime) ? fClientTime : fGameTime;
 }
