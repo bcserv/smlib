@@ -113,10 +113,13 @@ stock String_ToLower(const String:input[], String:output[], size)
 		if (IsCharUpper(input[x])) {
 			output[x] = CharToLower(input[x]);
 		}
+		else {
+			output[x] = input[x];
+		}
 		
 		x++;
 	}
-	
+
 	output[x] = '\0';
 }
 
@@ -140,10 +143,13 @@ stock String_ToUpper(const String:input[], String:output[], size)
 		if (IsCharLower(input[x])) {
 			output[x] = CharToUpper(input[x]);
 		}
-		
+		else {
+			output[x] = input[x];
+		}
+
 		x++;
 	}
-	
+
 	output[x] = '\0';
 }
 
