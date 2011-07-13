@@ -2164,6 +2164,7 @@ stock bool:Client_IsLookingAtWall(client, Float:distance=40.0) {
 	if (TR_DidHit(trace)) {
 		
 		if (TR_GetEntityIndex(trace) > 0) {
+			CloseHandle(trace);
 			return false;
 		}
 		

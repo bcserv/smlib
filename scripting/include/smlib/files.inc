@@ -293,4 +293,79 @@ stock File_LoadTranslations(const String:file[])
 	SetFailState("Unable to locate translation file (%s).",path);
 }
 
+/*
+ * Reads the contents of a given file into a string buffer in binaey mode.
+ *
+ * @param path		Path to the file
+ * @param buffer	String buffer
+ * @param size		If -1, reads until a null terminator is encountered in the file.  Otherwise, read_count bytes are read into the buffer provided.  In this case the buffer is not explicitly null terminated, and the buffer will contain any null terminators read from the file.
+ * @return			Number of characters written to the buffer, or -1 if an error was encountered.
+ */
+stock File_ToString(const String:path[], String:buffer[], size)
+{
+	new Handle:file = OpenFile(path, "rb");
 
+	if (file == INVALID_HANDLE) {
+		return -1;
+	}
+
+	new num_bytes_written = ReadFileString(file, buffer, size);
+	CloseHandle(file);
+
+	return num_bytes_written;
+}
+
+/*
+ * Writes a string into a file in binary mode.
+ *
+ * @param file		Path to the file
+ * @param str		String to write
+ * @return			True on success, false otherwise
+ */
+stock bool:File_StringToFile(const String:path[], String:str[])
+{
+	new Handle:file = OpenFile(path, "wb");
+
+	if (file == INVALID_HANDLE) {
+		return false;
+	}
+
+	new bool:success = WriteFileString(file, str, false);
+	CloseHandle(file);
+
+	return success;
+}
+
+/*
+ * Copies file source to destination
+ *
+ * @param source		Input file
+ * @param destination	Output file
+ */
+stock bool:File_Copy(const String:source[], const String:destination[])
+{
+	new Handle:file_source = OpenFile(source, "rb");
+
+	if (file_source == INVALID_HANDLE) {
+		return false;
+	}
+
+	new Handle:file_destination = OpenFile(destination, "wb");
+
+	if (file_destination == INVALID_HANDLE) {
+		CloseHandle(file_source);
+		return false;
+	}
+
+	new buffer[32];
+	new cache;
+
+	while((cache = ReadFile(file_source, buffer, 32, 1)) != -1) {
+		WriteFile(file_destination, buffer, cache, 1);
+	}
+
+	CloseHandle(file_source);
+	CloseHandle(file_destination);
+
+	return true;
+}

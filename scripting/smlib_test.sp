@@ -335,6 +335,9 @@ public OnPluginStart() {
 	File_AddToDownloadsTable("");
 	File_ReadDownloadList("");
 	File_LoadTranslations("");
+	File_ToString("", "", 0);
+	File_StringToFile("", "");
+	File_Copy("", "");
 
 	// File: game.inc
 	Game_End();
