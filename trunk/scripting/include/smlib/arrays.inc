@@ -141,3 +141,18 @@ stock Array_Fill(any:array[], size, any:value, start=0)
 		array[i] = value;
 	}
 }
+
+/**
+ * Copies a 1 dimensional static array.
+ *
+ * @param array			Static Array to copy from.
+ * @param newArray		New Array to copy to.
+ * @param size			Size of the array (or number of cells to copy)
+ * @noreturn
+ */
+stock Array_Copy(const any:array[], any:newArray[], size)
+{
+	for (new i=0; i < size; i++) {
+		newArray[i] = array[i];
+	}
+}

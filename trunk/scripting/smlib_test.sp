@@ -74,6 +74,7 @@ public OnPluginStart() {
 	Array_FindLowestValue(arr, sizeof(arr));
 	Array_FindHighestValue(arr, sizeof(arr));
 	Array_Fill(arr, sizeof(arr), 0);
+	Array_Copy(arr, arr, 1);
 
 	// File: 0s.inc
 	Client_SetHideHud(0, 0);
@@ -228,6 +229,9 @@ public OnPluginStart() {
 	Effect_Fade(0);
 	Effect_FadeIn(0);
 	Effect_FadeOut(0);
+	Effect_DrawBeamBox(arr, 1, NULL_VECTOR, NULL_VECTOR, 0, 0);
+	Effect_DrawBeamBoxToAll(NULL_VECTOR, NULL_VECTOR, 0, 0);
+	Effect_DrawBeamBoxToClient(0, NULL_VECTOR, NULL_VECTOR, 0, 0);
 
 	// File: entities.inc
 	Entity_IsValid(0);
