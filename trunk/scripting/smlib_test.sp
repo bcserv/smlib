@@ -338,6 +338,7 @@ public OnPluginStart() {
 	File_ToString("", "", 0);
 	File_StringToFile("", "");
 	File_Copy("", "");
+	File_CopyRecursive("", "");
 
 	// File: game.inc
 	Game_End();
