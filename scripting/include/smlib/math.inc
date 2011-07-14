@@ -122,6 +122,21 @@ stock bool:Math_IsInBounds(any:value, any:min, any:max)
 }
 
 /**
+ * Let's the specified value "overflow" if it is outside the given limit.
+ * This is like with integers when it reaches a value above the max possible
+ * integer size.
+ * 
+ * @param value			Value
+ * @param min			Min value used as lower border
+ * @param max			Max value used as upper border
+ * @return				Overflowed number
+ */
+stock any:Math_Overflow(any:value, any:min, any:max)
+{
+	return (value % max) + min;
+}
+
+/**
  * Returns a random, uniform Integer number in the specified (inclusive) range.
  * This is safe to use multiple times in a function.
  * The seed is set automatically for each plugin.
