@@ -235,3 +235,66 @@ stock bool:IsIPLocal(ip)
 
 	return false;
 }
+
+/*
+ * Callback for Change_OverTime.
+ * Note that every parameter is a reference and can be changed during this callback.
+ * You can get the elapsed time since start by multiply tick with currentCall.
+ * 
+ * @param entity		Entity Index.
+ * @param interval		The current interval from the current game time to execute the next call of this function.
+ * @param currentCall	The current call number (0 is the 1st call at 0.0 seconds, 1 the 2nd call at tick*1 seconds, ...).
+ * @return				When true this callback will be called again at the next defined tick, otherwise it won't.
+ */
+functag Entity_ChangeOverTimeCallback bool:public(&entity, &Float:interval, &currentCall);
+
+/*
+ * Creates a timer and provides a callback to change various things about an entity over time.
+ * 
+ * @param entity			Entity Index.
+ * @param interval			Interval from the current game time to execute the given function.
+ * @noreturn
+ */
+stock Entity_ChangeOverTime(entity, Float:interval=0.1, Entity_ChangeOverTimeCallback:valueCallback)
+{	
+	new Handle:dataPack = CreateDataPack();
+	WritePackCell(dataPack, EntIndexToEntRef(entity));
+	WritePackFloat(dataPack, interval);
+	WritePackCell(dataPack, 0);
+	WritePackCell(dataPack, _:valueCallback);
+	ResetPack(dataPack);
+	__smlib_Timer_ChangeOverTime(INVALID_HANDLE,dataPack);
+}
+
+public Action:__smlib_Timer_ChangeOverTime(Handle:Timer, Handle:dataPack)
+{
+	new entity = EntRefToEntIndex(ReadPackCell(dataPack));
+	if(!Entity_IsValid(entity)){
+		return Plugin_Stop;
+	}
+	
+	new Float:interval = ReadPackFloat(dataPack);
+	new currentCall = ReadPackCell(dataPack);
+	new Entity_ChangeOverTimeCallback:callback = Entity_ChangeOverTimeCallback:ReadPackCell(dataPack);
+	new any:result;
+	Call_StartFunction(INVALID_HANDLE, callback);
+	Call_PushCellRef(entity);
+	Call_PushFloatRef(interval);
+	Call_PushCellRef(currentCall);
+	Call_Finish(result);
+	
+	if(result == false){
+		return Plugin_Stop;
+	}
+	
+	ResetPack(dataPack,true);
+	WritePackCell(dataPack, EntIndexToEntRef(entity));
+	WritePackFloat(dataPack, interval);
+	WritePackCell(dataPack, currentCall+1);
+	WritePackCell(dataPack, _:callback);
+	ResetPack(dataPack);
+	CreateTimer(interval,__smlib_Timer_ChangeOverTime,dataPack);
+	return Plugin_Stop;
+}
+
+

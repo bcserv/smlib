@@ -2526,7 +2526,7 @@ stock bool:Client_MatchesFilter(client, flags)
 /**
  * Gets all clients matching the specified flags filter.
  *
- * @param Client		Client Array, size should be MaxClients or MAXPLAYERS
+ * @param client		Client Array, size should be MaxClients or MAXPLAYERS
  * @param flags			Client Filter Flags (Use the CLIENTFILTER_ constants).
  * @return				The number of clients stored in the array
  */
@@ -2600,3 +2600,47 @@ stock Float:Client_GetMapTime(client)
 
 	return (fClientTime < fGameTime) ? fClientTime : fGameTime;
 }
+
+/**
+ * Gets client money value (for games like Counter-Strike:Source).
+ *
+ * @param client		Client Index.
+ * @return				Money value from the client.
+ */
+stock Client_GetMoney(client)
+{
+	return GetEntProp(client,Prop_Send,"m_iAccount");
+}
+
+/**
+ * Sets client money value (for games like Counter-Strike:Source).
+ *
+ * @param client		Client Index.
+ * @param value			Money value to set.
+ * @noreturn
+ */
+stock Client_SetMoney(client,value)
+{
+	SetEntProp(client,Prop_Send,"m_iAccount",value);
+}
+
+/**
+ * Gets a client's observers.
+ *
+ * @param client		Client Index.
+ * @param observers		Array with size of MaxClients or MAXPLAYERS.
+ * @return				Number of observers found.
+ */
+stock Client_GetObservers(client,observers[])
+{
+	new count = 0;
+	LOOP_CLIENTS(player,CLIENTFILTER_OBSERVERS) {
+		if(Client_GetObserverTarget(player) == client) {
+			observers[count] = player;
+			count++;
+		}
+	}
+	return count;
+}
+
+
