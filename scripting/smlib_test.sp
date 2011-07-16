@@ -192,6 +192,7 @@ public OnPluginStart() {
 	Client_GetMapTime(0);
 	Client_GetMoney(0);
 	Client_SetMoney(0,0);
+	Client_GetObservers(0,{ 0 });
 
 	// File: convars.inc
 	ConCommand_HasFlags("", 0);
