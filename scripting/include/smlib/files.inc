@@ -265,32 +265,38 @@ stock File_ReadDownloadList(const String:path[])
 }
 
 /*
- * Attempts to load a translation file and unloads the plugin if the file doesn't exist.
+ * Attempts to load a translation file and optionally unloads the plugin if the file
+ * doesn't exist (also prints an error message).
  *
- * @param file		Filename of the translations file (eg. <pluginname>.phrases).
- * @noreturn
+ * @param file			Filename of the translations file (eg. <pluginname>.phrases).
+ * @param setFailState	If true, it sets the failstate if the translations file doesn't exist
+ * @return				True on success, false otherwise (only if setFailState is set to false)
  */
-stock File_LoadTranslations(const String:file[])
+stock File_LoadTranslations(const String:file[], setFailState=true)
 {
 	decl String:path[PLATFORM_MAX_PATH];
-	
-	Format(path,sizeof(path),"translations/%s",file);
-	
-	BuildPath(Path_SM, path, sizeof(path), path);
-	
+
+	BuildPath(Path_SM, path, sizeof(path), "translations/%s", file);
+
 	if (FileExists(path)) {
 		LoadTranslations(file);
-		return;
+		return true;
 	}
-	
-	Format(path,sizeof(path),"%s.txt",path);
-	
-	if (FileExists(path)) {
-		LoadTranslations(file);
-		return;
+
+	Format(path,sizeof(path), "%s.txt", path);
+
+	if (!FileExists(path)) {
+
+		if (setFailState) {
+			SetFailState("Unable to locate translation file (%s).", path);
+		}
+
+		return false;
 	}
-	
-	SetFailState("Unable to locate translation file (%s).",path);
+
+	LoadTranslations(file);
+
+	return true;
 }
 
 /*
