@@ -21,17 +21,15 @@ enum VecAngle
 
 /**
  * Makes a negative integer number to a positive integer number.
+ * This is faster than Sourcemod's native FloatAbs() for integers.
+ * Use FloatAbs() for Float numbers.
  *
  * @param number		A number that can be positive or negative.
  * @return				Positive number.
  */
-stock any:Math_Abs(any:number)
+stock Math_Abs(value)
 {	
-	if (number >= 0) {
-		return number;
-	}
-
-	return (number * -1);
+	return (value ^ (value >> 31)) - (value >> 31);
 }
 
 /**

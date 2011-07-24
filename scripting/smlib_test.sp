@@ -398,6 +398,8 @@ public OnPluginStart() {
 	String_ToLower(buf, buf, sizeof(buf));
 	String_ToUpper(buf, buf, sizeof(buf));
 	String_GetRandom(buf, sizeof(buf));
+	String_StartsWith("", "");
+	String_EndsWith("", "");
 
 	// File: teams.inc
 	Team_HaveAllPlayers();

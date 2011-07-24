@@ -300,7 +300,7 @@ stock File_LoadTranslations(const String:file[], setFailState=true)
 }
 
 /*
- * Reads the contents of a given file into a string buffer in binaey mode.
+ * Reads the contents of a given file into a string buffer in binary mode.
  *
  * @param path		Path to the file
  * @param buffer	String buffer
