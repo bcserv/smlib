@@ -7,6 +7,14 @@
 #include <sdktools_entinput>
 #include <sdktools_functions>
 
+/**
+ * Macro for iterating trough all children (entities it is parent of) of an entity.
+ *
+ * @param 1		Entity Index of the parent.
+ * @param 2		Name of the children entity index variable (will be only valid in the loop).
+ */
+#define LOOP_CHILDREN(%1,%2) for (new %2=Entity_GetNextChild(%1); %2 != INVALID_ENT_REFERENCE; %2=Entity_GetNextChild(%1, ++%2))
+
 /*
  * Checks if an entity is valid and exists.
  *
@@ -1832,4 +1840,25 @@ public Action:__smlib_Timer_ChangeOverTime(Handle:Timer, Handle:dataPack)
 	return Plugin_Stop;
 }
 
+/**
+ * Gets the next child, entity is parent of.
+ *
+ * @param client		Entity Index (of Parent)
+ * @param start			Start Index.
+ * @return				Entity Index or -1 if no entity was found.
+ */
+stock Entity_GetNextChild(parent, start=0)
+{
+	for (new entity=start; entity <= 2048; entity++) {
 
+		if (!Entity_IsValid(entity)) {
+			continue;
+		}
+
+		if (Entity_GetParent(entity) == parent) {
+			return entity;
+		}
+	}
+
+	return INVALID_ENT_REFERENCE;
+}

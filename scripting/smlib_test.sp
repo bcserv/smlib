@@ -191,8 +191,10 @@ public OnPluginStart() {
 	Client_GetNext(0);
 	Client_GetMapTime(0);
 	Client_GetMoney(0);
-	Client_SetMoney(0,0);
-	Client_GetObservers(0,{ 0 });
+	Client_SetMoney(0, 0);
+	Client_GetObservers(0, { 0 });
+	Client_GetPlayersInRadius(0, arr, 0.0);
+	Client_GetNextObserver(0);
 
 	// File: convars.inc
 	ConCommand_HasFlags("", 0);
@@ -334,6 +336,7 @@ public OnPluginStart() {
 	Entity_RemoveParent(0);
 	Entity_SetParent(0, 0);
 	Entity_ChangeOverTime(0, 0.1, Entity_ChangeOverTimeCallback:0);
+	Entity_GetNextChild(0);
 
 	// File: files.inc
 	File_GetBaseName("", buf, sizeof(buf));
@@ -454,7 +457,6 @@ public OnPluginStart() {
 	Weapon_GetViewModelIndex(0);
 	Weapon_SetViewModelIndex(0, 0);
 	
-
 	// File: world.inc
 	World_GetMaxs(vec);
 }

@@ -44,6 +44,14 @@
  * @param 2		CLIENTFILTER_ flags to check.
  */
 #define LOOP_CLIENTS(%1,%2) for (new %1=Client_GetNext(%2); %1 >= 1 && %1 <= MaxClients; %1=Client_GetNext(%2, ++%1))
+	
+/**
+ * Macro for iterating trough all observers of a player.
+ *
+ * @param 1		Client Index for who to get the observers.
+ * @param 2		Name of the observer client index variable (will be only valid in the loop).
+ */
+#define LOOP_OBSERVERS(%1,%2) for (new %2=Client_GetNextObserver(%1); %2 >= 1 && %2 <= MaxClients; %2=Client_GetNextObserver(%1, ++%2))
 
 /**
  * Very useful macro to iterate all weapons of a client.
@@ -2609,7 +2617,7 @@ stock Float:Client_GetMapTime(client)
  */
 stock Client_GetMoney(client)
 {
-	return GetEntProp(client,Prop_Send,"m_iAccount");
+	return GetEntProp(client, Prop_Send, "m_iAccount");
 }
 
 /**
@@ -2621,7 +2629,7 @@ stock Client_GetMoney(client)
  */
 stock Client_SetMoney(client,value)
 {
-	SetEntProp(client,Prop_Send,"m_iAccount",value);
+	SetEntProp(client, Prop_Send, "m_iAccount", value);
 }
 
 /**
@@ -2631,16 +2639,88 @@ stock Client_SetMoney(client,value)
  * @param observers		Array with size of MaxClients or MAXPLAYERS.
  * @return				Number of observers found.
  */
-stock Client_GetObservers(client,observers[])
+stock Client_GetObservers(client, observers[])
 {
 	new count = 0;
-	LOOP_CLIENTS(player,CLIENTFILTER_OBSERVERS) {
-		if(Client_GetObserverTarget(player) == client) {
-			observers[count] = player;
-			count++;
+
+	LOOP_CLIENTS(player, CLIENTFILTER_OBSERVERS) {
+
+		if (Client_GetObserverTarget(player) == client) {
+			observers[count++] = player;
 		}
 	}
+
 	return count;
 }
 
+static Float:getPlayersInRadius_distances[MAXPLAYERS+1];
 
+/**
+ * Gets all players near a player in a certain radius and
+ * orders the players by distance (optional).
+ *
+ * @param client			Client Index.
+ * @param clients			Array with size of MaxClients or MAXPLAYERS.
+ * @param radius			radius Float (max distance)
+ * @param orderByDistance	Set to true to order the clients by distance, false otherwise.
+ * @return					Number of clients found.
+ */
+stock Client_GetPlayersInRadius(client, clients[], Float:radius, bool:orderByDistance=true)
+{
+	decl Float:origin_client[3];
+	new
+		Float:distance,
+		count=0;
+
+	Entity_GetAbsOrigin(client, origin_client);
+
+	LOOP_CLIENTS(player, CLIENTFILTER_INGAME) {
+
+		if (player == client) {
+			continue;
+		}
+
+		distance = Entity_GetDistanceOrigin(player, origin_client);
+
+		if (distance <= radius) {
+			clients[count++] = player;
+
+			if (orderByDistance) {
+				getPlayersInRadius_distances[player] = distance;
+			}
+		}
+	}
+
+	if (orderByDistance) {
+		SortCustom1D(clients, count, __smlib_GetPlayersInRadius_Sort);
+	}
+
+	return count;
+}
+
+public __smlib_GetPlayersInRadius_Sort(player1, player2, const clients[], Handle:hndl)
+{
+	return FloatCompare(getPlayersInRadius_distances[player1], getPlayersInRadius_distances[player2]);
+}
+
+/**
+ * Gets the next player observing client starting at start.
+ *
+ * @param client		Client Index (Observer Target)
+ * @param start			Start Index.
+ * @return				Client Index or -1 if no client was found
+ */
+stock Client_GetNextObserver(client, start=1)
+{
+	for (new player=start; player <= MaxClients; player++) {
+
+		if (Client_MatchesFilter(player, CLIENTFILTER_OBSERVERS)) {
+
+			if (Client_GetObserverTarget(player) == client) {
+				return player;
+			}
+		}
+	}
+
+	return -1;
+}
