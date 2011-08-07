@@ -195,6 +195,8 @@ public OnPluginStart() {
 	Client_GetObservers(0, { 0 });
 	Client_GetPlayersInRadius(0, arr, 0.0);
 	Client_GetNextObserver(0);
+	Client_GetPlayerManager();
+	Client_SetPing(0, 0);
 
 	// File: convars.inc
 	ConCommand_HasFlags("", 0);

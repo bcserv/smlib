@@ -126,10 +126,11 @@ stock Entity_FindByClassName(startEntity, const String:className[])
 }
 
 /**
- * Checks if an entity matches a specific entity class.
+ * Checks if an entity (partially) matches a specific entity class.
  *
  * @param entity		Entity Index.
- * @param class			Classname String.
+ * @param className		Classname String.
+ * @partialMatch		If to do a partial classname check.
  * @return				True if the classname matches, false otherwise.
  */
 stock bool:Entity_ClassNameMatches(entity, const String:className[], partialMatch=false)

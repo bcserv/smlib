@@ -2724,3 +2724,68 @@ stock Client_GetNextObserver(client, start=1)
 
 	return -1;
 }
+
+/**
+ * Searchs and returns the game's player_manager entity.
+ * This should be called on every map start.
+ *
+ * @return				player_manager entity or INVALID_ENT_REFERENCE if not found.
+ */
+stock Client_GetPlayerManager()
+{
+	static player_manager = INVALID_ENT_REFERENCE;
+
+	if (player_manager != INVALID_ENT_REFERENCE) {
+
+		if (Entity_IsValid(player_manager)) {
+			return player_manager;
+		}
+		else {
+			player_manager = INVALID_ENT_REFERENCE;
+		}
+	}
+
+	new maxEntities = GetMaxEntities();
+
+	for (new entity=0; entity < maxEntities; entity++) {
+
+		if (!Entity_IsValid(entity)) {
+			continue;
+		}
+
+		if (Entity_ClassNameMatches(entity, "player_manager", true)) {
+			player_manager = EntIndexToEntRef(entity);
+
+			return player_manager;
+		}
+	}
+
+	return INVALID_ENT_REFERENCE;
+}
+
+/**
+ * Sets the client's ping as displayed in the scoreboards.
+ * Should be called OnGameFrame.
+ *
+ * @param client		Client Index
+ * @param start			New ping value.
+ * @return				True on sucess, false otherwise.
+ */
+stock Client_SetPing(client, value)
+{
+	new player_manager = Client_GetPlayerManager();
+
+	static offset = -1;
+	
+	if (offset== -1) {
+		offset = GetEntSendPropOffs(player_manager, "m_iPing", true);
+		
+		if (offset == -1) {
+			return false;
+		}
+	}
+
+	SetEntData(player_manager, offset + (client * 4), value, 4, true);
+
+	return true;
+}
