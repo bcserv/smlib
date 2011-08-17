@@ -197,6 +197,11 @@ public OnPluginStart() {
 	Client_GetNextObserver(0);
 	Client_GetPlayerManager();
 	Client_SetPing(0, 0);
+	Client_PrintToTopExclude(0);
+	Client_PrintToTopRaw(0,0,0,0,0,0.0,"");
+	Client_PrintToTop(0,0,0,0,0,0.0,"");
+	Client_PrintToTopAll(0,0,0,0,0.0,"");
+	Client_PrintToTopEx({ 0 },1,0,0,0,0,0.0,"");
 
 	// File: convars.inc
 	ConCommand_HasFlags("", 0);
@@ -239,6 +244,7 @@ public OnPluginStart() {
 	Effect_DrawBeamBox(arr, 1, NULL_VECTOR, NULL_VECTOR, 0, 0);
 	Effect_DrawBeamBoxToAll(NULL_VECTOR, NULL_VECTOR, 0, 0);
 	Effect_DrawBeamBoxToClient(0, NULL_VECTOR, NULL_VECTOR, 0, 0);
+	Effect_EnvSprite(NULL_VECTOR,0);
 
 	// File: entities.inc
 	Entity_IsValid(0);
@@ -335,11 +341,22 @@ public OnPluginStart() {
 	Entity_GetGroundEntity(0);
 	Entity_Hurt(0, 0);
 	Entity_GetParent(0);
-	Entity_RemoveParent(0);
+	Entity_ClearParent(0);
 	Entity_SetParent(0, 0);
 	Entity_ChangeOverTime(0, 0.1, Entity_ChangeOverTimeCallback:0);
 	Entity_GetNextChild(0);
-
+	Entity_GetMoveDirection(0,NULL_VECTOR);
+	Entity_SetMoveDirection(0,NULL_VECTOR);
+	Entity_GetForceClose(0);
+	Entity_SetForceClose(0,true);
+	Entity_GetSpeed(0);
+	Entity_SetSpeed(0,0.0);
+	Entity_GetBlockDamage(0);
+	Entity_SetBlockDamage(0,0.0);
+	Entity_IsDisabled(0);
+	Entity_Disable(0);
+	Entity_Enable(0);
+	
 	// File: files.inc
 	File_GetBaseName("", buf, sizeof(buf));
 	File_GetDirName("", buf, sizeof(buf));

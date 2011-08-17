@@ -12,6 +12,8 @@
 #include <smlib/entities>
 #include <smlib/math>
 
+
+
 // Entity Dissolve types
 enum DissolveType
 {
@@ -261,7 +263,7 @@ stock Effect_DrawBeamBoxToAll(
  * 
  * Ported from eventscripts vecmath library.
  *
- * @param clients        An array of clients to show the box to.
+ * @param clients       An array of clients to show the box to.
  * @param numClients    Number of players in the array.
  * @param bottomCorner	One bottom corner of the box.
  * @param upperCorner	One upper corner of the box.
@@ -333,3 +335,67 @@ stock Effect_DrawBeamBox(
 		TE_Send(clients, numClients);
 	}
 }
+
+/**
+ * Creates an env_sprite.
+ *
+ * @param origin			Origin of the Sprite.
+ * @param modelIndex		Precached model index.
+ * @param color				Color array (r, g, b, a).
+ * @param scale				Scale (Note: many materials ignore a lower value than 0.25).
+ * @param targetName		Targetname of the sprite.
+ * @param parent			Entity Index of this sprite's parent in the movement hierarchy.
+ * @param renderMode		Render mode (use the enum).
+ * @param renderFx			Render fx (use the enum).
+ * @param glowProxySize		Radius size of the glow when to be rendered, if inside a geometry. Ex: a block 2x2x2 units big, if the glowProxySize is between 0.0 and 2.0 the sprite will not be rendered, even if the actual size of the sprite is bigger, everything above 2.0 will render the sprite. Using an abnormal high value will render Sprites trough walls.
+ * @param frameRate			Sprite frame rate.
+ * @param hdrColorScale 	Float value to multiply sprite color by when running with HDR.
+ * @param receiveShadows	When false then this prevents the sprite from receiving shadows.
+ * @return					Entity Index of the created Sprite.
+ */
+stock Effect_EnvSprite(
+	const Float:origin[3],
+	modelIndex, 
+	const color[4]={255, 255, 255, 255},
+	Float:scale=0.25, 
+	const String:targetName[MAX_NAME_LENGTH]="",
+	parent=-1,
+	RenderMode:renderMode=RENDER_WORLDGLOW, 
+	RenderFx:renderFx=RENDERFX_NONE, 
+	Float:glowProxySize=2.0, 
+	Float:framerate=10.0, 
+	Float:hdrColorScale=1.0,
+	bool:receiveShadows = true
+) {
+	new entity = Entity_Create("env_sprite");
+	
+	if (entity == INVALID_ENT_REFERENCE) {
+		return INVALID_ENT_REFERENCE;
+	}
+	
+	DispatchKeyValue		(entity, "disablereceiveshadows", (receiveShadows) ? "0" : "1");
+	DispatchKeyValueFloat	(entity, "framerate", framerate);
+	DispatchKeyValueFloat	(entity, "GlowProxySize", glowProxySize);
+	DispatchKeyValue		(entity, "spawnflags", "1");
+	DispatchKeyValueFloat	(entity, "HDRColorScale", hdrColorScale);
+	DispatchKeyValue		(entity, "maxdxlevel", "0");
+	DispatchKeyValue		(entity, "mindxlevel", "0");
+	DispatchKeyValueFloat	(entity, "scale", scale);
+	
+	DispatchSpawn(entity);
+	
+	SetEntityRenderMode(entity, renderMode);
+	SetEntityRenderColor(entity, color[0], color[1], color[2], color[3]);
+	SetEntityRenderFx(entity, renderFx);
+	
+	Entity_SetName(entity, targetName);
+	Entity_SetModelIndex(entity, modelIndex);
+	Entity_SetAbsOrigin(entity, origin);
+	
+	if (parent != -1) {
+		Entity_SetParent(entity, parent);
+	}
+	
+	return entity;
+}
+

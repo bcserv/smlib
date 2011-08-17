@@ -1086,7 +1086,7 @@ stock Entity_GetAbsOrigin(entity, Float:vec[3])
  * @param vec				3 dimensional vector array.
  * @noreturn
  */
-stock Entity_SetAbsOrigin(entity, Float:vec[3])
+stock Entity_SetAbsOrigin(entity, const Float:vec[3])
 {
 	// We use TeleportEntity to set the origin more safely
 	// Todo: Replace this with a call to UTIL_SetOrigin() or CBaseEntity::SetLocalOrigin()
@@ -1566,7 +1566,7 @@ stock bool:Entity_Kill(kenny, killChildren=false)
 		}
 		
 		if(kenny == Entity_GetParent(child)){
-			Entity_RemoveParent(child);
+			Entity_ClearParent(child);
 			
 			if(killChildren){
 				Entity_Kill(child,killChildren);
@@ -1575,7 +1575,7 @@ stock bool:Entity_Kill(kenny, killChildren=false)
 	}
 	
 	if(Entity_GetParent(kenny) > 1){
-		Entity_RemoveParent(kenny);
+		Entity_ClearParent(kenny);
 	}
 	
 	if (Entity_IsPlayer(kenny)) {
@@ -1760,7 +1760,7 @@ stock Entity_GetParent(entity)
  * @param entity		Entity Index.
  * @noreturn
  */
-stock Entity_RemoveParent(entity)
+stock Entity_ClearParent(entity)
 {
 	SetVariantString("");
 	AcceptEntityInput(entity, "ClearParent");
@@ -1773,10 +1773,10 @@ stock Entity_RemoveParent(entity)
  * @param parentEntity	Entity Index of the new parent.
  * @noreturn
  */
-stock Entity_SetParent(entity, parentEntity)
+stock Entity_SetParent(entity, parent)
 {
 	SetVariantString("!activator");
-	AcceptEntityInput(entity, "SetParent", parentEntity);
+	AcceptEntityInput(entity, "SetParent", parent);
 }
 
 
@@ -1841,6 +1841,7 @@ public Action:__smlib_Timer_ChangeOverTime(Handle:Timer, Handle:dataPack)
 	return Plugin_Stop;
 }
 
+
 /**
  * Gets the next child, entity is parent of.
  *
@@ -1863,3 +1864,134 @@ stock Entity_GetNextChild(parent, start=0)
 
 	return INVALID_ENT_REFERENCE;
 }
+/**
+ * Gets the move/open direction of an entity (only available for func_door*, prop_door* and func_movelinear).
+ * Ex: if vec[2] is 1.0 a func_door moves straight up.
+ * 
+ * @param entity			Entity index.
+ * @param vec				Vector.
+ * @noreturn
+ */
+stock Entity_GetMoveDirection(entity, Float:vec[3])
+{
+	GetEntPropVector(entity, Prop_Data, "m_vecMoveDir", vec);
+}
+/**
+ * Sets the move/open direction of an entity (only available for func_door*, prop_door* and func_movelinear).
+ * Ex: if vec[2] is 1.0 a func_door moves straight up.
+ * 
+ * @param entity			Entity index.
+ * @param vec				Vector.
+ * @noreturn
+ */
+stock Entity_SetMoveDirection(entity, const Float:vec[3])
+{
+	SetEntPropVector(entity, Prop_Data, "m_vecMoveDir", vec);
+}
+
+/**
+ * Returns if the entity will force close (won't be blockable by players and/or objects) or not when triggered to move.
+ * 
+ * @param entity			Entity index.
+ * @return					True if the door will force close, otherwise false.
+ */
+stock bool:Entity_GetForceClose(entity)
+{
+	return bool:GetEntProp(entity, Prop_Data, "m_bForceClosed");
+}
+
+/**
+ * Sets if the door should force close (souldn't be blockable by players and/or objects) or not when triggered to move.
+ * 
+ * @param entity			Entity index.
+ * @param forceClose		If true the door will force close, otherwise it won't.
+ * @noreturn
+ */
+stock Entity_SetForceClose(entity, bool:forceClose)
+{
+	SetEntProp(entity, Prop_Data, "m_bForceClosed", forceClose);
+}
+
+/**
+ * Gets the speed of a moving entity (like doors: open close speed).
+ * 
+ * @param entity			Entity index.
+ * @return					Speed of the entity.
+ */
+stock Float:Entity_GetSpeed(entity)
+{
+	return GetEntPropFloat(entity, Prop_Data, "m_flSpeed");
+}
+
+/**
+ * Sets how fast an entity moves (like doors: open close speed).
+ * 
+ * @param entity			Entity index.
+ * @param speed				The new speed of the entity.
+ * @noreturn
+ */
+stock Entity_SetSpeed(entity, Float:speed)
+{
+	SetEntPropFloat(entity, Prop_Data, "m_flSpeed", speed);
+}
+
+/**
+ * Gets the damage of a moving entity when blocked (like doors when open or close and players and/or objects are between the entity and something else).
+ * Note: Negative values add health to the blocking entity.
+ *
+ * @param entity			Entity index.
+ * @return					Damage.
+ */
+stock Float:Entity_GetBlockDamage(entity)
+{
+	return GetEntPropFloat(entity, Prop_Data, "m_flBlockDamage");
+}
+
+/**
+ * Sets the damage of a moving entity when blocked (like doors when open or close and players and/or objects are between the entity and something else).
+ * Note: Negative values add health to the blocking entity.
+ * 
+ * @param entity			Entity index.
+ * @param damage			Damage.
+ * @noreturn
+ */
+stock Entity_SetBlockDamage(entity, Float:damage)
+{
+	SetEntPropFloat(entity, Prop_Data, "m_flBlockDamage", damage);
+}
+
+/**
+ * Returns if the given entity is disabled or not.
+ * 
+ * @param entity			Entity index.
+ * @return					True if entity is disabled, otherwise false.
+ */
+stock bool:Entity_IsDisabled(entity)
+{
+	return bool:GetEntProp(entity, Prop_Data, "m_bDisabled", 1);
+}
+
+/**
+ * Disables the given entity.
+ * 
+ * @param entity			Entity index.
+ * @noreturn
+ */
+stock Entity_Disable(entity)
+{
+	AcceptEntityInput(entity, "Disable");
+}
+
+/**
+ * Enables the given entity.
+ * 
+ * @param entity			Entity index.
+ * @noreturn
+ */
+stock Entity_Enable(entity)
+{
+	AcceptEntityInput(entity, "Enable");
+}
+
+
+

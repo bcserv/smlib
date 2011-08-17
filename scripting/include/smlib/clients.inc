@@ -2627,7 +2627,7 @@ stock Client_GetMoney(client)
  * @param value			Money value to set.
  * @noreturn
  */
-stock Client_SetMoney(client,value)
+stock Client_SetMoney(client, value)
 {
 	SetEntProp(client, Prop_Send, "m_iAccount", value);
 }
@@ -2789,3 +2789,175 @@ stock Client_SetPing(client, value)
 
 	return true;
 }
+static printToTop_excludeclient = -1;
+
+/**
+ * Exclude a client from the next call to a Client_PrintToTop function.
+ * 
+ * @param client		Client Index.
+ * @noreturn
+ */
+stock Client_PrintToTopExclude(client)
+{
+	printToTop_excludeclient = client;
+}
+
+/**
+ * Prints colored text to the top left of the screen
+ * for one client. Does not work in all games.
+ * Line Breaks can't be done.
+ * 
+ * @param client		Client Index.
+ * @param r				Red amount.
+ * @param g				Green amount.
+ * @param b				Blue amount.
+ * @param a				Transparency.
+ * @param duration		Duration in seconds the text stays (min 10 - max 200 seconds).
+ * @param text			Text to print to.
+ * @return				True on success, false if the key value for the dialog couldn't be created or closed.
+ */
+stock bool:Client_PrintToTopRaw(client, r=255, g=255, b=255, a=255, Float:duration=10.0, const String:text[])
+{
+	//message line max 50
+	//overline: 	39*_ 
+	//underline: 	44*T
+	new Handle:keyValue = CreateKeyValues("Stuff", "title", text);
+	
+	if (keyValue == INVALID_HANDLE) {
+		return false;
+	}
+	
+	KvSetColor(keyValue, "color", r, g, b, a);
+	KvSetNum(keyValue, "level", 1);
+	KvSetNum(keyValue, "time", RoundToFloor(duration));
+	
+	CreateDialog(client, keyValue, DialogType_Msg);
+	
+	if (!CloseHandle(keyValue)) {
+		return false;
+	}
+	return true;
+}
+
+/**
+ * Prints colored text to the top left of the screen
+ * for one client. Does not work in all games.
+ * Line Breaks can't be done.
+ * 
+ * @param client		Client Index.
+ * @param r				Red amount.
+ * @param g				Green amount.
+ * @param b				Blue amount.
+ * @param a				Transparency.
+ * @param duration		Duration in seconds the text stays (min 10 - max 200 seconds).
+ * @param format		Formatting rules.
+ * @param ...			Variable number of format parameters.
+ * @return				True on success, false if the key value for the dialog couldn't be created or closed.
+ */
+stock bool:Client_PrintToTop(client, r=255, g=255, b=255, a=255, Float:duration=10.0, const String:format[], any:...)
+{
+	new String:buffer[150];
+	SetGlobalTransTarget(client);
+	VFormat(buffer, sizeof(buffer), format, 8);	
+	
+	return Client_PrintToTopRaw(client, r, g, b, a, duration, buffer);
+}
+
+/**
+ * Prints colored text to the top left of the screen
+ * to all clients. Does not work in all games.
+ * Line Breaks can't be done.
+ * 
+ * @param r				Red amount.
+ * @param g				Green amount.
+ * @param b				Blue amount.
+ * @param a				Transparency.
+ * @param duration		Duration in seconds the text stays (min 10 - max 200 seconds).
+ * @param format		Formatting rules.
+ * @param ...			Variable number of format parameters.
+ * @noreturn
+ */
+stock Client_PrintToTopAll(r=255, g=255, b=255, a=255, Float:duration=10.0, const String:format[], any:...)
+{
+	decl
+		String:buffer[150];
+	new
+		language,
+		lastLanguage = -1;
+	
+	for (new client=1; client <= MaxClients; client++) {
+		
+		if (!IsClientInGame(client)) {
+			continue;
+		}
+		
+		if (client == printToTop_excludeclient) {
+			printToTop_excludeclient = -1;
+			continue;
+		}
+		
+		language = GetClientLanguage(client);
+		
+		if (language != lastLanguage) {
+			SetGlobalTransTarget(client);
+			VFormat(buffer, sizeof(buffer), format, 7);
+			
+			lastLanguage = language;
+		}
+		
+		Client_PrintToTopRaw(client, r, g, b, a, duration, buffer);
+	}
+}
+
+/**
+ * Prints colored text to the top left of the screen
+ * to specified clients. Does not work in all games.
+ * Line Breaks can't be done.
+ * 
+ * @param clients		Client Array.
+ * @param numClients	Number of clients in the clients array.
+ * @param r				Red amount.
+ * @param g				Green amount.
+ * @param b				Blue amount.
+ * @param a				Transparency.
+ * @param duration		Duration in seconds the text stays (min 10 - max 200 seconds).
+ * @param format		Formatting rules.
+ * @param ...			Variable number of format parameters.
+ * @noreturn
+ */
+stock Client_PrintToTopEx(clients[], numClients, r=255, g=255, b=255, a=255, Float:duration=10.0, const String:format[], any:...)
+{
+	decl
+		String:buffer[150];
+	new
+		client,
+		language,
+		lastLanguage = -1;
+
+	for (new i=0; i < numClients; i++) {
+
+		client = clients[i];
+
+		if (!IsClientInGame(client)) {
+			continue;
+		}
+
+		if (client == printToTop_excludeclient) {
+			printToTop_excludeclient = -1;
+			continue;
+		}
+
+		language = GetClientLanguage(client);
+		
+		if (language != lastLanguage) {
+			SetGlobalTransTarget(client);
+			VFormat(buffer, sizeof(buffer), format, 9);
+			
+			lastLanguage = language;
+		}
+		
+		Client_PrintToTopRaw(client, r, g, b, a, duration, buffer);
+	}
+}
+
+
