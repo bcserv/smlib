@@ -1304,8 +1304,8 @@ stock Entity_AddHealth(entity, value, ignoreMax=false, kill=true)
 	new health = Entity_GetHealth(entity);
 	
 	health += value;
-	
-	return Entity_SetHealth(entity, value, ignoreMax, kill);
+
+	return Entity_SetHealth(entity, health, ignoreMax, kill);
 }
 
 /**
