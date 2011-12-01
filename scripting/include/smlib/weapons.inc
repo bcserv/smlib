@@ -53,7 +53,7 @@ stock Weapon_IsValid(weapon)
 	if (!IsValidEdict(weapon)) {
 		return false;
 	}
-
+	
 	return Entity_ClassNameMatches(weapon, "weapon_", true);
 }
 

@@ -28,9 +28,10 @@ enum DissolveType
  *
  * @param client		Client Index.
  * @param dissolveType	Dissolve Type, use the DissolveType enum.
+ * @param magnitude		How strongly to push away from the center.
  * @return				True on success, otherwise false.
  */
-stock bool:Effect_DissolveEntity(entity, DissolveType:dissolveType=DISSOLVE_NORMAL)
+stock bool:Effect_DissolveEntity(entity, DissolveType:dissolveType=DISSOLVE_NORMAL, magnitude=1)
 {
 	new env_entity_dissolver = CreateEntityByName("env_entity_dissolver");
 
@@ -40,6 +41,7 @@ stock bool:Effect_DissolveEntity(entity, DissolveType:dissolveType=DISSOLVE_NORM
 
 	Entity_PointAtTarget(env_entity_dissolver, entity);
 	SetEntProp(env_entity_dissolver, Prop_Send, "m_nDissolveType", _:dissolveType);
+	SetEntProp(env_entity_dissolver, Prop_Send, "m_nMagnitude", magnitude);
 	AcceptEntityInput(env_entity_dissolver,	"Dissolve");
 	Entity_Kill(env_entity_dissolver);
 

@@ -150,6 +150,7 @@ public OnPluginStart() {
 	Client_IsReloading(0);
 	Client_SetWeaponClipAmmo(0, "");
 	Client_GetWeaponPlayerAmmo(0, "");
+	Client_GetWeaponPlayerAmmoEx(0, 0);
 	Client_SetWeaponPlayerAmmo(0, "");
 	Client_SetWeaponPlayerAmmoEx(0, 0);
 	Client_SetWeaponAmmo(0, "");
@@ -356,6 +357,10 @@ public OnPluginStart() {
 	Entity_IsDisabled(0);
 	Entity_Disable(0);
 	Entity_Enable(0);
+	Entity_SetTakeDamage(0,0);
+	Entity_GetTakeDamage(0);
+	Entity_SetMinHealthDamage(0,0);
+	Entity_GetMinHealthDamage(0);
 	
 	// File: files.inc
 	File_GetBaseName("", buf, sizeof(buf));

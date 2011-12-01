@@ -1331,11 +1331,11 @@ stock Client_HasWeapon(client, const String:className[])
 stock Client_GetWeapon(client, const String:className[])
 {
 	new offset = Client_GetWeaponsOffset(client) - 4;
-
+	new weapon = INVALID_ENT_REFERENCE;
 	for (new i=0; i < MAX_WEAPONS; i++) {
 		offset += 4;
-
-		new weapon = GetEntDataEnt2(client, offset);
+		
+		weapon = GetEntDataEnt2(client, offset);
 		
 		if (!Weapon_IsValid(weapon)) {
 			continue;
@@ -1345,7 +1345,7 @@ stock Client_GetWeapon(client, const String:className[])
 			return weapon;
 		}
 	}
-	
+
 	return INVALID_ENT_REFERENCE;
 }
 
@@ -1527,6 +1527,30 @@ stock bool:Client_GetWeaponPlayerAmmo(client, const String:className[], &primary
 	}
 
 	return true;
+}
+
+/**
+ * Gets the primary and secondary ammo the player carries for a specific weapon index.
+ *
+ * @param client		Client Index.
+ * @param weapon		Weapon Entity Index.
+ * @param primaryAmmo	Primary ammo stock value from the client, if -1 the value is untouched.
+ * @param secondaryAmmo	Secondary ammo stock value from the client, if -1 the value is untouched.
+ * @noreturn
+ */
+stock Client_GetWeaponPlayerAmmoEx(client, weapon, &primaryAmmo=-1, &secondaryAmmo=-1)
+{	
+	new offset_ammo = FindDataMapOffs(client, "m_iAmmo");
+	
+	if (primaryAmmo != -1) {
+		new offset = offset_ammo + (Weapon_GetPrimaryAmmoType(weapon) * 4);
+		primaryAmmo = GetEntData(client, offset);
+	}
+	
+	if (secondaryAmmo != -1) {
+		new offset = offset_ammo + (Weapon_GetSecondaryAmmoType(weapon) * 4);
+		secondaryAmmo = GetEntData(client, offset);
+	}
 }
 
 /**
@@ -2789,6 +2813,7 @@ stock Client_SetPing(client, value)
 
 	return true;
 }
+
 static printToTop_excludeclient = -1;
 
 /**

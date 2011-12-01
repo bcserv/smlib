@@ -141,7 +141,7 @@ stock bool:Entity_ClassNameMatches(entity, const String:className[], partialMatc
 	if (partialMatch) {
 		return (StrContains(entity_className, className) != -1);
 	}
-	
+
 	return StrEqual(entity_className, className);
 }
 
@@ -360,7 +360,7 @@ stock Entity_GetMinSize(entity, Float:vec[3])
  * @param vec				Vector.
  * @noreturn
  */
-stock Entity_SetMinSize(entity, Float:vecMins[3])
+stock Entity_SetMinSize(entity, const Float:vecMins[3])
 {
 	SetEntPropVector(entity, Prop_Send, "m_vecMins", vecMins);
 }
@@ -386,7 +386,7 @@ stock Entity_GetMaxSize(entity, Float:vec[3])
  * @param vec				Vector.
  * @noreturn
  */
-stock Entity_SetMaxSize(entity, Float:vecMaxs[3])
+stock Entity_SetMaxSize(entity, const Float:vecMaxs[3])
 {
 	SetEntPropVector(entity, Prop_Send, "m_vecMaxs", vecMaxs);
 }
@@ -1118,7 +1118,7 @@ stock Entity_GetAbsAngles(entity, Float:vec[3])
  * @param vec				3 dimensional vector array.
  * @noreturn
  */ 
-stock Entity_SetAbsAngles(entity, Float:vec[3])
+stock Entity_SetAbsAngles(entity, const Float:vec[3])
 {
 	// We use TeleportEntity to set the angles more safely
 	// Todo: Replace this with a call to CBaseEntity::SetLocalAngles()
@@ -1994,4 +1994,58 @@ stock Entity_Enable(entity)
 }
 
 
+// settings for m_takedamage taken from hl2sdk-ob-valve\game\shared\shareddefs.h
+#define		DAMAGE_NO			0
+#define 	DAMAGE_EVENTS_ONLY	1		// Call damage functions, but don't modify health
+#define		DAMAGE_YES			2
+#define		DAMAGE_AIM			3
 
+/**
+ * Sets the mode for an entity to take damage.
+ * Note: This is used to give a client god mode (DAMAGE_NO).
+ * 
+ * @param entity			Entity index.
+ * @param value				Mode, use DAMAGE_* defines.
+ * @noreturn
+ */
+stock Entity_SetTakeDamage(entity, value)
+{
+	SetEntProp(entity, Prop_Data, "m_takedamage", value, 1);
+}
+
+/**
+ * Gets the mode for an entity to take damage.
+ * Note: When the return value is DAMAGE_NO then the client is using godmode.
+ * 
+ * @param entity			Entity index.
+ * @return					Take damage mode (DAMAGE_*).
+ */
+stock Entity_GetTakeDamage(entity)
+{
+	return GetEntProp(entity, Prop_Data, "m_takedamage", 1);
+}
+
+/**
+ * Sets the minimum of damage required to hurt this entity.
+ * Example: This is used to block any damage done by projectile weapons against a gun ship in Half-Life 2.
+ * 
+ * @param entity			Entity index.
+ * @param minDamage			Minimum required damage.
+ * @noreturn
+ */
+stock Entity_SetMinHealthDamage(entity, minDamage)
+{
+	SetEntProp(entity, Prop_Data, "m_iMinHealthDmg", minDamage);
+}
+
+/**
+ * Gets the minimum of damage required to hurt this entity.
+ * Example: This is used to block any damage done by projectile weapons against a gun ship in Half-Life 2.
+ * 
+ * @param entity			Entity index.
+ * @return					Minimum required damage.
+ */
+stock Entity_GetMinHealthDamage(entity)
+{
+	return GetEntProp(entity, Prop_Data, "m_iMinHealthDmg");
+}

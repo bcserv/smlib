@@ -20,7 +20,7 @@
 #define TEAM_FOUR		5
 
 /*
- * If one team is empty its assumed single team mode is enabled.
+ * If one team is empty its assumed single team mode is enabled and the game won't start.
  *
  * @noparam
  * @return			True if one team is empty, false otherwise.			
@@ -29,8 +29,8 @@ stock bool:Team_HaveAllPlayers(bool:countFakeClients=true) {
 
 	new teamCount = GetTeamCount();
 	for (new i=2; i < teamCount; i++) {
-
-		if (Team_GetClientCount(i, countFakeClients) == 0) {
+		
+		if (Team_GetClientCount(i, ((countFakeClients) ? CLIENTFILTER_ALL : CLIENTFILTER_NOBOTS)) == 0) {
 			return false;
 		}
 	}
