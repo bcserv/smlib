@@ -1550,41 +1550,25 @@ stock Entity_Create(const String:className[], ForceEdictIndex=-1)
  * Kills an entity on the next frame (delayed).
  * It is safe to use with entity loops.
  * If the entity is is player ForcePlayerSuicide() is called.
- * If the entity is a child or has one or more children, then the relationship to each other will be removed first.
  *
  * @param kenny			Entity index.
- * @param killChildren	When true, kennys children are killed first.
- * @return 				True on success, false otherwise
+ * @param killChildren	When true, kennys children are killed too.
+ * @return 				True on success, false otherwise.
  */
 stock bool:Entity_Kill(kenny, killChildren=false)
 {
-	new maxEntities = GetMaxEntities();
-	for(new child = 1;child < maxEntities;child++){
-		
-		if(!Entity_IsValid(child)){
-			continue;
-		}
-		
-		if(kenny == Entity_GetParent(child)){
-			Entity_ClearParent(child);
-			
-			if(killChildren){
-				Entity_Kill(child,killChildren);
-			}
-		}
-	}
-	
-	if(Entity_GetParent(kenny) > 1){
-		Entity_ClearParent(kenny);
-	}
-	
 	if (Entity_IsPlayer(kenny)) {
 		// Oh My God! They Killed Kenny!!
 		ForcePlayerSuicide(kenny);
 		return true;
 	}
 	
-	return AcceptEntityInput(kenny, "kill");
+	if(killChildren){
+		return AcceptEntityInput(kenny, "KillHierarchy");
+	}
+	else {
+		return AcceptEntityInput(kenny, "Kill");
+	}
 }
 
 /**
