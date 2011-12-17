@@ -166,7 +166,7 @@ stock bool:Entity_NameMatches(entity, const String:name[])
  * @param entity			Entity index.
  * @param buffer			Return/Output buffer.
  * @param size				Max size of buffer.
- * @noreturn
+ * @return					Number of non-null bytes written.
  */
 stock Entity_GetName(entity, String:buffer[], size)
 {
@@ -178,14 +178,14 @@ stock Entity_GetName(entity, String:buffer[], size)
  *
  * @param entity			Entity index.
  * @param name				The name you want to give.
- * @noreturn
+ * @return					True on success, false otherwise.
  */
 stock Entity_SetName(entity, const String:name[], any:...)
 {
 	decl String:format[128];
 	VFormat(format, sizeof(format), name, 3);
 
-	DispatchKeyValue(entity, "targetname", format);
+	return DispatchKeyValue(entity, "targetname", format);
 }
 
 /**
@@ -196,17 +196,11 @@ stock Entity_SetName(entity, const String:name[], any:...)
  * @param entity			Entity index.
  * @param buffer			Return/Output buffer.
  * @param size				Max size of buffer.
- * @return					
+ * @return					Number of non-null bytes written.
  */
 stock Entity_GetClassName(entity, String:buffer[], size)
 {
-	GetEntPropString(entity, Prop_Data, "m_iClassname", buffer, size);
-	
-	if (buffer[0] == '\0') {
-		return false;
-	}
-	
-	return true;
+	return GetEntPropString(entity, Prop_Data, "m_iClassname", buffer, size);	
 }
 
 /**
@@ -214,11 +208,11 @@ stock Entity_GetClassName(entity, String:buffer[], size)
  *
  * @param entity			Entity index.
  * @param name				The name you want to give.
- * @noreturn
+ * @return					True on success, false otherwise.
  */
 stock Entity_SetClassName(entity, const String:className[])
 {
-	DispatchKeyValue(entity, "classname", className);
+	return DispatchKeyValue(entity, "classname", className);
 }
 
 /**
@@ -227,11 +221,11 @@ stock Entity_SetClassName(entity, const String:className[])
  * @param entity			Entity index.
  * @param buffer			Return/Output buffer.
  * @param size				Max size of buffer.
- * @noreturn
+ * @return					Number of non-null bytes written.
  */
 stock Entity_GetTargetName(entity, String:buffer[], size)
 {
-	GetEntPropString(entity, Prop_Data, "m_target", buffer, size);
+	return GetEntPropString(entity, Prop_Data, "m_target", buffer, size);
 }
 
 /**
@@ -239,14 +233,14 @@ stock Entity_GetTargetName(entity, String:buffer[], size)
  *
  * @param entity			Entity index.
  * @param name				The target name you want to set
- * @noreturn
+ * @return					True on success, false otherwise.
  */
 stock Entity_SetTargetName(entity, const String:name[], any:...)
 {
 	decl String:format[128];
 	VFormat(format, sizeof(format), name, 3);
 
-	DispatchKeyValue(entity, "target", format);
+	return DispatchKeyValue(entity, "target", format);
 }
 
 /**
@@ -255,11 +249,11 @@ stock Entity_SetTargetName(entity, const String:name[], any:...)
  * @param entity			Entity index.
  * @param buffer			Return/Output buffer.
  * @param size				Max size of buffer.
- * @noreturn
+ * @return					Number of non-null bytes written.
  */
 stock Entity_GetGlobalName(entity, String:buffer[], size)
 {
-	GetEntPropString(entity, Prop_Data, "m_iGlobalname", buffer, size);
+	return GetEntPropString(entity, Prop_Data, "m_iGlobalname", buffer, size);
 }
 
 /**
@@ -267,14 +261,14 @@ stock Entity_GetGlobalName(entity, String:buffer[], size)
  *
  * @param entity			Entity index.
  * @param name				The global name you want to set.
- * @noreturn
+ * @return					True on success, false otherwise.
  */
 stock Entity_SetGlobalName(entity, const String:name[], any:...)
 {
 	decl String:format[128];
 	VFormat(format, sizeof(format), name, 3);
 
-	DispatchKeyValue(entity, "globalname", format);
+	return DispatchKeyValue(entity, "globalname", format);
 }
 
 /**
@@ -283,11 +277,11 @@ stock Entity_SetGlobalName(entity, const String:name[], any:...)
  * @param entity			Entity index.
  * @param buffer			Return/Output buffer.
  * @param size				Max size of buffer.
- * @noreturn
+ * @return					Number of non-null bytes written.
  */
 stock Entity_GetParentName(entity, String:buffer[], size)
 {
-	GetEntPropString(entity, Prop_Data, "m_iParent", buffer, size);
+	return GetEntPropString(entity, Prop_Data, "m_iParent", buffer, size);
 }
 
 /**
@@ -295,14 +289,14 @@ stock Entity_GetParentName(entity, String:buffer[], size)
  *
  * @param entity			Entity index.
  * @param name				The parent name you want to set.
- * @noreturn
+ * @return					True on success, false otherwise.
  */
 stock Entity_SetParentName(entity, const String:name[], any:...)
 {
 	decl String:format[128];
 	VFormat(format, sizeof(format), name, 3);
 
-	DispatchKeyValue(entity, "parentname", format);
+	return DispatchKeyValue(entity, "parentname", format);
 }
 
 /**
@@ -952,11 +946,11 @@ stock bool:Entity_IsSolid(entity)
  * @param entity		entity reference or index
  * @param model			buffer String for the model
  * @param size			max size of buffer string
- * @noreturn				
+ * @return				Number of non-null bytes written.
  */
 stock Entity_GetModel(entity, String:buffer[], size)
 {	
-	GetEntPropString(entity, Prop_Data, "m_ModelName", buffer, size);
+	return GetEntPropString(entity, Prop_Data, "m_ModelName", buffer, size);
 }
 
 /**
