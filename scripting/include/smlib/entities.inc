@@ -1953,22 +1953,22 @@ stock bool:Entity_IsDisabled(entity)
  * Disables the given entity.
  * 
  * @param entity			Entity index.
- * @noreturn
+ * @return					True if successful otherwise false.
  */
 stock Entity_Disable(entity)
 {
-	AcceptEntityInput(entity, "Disable");
+	return AcceptEntityInput(entity, "Disable");
 }
 
 /**
  * Enables the given entity.
  * 
  * @param entity			Entity index.
- * @noreturn
+ * @return					True if successful otherwise false.
  */
 stock Entity_Enable(entity)
 {
-	AcceptEntityInput(entity, "Enable");
+	return AcceptEntityInput(entity, "Enable");
 }
 
 
