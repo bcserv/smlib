@@ -313,9 +313,9 @@ stock bool:Client_SetObserverMode(client, Obs_Mode:mode, bool:updateMoveType=tru
  * @param client		Client Index.
  * @return				Last Observer mode
  */
-stock Obs_mode:Client_GetObserverLastMode(client)
+stock Obs_Mode:Client_GetObserverLastMode(client)
 {
-	return Obs_mode:GetEntProp(client, Prop_Data, "m_iObserverLastMode");
+	return Obs_Mode:GetEntProp(client, Prop_Data, "m_iObserverLastMode");
 }
 
 /**
