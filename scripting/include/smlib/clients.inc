@@ -2011,8 +2011,7 @@ stock Client_Print(client, ClientHudPrint:destination, const String:format[], an
 		(destination != ClientHudPrint_Console) ||
 		(destination == ClientHudPrint_Console && GuessSDKVersion() < SOURCE_SDK_LEFT4DEAD))
 	{
-		Color_StripFromChatText(buffer, buffer2, sizeof(buffer2));
-		strcopy(buffer, sizeof(buffer), buffer2);
+		Color_StripFromChatText(buffer2, buffer, sizeof(buffer2));
 
 		if (client == 0) {
 			PrintToServer(buffer2);
