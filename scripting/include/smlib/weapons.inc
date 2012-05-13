@@ -208,6 +208,17 @@ stock Weapon_GetPrimaryAmmoType(weapon)
 }
 
 /*
+ * Sets the primary ammo Type (int offset)
+ * 
+ * @param weapon		Weapon Entity.
+ * @param type			Primary ammo type value.
+ */
+stock Weapon_SetPrimaryAmmoType(weapon,type)
+{
+	return SetEntProp(weapon, Prop_Data, "m_iPrimaryAmmoType", type);
+}
+
+/*
  * Gets the secondary ammo Type (int offset)
  * 
  * @param weapon		Weapon Entity.
@@ -216,6 +227,17 @@ stock Weapon_GetPrimaryAmmoType(weapon)
 stock Weapon_GetSecondaryAmmoType(weapon)
 {
 	return GetEntProp(weapon, Prop_Data, "m_iSecondaryAmmoType");
+}
+
+/*
+ * Sets the secondary ammo Type (int offset)
+ * 
+ * @param weapon		Weapon Entity.
+ * @param type			Secondary ammo type value.
+ */
+stock Weapon_SetSecondaryAmmoType(weapon,type)
+{
+	return SetEntProp(weapon, Prop_Data, "m_iSecondaryAmmoType", type);
 }
 
 /*
