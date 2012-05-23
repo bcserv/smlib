@@ -14,6 +14,7 @@
 //Game modes in Nmrih
 enum Nmrih_GameType 
 {
+	Nmrih_GameType_Unknown = -1,
 	Nmrih_GameType_Objective = 0,
 	Nmrih_GameType_Survial,
 	
