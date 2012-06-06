@@ -468,6 +468,8 @@ public OnPluginStart() {
 	Weapon_SetFiresUnderWaterAlt(0);
 	Weapon_GetPrimaryAmmoType(0);
 	Weapon_GetSecondaryAmmoType(0);
+	Weapon_SetSecondaryAmmoType(0,0);
+	Weapon_SetPrimaryAmmoType(0,0);
 	Weapon_GetPrimaryClip(0);
 	Weapon_SetPrimaryClip(0, 0);
 	Weapon_GetSecondaryClip(0);
