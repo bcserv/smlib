@@ -16,6 +16,7 @@
 
 #include <sourcemod>
 #include <smlib>
+#include <smlib/games/nmrih>
 
 #define PLUGIN_VERSION "0.1"
 
@@ -485,6 +486,32 @@ public OnPluginStart() {
 	
 	// File: world.inc
 	World_GetMaxs(vec);
+	
+	// File: games/nmrih.inc
+	Nmrih_Client_IsSprintEnabled(0);
+	Nmrih_Client_SetSprintEnabled(0,false);
+	Nmrih_Client_GetCarriedWeight(0);
+	Nmrih_Client_SetCarriedWeight(0,0.0);
+	Nmrih_Client_IsDiedWhileInfected(0);
+	Nmrih_Client_SetDiedWhileInfected(0,false);
+	Nmrih_Client_IsGrabbed(0);
+	Nmrih_Client_SetGrabbed(0,false);
+	Nmrih_Client_HasPills(0);
+	Nmrih_Client_SetPills(0,false);
+	Nmrih_Client_HasWalkieTalkie(0);
+	Nmrih_Client_SetWalkieTalkie(0,false);
+	Nmrih_Client_IsTalkingViaWalkieTalkie(0);
+	Nmrih_Client_SetTalkingViaWalkieTalkie(0,false);
+	Nmrih_Client_GetTokens(0);
+	Nmrih_Client_SetTokens(0,0);
+	Nmrih_Client_GetInfectionDeathTime(0);
+	Nmrih_Client_SetInfectionDeathTime(0,0.0);
+	Nmrih_Client_GetInfectionTime(0);
+	Nmrih_Client_SetInfectionTime(0,0.0);
+	Nmrih_Client_IsInfected(0);
+	Nmrih_Zombie_GetCount();
+	Nmrih_Zombie_GetType(0);
+	Nmrih_Zombie_IsValid(0);
 }
 
 
