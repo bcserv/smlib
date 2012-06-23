@@ -5,6 +5,7 @@
 #include <sourcemod>
 #include <sdktools>
 #include <smlib>
+#include <smlib/pluginmanager>
 
 #define PLUGIN_VERSION "0.1"
 
