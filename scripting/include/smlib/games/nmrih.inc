@@ -257,5 +257,105 @@ stock Nmrih_Client_SetInfectionTime(client, Float:infectionTime)
  */
 stock bool:Nmrih_Client_IsInfected(client)
 {
-	return bool:(Nmrih_Client_GetInfectionTime(client) != -1.0 );
+	return bool:(Nmrih_Client_GetInfectionTime(client) != -1.0);
 }
+
+enum Nmrih_Zombie_Type
+{
+	
+	Nmrih_Zombie_None = -1,
+	
+	Nmrih_Zombie_Shambler,
+	Nmrih_Zombie_Runner,
+	Nmrih_Zombie_Kid,
+	
+	Nmrih_Zombie_All
+}
+
+/*new String:Nmrih_Zombie_Type_ClassNames[][] =
+{
+	
+	"npc_nmrih_shamblerzombie",
+	"npc_nmrih_runnerzombie",
+	"npc_nmrih_kidzombie"
+};*/
+
+/**
+ * Returns how many valid zombies of specified type are on the map.
+ * 
+ * @param type			The filter type, only matching zombies will count.
+ * @return				Number of zombies.
+ */
+stock Nmrih_Zombie_GetCount(Nmrih_Zombie_Type:type=Nmrih_Zombie_All)
+{
+	new count = 0;
+	new maxEntities = GetMaxEntities();
+	
+	for (new entity=0; entity<maxEntities; entity++) {
+		
+		if (Nmrih_Zombie_IsValid(entity)) {
+			
+			if (type == Nmrih_Zombie_All) {
+				
+				count++;
+			}
+			else if (type == Nmrih_Zombie_GetType(entity)) {
+				
+				count++;
+			}
+		}
+	}
+	return count;
+}
+
+/**
+ * Returns the type of a zombie.
+ * Note: Use Nmrih_Zombie_Type to differentiate the different types.
+ * 
+ * @param entity		Entity index.
+ * @return				Type of zombie.
+ */
+stock Nmrih_Zombie_Type:Nmrih_Zombie_GetType(entity)
+{
+	decl String:className[MAX_NAME_LENGTH];
+	Entity_GetClassName(entity,className,sizeof(className));
+	
+	if (StrContains(className,"npc_nmrih_",false) == 0) {
+		
+		//npc_nmrih_shamblerzombie
+		if (className[10] == 's' || className[10] == 'S') {
+			return Nmrih_Zombie_Shambler;
+		}
+		//npc_nmrih_runnerzombie
+		else if (className[10] == 'r' || className[10] == 'R') {
+			return Nmrih_Zombie_Runner;
+		}
+		//npc_nmrih_kidzombie
+		else if (className[10] == 'k' || className[10] == 'K') {
+			return Nmrih_Zombie_Kid;
+		}
+		
+		return Nmrih_Zombie_All;
+	}
+	return Nmrih_Zombie_None;
+}
+/**
+ * Returns true when the given entity is valid and a zombie.
+ * 
+ * @param entity		Entity index.
+ * @return				True if entity is valid and is a zombie, otherwise false.
+ */
+stock bool:Nmrih_Zombie_IsValid(entity)
+{
+	if (!Entity_IsValid(entity)) {
+		return false;
+	}
+	
+	if (Nmrih_Zombie_GetType(entity) == Nmrih_Zombie_None) {
+		return false;
+	}
+	
+	return true;
+}
+
+
