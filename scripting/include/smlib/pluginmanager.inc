@@ -73,7 +73,21 @@ PluginManager_Initialize(const String:prefix[], const String:tag[]="", bool:load
 	//override old cvar in case of late load (this is needed to kick the engine in the ass, so it'll broadcast its value again)
 	SetConVarString(Plugin_VersionCvar,Plugin_Version);
 }
-
+/**
+* Creates a new console variable.
+* Note: You only enter a name and this function will add the prefix you defined in the initialation automatically.
+* The new convar also has FCVAR_PLUGIN as default flag set.
+*
+* @param name				Name of new convar.
+* @param defaultValue		String containing the default value of new convar.
+* @param description		Optional description of the convar.
+* @param flags				Optional bitstring of flags determining how the convar should be handled. See FCVAR_* constants for more details.
+* @param hasMin				Optional boolean that determines if the convar has a minimum value.
+* @param min				Minimum floating point value that the convar can have if hasMin is true.
+* @param hasMax				Optional boolean that determines if the convar has a maximum value.
+* @param max				Maximum floating point value that the convar can have if hasMax is true.
+* @return					A handle to the newly created convar. If the convar already exists, a handle to it will still be returned.
+*/
 stock Handle:PluginManager_CreateConvar(const String:name[], const String:defaultValue[], const String:description[]="", flags=0, bool:hasMin=false, Float:min=0.0, bool:hasMax=false, Float:max=0.0)
 {
 	flags |= FCVAR_PLUGIN;
@@ -84,6 +98,16 @@ stock Handle:PluginManager_CreateConvar(const String:name[], const String:defaul
 	return CreateConVar(conVarName, defaultValue, description, flags, hasMin, min, hasMax, max);
 }
 
+/**
+* Creates a server-only console command, or hooks an already existing one. Server commands are case sensitive.
+* Note: The new command also has FCVAR_PLUGIN as default flag set.
+*
+* @param cmd				Name of the command to hook or create.
+* @param callback			A function to use as a callback for when the command is invoked.
+* @param description		Optional description to use for command creation.
+* @param flags				Optional flags to use for command creation.
+* @noreturn
+*/
 stock PluginManager_RegServerCmd(const String:name[], SrvCmd:callback, const String:description[]="", minArgs=0, const String:usage[]="", flags=0)
 {
 	flags |= FCVAR_PLUGIN;
@@ -91,6 +115,16 @@ stock PluginManager_RegServerCmd(const String:name[], SrvCmd:callback, const Str
 	RegAdminCmd(name, callback, description, flags);
 }
 
+/**
+* Creates a console command, or hooks an already existing one. Console commands are case sensitive. However, if the command already exists in the game, the a client may enter the command in any case. SourceMod corrects for this automatically, and you should only hook the "real" version of the command.
+* Note: The new command also has FCVAR_PLUGIN as default flag set.
+*
+* @param cmd				Name of the command to hook or create.
+* @param callback			A function to use as a callback for when the command is invoked.
+* @param description		Optional description to use for command creation.
+* @param flags				Optional flags to use for command creation.
+* @noreturn
+*/
 stock PluginManager_RegConsoleCmd(const String:name[], ConCmd:callback, const String:description[]="", minArgs=0, const String:usage[]="", flags=0)
 {
 	flags |= FCVAR_PLUGIN;
@@ -98,6 +132,18 @@ stock PluginManager_RegConsoleCmd(const String:name[], ConCmd:callback, const St
 	RegConsoleCmd(name, callback, description, flags);
 }
 
+/**
+* Creates a console command as an administrative command. If the command does not exist, it is created. When this command is invoked, the access rights of the player are automatically checked before allowing it to continue. Admin commands are case sensitive from both the client and server.
+* Note: The new command also has FCVAR_PLUGIN as default flag set.
+*
+* @param cmd				String containing command to register.
+* @param callback			A function to use as a callback for when the command is invoked.
+* @param adminflags			Administrative flags (bitstring) to use for permissions.
+* @param description		Optional description to use for help.
+* @param group				String containing the command group to use.  If empty, the plugin's filename will be used instead.
+* @param flags				Optional console flags.
+* @noreturn
+*/
 stock PluginManager_RegAdminCmd(const String:name[], ConCmd:callback, adminflags, const String:description[]="", minArgs=0, const String:usage[]="", const String:group[]="", flags=0)
 {
 	flags |= FCVAR_PLUGIN;
@@ -105,6 +151,15 @@ stock PluginManager_RegAdminCmd(const String:name[], ConCmd:callback, adminflags
 	RegAdminCmd(name, callback, description, groups, flags);
 }
 
+/**
+* Creates a hook for when a game event is fired.
+*
+* @param name				Name of event.
+* @param callback			An EventHook function pointer.
+* @param mode				Optional EventHookMode determining the type of hook.
+* @param setFailState		Optional boolean, if true a SetFailState triggers, when given event isn't available in the game/mod.
+* @return					True if event exists and was hooked successfully, false otherwise.
+*/
 stock bool:PluginManager_HookEvent(const String:name[], EventHook:callback, EventHookMode:mode=EventHookMode_Post, bool:setFailState=true)
 {
 	if (!HookEventEx(name, callback, mode)) {
@@ -119,6 +174,13 @@ stock bool:PluginManager_HookEvent(const String:name[], EventHook:callback, Even
 	return true;
 }
 
+/**
+* Searches for a console variable.  
+*
+* @param name				Name of convar to find.
+* @param setFailState		Optional boolean, if true a SetFailState triggers, when given convar can't be found.
+* @return					A handle to the convar if it is found. INVALID_HANDLE otherwise.
+*/
 stock Handle:PluginManager_FindConVar(const String:name[], bool:setFailState=true)
 {
 	new Handle:consoleVariable = FindConVar(name);
