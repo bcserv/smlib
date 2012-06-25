@@ -260,16 +260,16 @@ stock bool:Nmrih_Client_IsInfected(client)
 	return bool:(Nmrih_Client_GetInfectionTime(client) != -1.0);
 }
 
-enum Nmrih_Zombie_Type
+enum NMRIH_ZOMBIE_TYPE
 {
 	
-	Nmrih_Zombie_None = -1,
+	NMRIH_ZOMBIE_TYPE_NONE = -1,
 	
-	Nmrih_Zombie_Shambler,
-	Nmrih_Zombie_Runner,
-	Nmrih_Zombie_Kid,
+	NMRIH_ZOMBIE_TYPE_SHAMBLER,
+	NMRIH_ZOMBIE_TYPE_RUNNER,
+	NMRIH_ZOMBIE_TYPE_KID,
 	
-	Nmrih_Zombie_All
+	NMRIH_ZOMBIE_TYPE_ALL
 }
 
 /*new String:Nmrih_Zombie_Type_ClassNames[][] =
@@ -286,7 +286,7 @@ enum Nmrih_Zombie_Type
  * @param type			The filter type, only matching zombies will count.
  * @return				Number of zombies.
  */
-stock Nmrih_Zombie_GetCount(Nmrih_Zombie_Type:type=Nmrih_Zombie_All)
+stock Nmrih_Zombie_GetCount(NMRIH_ZOMBIE_TYPE:type=NMRIH_ZOMBIE_TYPE_ALL)
 {
 	new count = 0;
 	new maxEntities = GetMaxEntities();
@@ -295,7 +295,7 @@ stock Nmrih_Zombie_GetCount(Nmrih_Zombie_Type:type=Nmrih_Zombie_All)
 		
 		if (Nmrih_Zombie_IsValid(entity)) {
 			
-			if (type == Nmrih_Zombie_All) {
+			if (type == NMRIH_ZOMBIE_TYPE_ALL) {
 				
 				count++;
 			}
@@ -315,7 +315,7 @@ stock Nmrih_Zombie_GetCount(Nmrih_Zombie_Type:type=Nmrih_Zombie_All)
  * @param entity		Entity index.
  * @return				Type of zombie.
  */
-stock Nmrih_Zombie_Type:Nmrih_Zombie_GetType(entity)
+stock NMRIH_ZOMBIE_TYPE:Nmrih_Zombie_GetType(entity)
 {
 	decl String:className[MAX_NAME_LENGTH];
 	Entity_GetClassName(entity,className,sizeof(className));
@@ -324,20 +324,20 @@ stock Nmrih_Zombie_Type:Nmrih_Zombie_GetType(entity)
 		
 		//npc_nmrih_shamblerzombie
 		if (className[10] == 's' || className[10] == 'S') {
-			return Nmrih_Zombie_Shambler;
+			return NMRIH_ZOMBIE_TYPE_SHAMBLER;
 		}
 		//npc_nmrih_runnerzombie
 		else if (className[10] == 'r' || className[10] == 'R') {
-			return Nmrih_Zombie_Runner;
+			return NMRIH_ZOMBIE_TYPE_RUNNER;
 		}
 		//npc_nmrih_kidzombie
 		else if (className[10] == 'k' || className[10] == 'K') {
-			return Nmrih_Zombie_Kid;
+			return NMRIH_ZOMBIE_TYPE_KID;
 		}
 		
-		return Nmrih_Zombie_All;
+		return NMRIH_ZOMBIE_TYPE_ALL;
 	}
-	return Nmrih_Zombie_None;
+	return NMRIH_ZOMBIE_TYPE_NONE;
 }
 /**
  * Returns true when the given entity is valid and a zombie.
@@ -351,7 +351,7 @@ stock bool:Nmrih_Zombie_IsValid(entity)
 		return false;
 	}
 	
-	if (Nmrih_Zombie_GetType(entity) == Nmrih_Zombie_None) {
+	if (Nmrih_Zombie_GetType(entity) == NMRIH_ZOMBIE_TYPE_NONE) {
 		return false;
 	}
 	
