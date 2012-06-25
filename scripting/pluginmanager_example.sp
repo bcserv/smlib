@@ -5,6 +5,7 @@
 #include <sourcemod>
 #include <sdktools>
 #include <smlib>
+#include <smlib/pluginmanager>
 
 #define PLUGIN_VERSION "0.1"
 
@@ -23,7 +24,7 @@ public Plugin:myinfo = {
 	author = "Berni",
 	description = "Plugin by Berni",
 	version = PLUGIN_VERSION,
-	url = "http://www.mannisfunhouse.eu"
+	url = "http://www.bcserv.eu"
 }
 
 
@@ -52,7 +53,7 @@ public Plugin:myinfo = {
 
 public OnPluginStart()
 {
-	PluginManager_Initialize("smlib_example", "SMLIB Example");
+	PluginManager_Initialize("smlib_example", "[SM]");
 }
 
 
