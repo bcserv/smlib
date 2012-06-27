@@ -69,7 +69,7 @@ PluginManager_Initialize(const String:prefix[], const String:tag[]="", bool:load
 		AutoExecConfig(true,baseFileName);
 	}
 	
-	Plugin_VersionCvar = PluginManager_CreateConvar("version", Plugin_Version, Plugin_VersionDescription, FCVAR_PLUGIN|FCVAR_DONTRECORD|FCVAR_NOTIFY);
+	Plugin_VersionCvar = PluginManager_CreateConVar("version", Plugin_Version, Plugin_VersionDescription, FCVAR_PLUGIN|FCVAR_DONTRECORD|FCVAR_NOTIFY);
 	//override old cvar in case of late load (this is needed to kick the engine in the ass, so it'll broadcast its value again)
 	SetConVarString(Plugin_VersionCvar,Plugin_Version);
 }
@@ -88,7 +88,7 @@ PluginManager_Initialize(const String:prefix[], const String:tag[]="", bool:load
 * @param max				Maximum floating point value that the convar can have if hasMax is true.
 * @return					A handle to the newly created convar. If the convar already exists, a handle to it will still be returned.
 */
-stock Handle:PluginManager_CreateConvar(const String:name[], const String:defaultValue[], const String:description[]="", flags=0, bool:hasMin=false, Float:min=0.0, bool:hasMax=false, Float:max=0.0)
+stock Handle:PluginManager_CreateConVar(const String:name[], const String:defaultValue[], const String:description[]="", flags=0, bool:hasMin=false, Float:min=0.0, bool:hasMax=false, Float:max=0.0)
 {
 	flags |= FCVAR_PLUGIN;
 
@@ -147,8 +147,8 @@ stock PluginManager_RegConsoleCmd(const String:name[], ConCmd:callback, const St
 stock PluginManager_RegAdminCmd(const String:name[], ConCmd:callback, adminflags, const String:description[]="", minArgs=0, const String:usage[]="", const String:group[]="", flags=0)
 {
 	flags |= FCVAR_PLUGIN;
-
-	RegAdminCmd(name, callback, description, groups, flags);
+	
+	RegAdminCmd(name, callback, adminflags, description, group, flags);
 }
 
 /**

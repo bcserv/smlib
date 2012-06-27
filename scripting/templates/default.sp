@@ -74,8 +74,10 @@ public Plugin:myinfo = {
 // Console Variables
 // new Handle:g_cvarEnable 					= INVALID_HANDLE;
 
+
 // Console Variables: Runtime Optimizers
 // new g_iPlugin_Enable 					= 1;
+
 
 // Plugin Internal Variables
 
@@ -167,24 +169,40 @@ public OnClientPostAdminCheck(client)
 **************************************************************************************/
 /**************************************************************************************
 
-	E V E N T S
+	C O N  V A R  C H A N G E
 
 **************************************************************************************/
-/* Example Callback Event
-public Action:Event_Example(Handle:event, const String:name[], bool:dontBroadcast){
-
+/* Example Callback Con Var Change
+public ConVarChange_Enable(Handle:cvar, const String:oldVal[], const String:newVal[])
+{
+	g_iPlugin_Enable = StringToInt(newVal);
 }
 */
 
 
 /**************************************************************************************
 
-	C O N  V A R  C H A N G E
+	C O M M A N D S
 
 **************************************************************************************/
-/* Example Callback Con Var Change
-public ConVarChange_Enable(Handle:cvar, const String:oldVal[], const String:newVal[]){
-	g_iPlugin_Enable = StringToInt(newVal);
+/* Example Command Callback
+public Action:Command_(client, args)
+{
+	
+	return Plugin_Handled;
+}
+*/
+
+
+/**************************************************************************************
+
+	E V E N T S
+
+**************************************************************************************/
+/* Example Callback Event
+public Action:Event_Example(Handle:event, const String:name[], bool:dontBroadcast)
+{
+
 }
 */
 
