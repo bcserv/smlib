@@ -17,7 +17,7 @@
 #include <sourcemod>
 #include <smlib>
 
-#define PLUGIN_VERSION "0.1"
+#define PLUGIN_VERSION "1.0"
 
 
 
