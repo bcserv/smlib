@@ -45,15 +45,9 @@ PluginManager_Initialize(const String:prefix[], const String:tag[]="", bool:load
 	Format(
 		Plugin_VersionDescription,
 		sizeof(Plugin_VersionDescription),
-		"\n  || %s ('%s') v%s\n  || Builddate:'%s - %s'\n  || Author(s):'%s'\n  || URL:'%s'\n  || Description:'%s'\n",
+		"Version of %s ('%s')",
 		Plugin_Name,
-		Plugin_FileName,
-		Plugin_Version,
-		__TIME__,
-		__DATE__,
-		Plugin_Author,
-		Plugin_Url,
-		Plugin_Description
+		Plugin_FileName
 	);
 	
 	decl String:baseFileName[PLATFORM_MAX_PATH];
