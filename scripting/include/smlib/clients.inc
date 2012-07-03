@@ -179,7 +179,7 @@ stock Client_FindBySteamId(const String:auth[])
 */
 stock Client_FindByName(const String:name[], bool:partOfName=true, bool:caseSensitive=false)
 {
-	new String:clientName[MAX_STEAMAUTH_LENGTH];
+	new String:clientName[MAX_NAME_LENGTH];
 	for (new client=1; client <= MaxClients; client++) {
 		if (!IsClientAuthorized(client)) {
 			continue;
