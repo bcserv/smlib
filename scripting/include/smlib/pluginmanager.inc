@@ -99,6 +99,8 @@ stock Handle:PluginManager_CreateConVar(const String:name[], const String:defaul
 * @param cmd				Name of the command to hook or create.
 * @param callback			A function to use as a callback for when the command is invoked.
 * @param description		Optional description to use for command creation.
+* @param minArgs			NOT IMPLEMENTED YET
+* @param usage				NOT IMPLEMENTED YET
 * @param flags				Optional flags to use for command creation.
 * @noreturn
 */
@@ -116,6 +118,8 @@ stock PluginManager_RegServerCmd(const String:name[], SrvCmd:callback, const Str
 * @param cmd				Name of the command to hook or create.
 * @param callback			A function to use as a callback for when the command is invoked.
 * @param description		Optional description to use for command creation.
+* @param minArgs			NOT IMPLEMENTED YET
+* @param usage				NOT IMPLEMENTED YET
 * @param flags				Optional flags to use for command creation.
 * @noreturn
 */
@@ -134,6 +138,8 @@ stock PluginManager_RegConsoleCmd(const String:name[], ConCmd:callback, const St
 * @param callback			A function to use as a callback for when the command is invoked.
 * @param adminflags			Administrative flags (bitstring) to use for permissions.
 * @param description		Optional description to use for help.
+* @param minArgs			NOT IMPLEMENTED YET
+* @param usage				NOT IMPLEMENTED YET
 * @param group				String containing the command group to use.  If empty, the plugin's filename will be used instead.
 * @param flags				Optional console flags.
 * @noreturn

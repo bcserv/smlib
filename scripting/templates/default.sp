@@ -82,6 +82,12 @@ public Plugin:myinfo = {
 // Plugin Internal Variables
 
 
+// Library Load Checks
+
+
+// Game Variables
+
+
 // Server Variables
 
 
@@ -123,7 +129,26 @@ public OnPluginStart() {
 	// g_cvarEnable = PluginManager_CreateConVar("enable","1","Enables or disables this plugin");
 	
 	
+	// Hook ConVar Change
+	// HookConVarChange(g_cvarEnable,ConVarChange_Enable);
+	
+	
 	// Event Hooks
+	
+	
+	// Library
+	
+	
+	/* Features
+	if(CanTestFeatures()){
+		
+	}
+	*/
+	
+	// Create ADT Arrays
+	
+	
+	// Timers
 	
 	
 }
@@ -131,8 +156,8 @@ public OnPluginStart() {
 public OnMapStart() {
 	
 	// hax against valvefail (thx psychonic for fix)
-	if(GuessSDKVersion() == SOURCE_SDK_EPISODE2VALVE){
-		SetConVarString(g_cvarVersion, PLUGIN_VERSION);
+	if (GuessSDKVersion() == SOURCE_SDK_EPISODE2VALVE) {
+		SetConVarString(Plugin_VersionCvar, Plugin_Version);
 	}
 }
 
@@ -140,10 +165,6 @@ public OnConfigsExecuted()
 {
 	// Set your ConVar runtime optimizers here
 	// g_iPlugin_Enable = GetConVarInt(g_cvarEnable);
-	
-	
-	// Hook ConVar Change
-	// HookConVarChange(g_cvarEnable,ConVarChange_Enable);
 	
 	// Mind: this is only here for late load, since on map change or server start, there isn't any client.
 	// Remove it if you don't need it.
