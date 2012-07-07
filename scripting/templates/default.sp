@@ -71,6 +71,12 @@ public Plugin:myinfo = {
 
 
 ***************************************************************************************/
+// Server Variables
+
+
+// Plugin Internal Variables
+
+
 // Console Variables
 // new Handle:g_cvarEnable 					= INVALID_HANDLE;
 
@@ -79,16 +85,13 @@ public Plugin:myinfo = {
 // new g_iPlugin_Enable 					= 1;
 
 
-// Plugin Internal Variables
+// Timers
 
 
 // Library Load Checks
 
 
 // Game Variables
-
-
-// Server Variables
 
 
 // Map Variables
@@ -107,10 +110,10 @@ public Plugin:myinfo = {
 
 
 ***************************************************************************************/
-public OnPluginStart() {
-	
+public OnPluginStart()
+{
 	// Initialization for SMLib
-	PluginManager_Initialize("","[SM] ");
+	PluginManager_Initialize("", "[SM] ");
 	
 	// Translations
 	// LoadTranslations("common.phrases");
@@ -126,11 +129,11 @@ public OnPluginStart() {
 	
 	
 	// Cvars: Create a global handle variable.
-	// g_cvarEnable = PluginManager_CreateConVar("enable","1","Enables or disables this plugin");
+	// g_cvarEnable = PluginManager_CreateConVar("enable", "1", "Enables or disables this plugin");
 	
 	
 	// Hook ConVar Change
-	// HookConVarChange(g_cvarEnable,ConVarChange_Enable);
+	// HookConVarChange(g_cvarEnable, ConVarChange_Enable);
 	
 	
 	// Event Hooks
@@ -153,8 +156,8 @@ public OnPluginStart() {
 	
 }
 
-public OnMapStart() {
-	
+public OnMapStart()
+{
 	// hax against valvefail (thx psychonic for fix)
 	if (GuessSDKVersion() == SOURCE_SDK_EPISODE2VALVE) {
 		SetConVarString(Plugin_VersionCvar, Plugin_Version);
@@ -245,7 +248,7 @@ public Action:Event_Example(Handle:event, const String:name[], bool:dontBroadcas
 ***************************************************************************************/
 stock Client_InitializeAll()
 {
-	LOOP_CLIENTS(client,CLIENTFILTER_ALL){
+	LOOP_CLIENTS (client, CLIENTFILTER_ALL) {
 		
 		Client_Initialize(client);
 	}
