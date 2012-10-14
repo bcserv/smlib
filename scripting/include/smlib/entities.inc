@@ -2027,3 +2027,89 @@ stock Entity_GetMinHealthDamage(entity)
 {
 	return GetEntProp(entity, Prop_Data, "m_iMinHealthDmg");
 }
+
+/**
+ * Sets an entity's color.
+ * Doesn't change the value, if set to -1.
+ *
+ * @param entity	Entity index
+ * @param r 		Amount of red (0-255)
+ * @param g 		Amount of green (0-255)
+ * @param b 		Amount of blue (0-255)
+ * @param a 		Amount of alpha (0-255)
+ * @noreturn
+ * @error			Invalid entity index, or lack of mod compliance.
+ */
+stock Entity_SetRenderColor(entity, r=-1, g=-1, b=-1, a=-1)
+{
+	static bool:gotconfig = false;
+	static String:prop[32];
+	
+	if (!gotconfig)
+	{
+		new Handle:gc = LoadGameConfigFile("core.games");
+		new bool:exists = GameConfGetKeyValue(gc, "m_clrRender", prop, sizeof(prop));
+		CloseHandle(gc);
+		
+		if (!exists)
+		{
+			strcopy(prop, sizeof(prop), "m_clrRender");
+		}
+		
+		gotconfig = true;
+	}
+	
+	new offset = GetEntSendPropOffs(entity, prop);
+	
+	if (offset <= 0)
+	{
+		ThrowError("SetEntityRenderColor not supported by this mod");
+	}
+	
+	if(r != -1)
+		SetEntData(entity, offset, r, 1, true);
+	if(g != -1)
+		SetEntData(entity, offset + 1, g, 1, true);
+	if(b != -1)
+		SetEntData(entity, offset + 2, b, 1, true);
+	if(a != -1)
+		SetEntData(entity, offset + 3, a, 1, true);
+}
+
+/**
+ * Gets an entity's color.
+ *
+ * @param entity	Entity index
+ * @param color 	Array where [r,g,b,a] values are stored
+ * @noreturn
+ * @error			Invalid entity index, or lack of mod compliance.
+ */
+stock Entity_GetRenderColor(entity, color[4])
+{
+	static bool:gotconfig = false;
+	static String:prop[32];
+	
+	if (!gotconfig)
+	{
+		new Handle:gc = LoadGameConfigFile("core.games");
+		new bool:exists = GameConfGetKeyValue(gc, "m_clrRender", prop, sizeof(prop));
+		CloseHandle(gc);
+		
+		if (!exists)
+		{
+			strcopy(prop, sizeof(prop), "m_clrRender");
+		}
+		
+		gotconfig = true;
+	}
+	
+	new offset = GetEntSendPropOffs(entity, prop);
+	
+	if (offset <= 0)
+	{
+		ThrowError("SetEntityRenderColor not supported by this mod");
+	}
+	
+	for(new i=0;i<4;i++)
+		color[i] = GetEntData(entity, offset + i + 1, 1);
+}
