@@ -97,7 +97,7 @@ stock Edict_GetClosest(Float:vecOrigin_center[3], bool:clientsOnly=false, ignore
 		
 		new Float:edict_distance = GetVectorDistance(vecOrigin_center, vecOrigin_edict, true);
 		
-		if (smallestDistance == 0.0 || edict_distance < smallestDistance) {
+		if (edict_distance < smallestDistance || smallestDistance == 0.0) {
 			smallestDistance = edict_distance;
 			closestEdict = edict;
 		}
