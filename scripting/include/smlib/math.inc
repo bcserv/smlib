@@ -34,7 +34,7 @@ stock Math_Abs(value)
 
 /**
  * Checks if 2 vectors are equal.
- * You can specfiy a tolerance.
+ * You can specfiy a tolerance, which is the maximum distance at which vectors are considered equals
  *
  * @param vec1			First vector (3 dim array)
  * @param vec2			Second vector (3 dim array)
@@ -43,9 +43,9 @@ stock Math_Abs(value)
  */
 stock bool:Math_VectorsEqual(Float:vec1[3], Float:vec2[3], Float:tolerance=0.0)
 {	
-	new Float:distance = GetVectorDistance(vec1, vec2);
+	new Float:distance = GetVectorDistance(vec1, vec2, true);
 	
-	return distance <= tolerance;
+	return distance <= (tolerance * tolerance);
 }
 
 /**
