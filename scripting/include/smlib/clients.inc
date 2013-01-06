@@ -2204,7 +2204,7 @@ stock bool:Client_IsLookingAtWall(client, Float:distance=40.0) {
 
 		TR_GetEndPosition(posEnd, trace);
 		
-		if (GetVectorDistance(posEye, posEnd) <= distance) {
+		if (GetVectorDistance(posEye, posEnd, true) <= (distance * distance)) {
 			isClientLookingAtWall = true;
 		}
 	}
