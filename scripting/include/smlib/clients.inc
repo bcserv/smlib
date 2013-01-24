@@ -496,7 +496,7 @@ stock bool:Client_ScreenFade(client, duration, mode, holdtime=-1, r=0, g=0, b=0,
 		return false;
 	}
 
-	if(GetUserMessageType() == UM_Protobuf) {
+	if(GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available && GetUserMessageType() == UM_Protobuf) {
 		PbSetInt(userMessage, "duration", duration);
 		PbSetInt(userMessage, "hold_time", holdtime);
 		PbSetInt(userMessage, "flags", mode);
@@ -912,7 +912,7 @@ stock bool:Client_RawAudio(client, const emitter, const String:soundfile[], Floa
 		return false;
 	}
 
-	if(GetUserMessageType() == UM_Protobuf) {
+	if(GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available && GetUserMessageType() == UM_Protobuf) {
 		PbSetInt(message, "pitch", pitch);
 		PbSetInt(message, "entidx", emitter);
 		PbSetFloat(message, "duration", length);
@@ -948,7 +948,7 @@ stock bool:Client_RawAudioToAll(const emitter, const String:soundfile[], Float:l
 		return false;
 	}
 
-	if(GetUserMessageType() == UM_Protobuf) {
+	if(GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available && GetUserMessageType() == UM_Protobuf) {
 		PbSetInt(message, "pitch", pitch);
 		PbSetInt(message, "entidx", emitter);
 		PbSetFloat(message, "duration", length);
@@ -1705,7 +1705,7 @@ stock bool:Client_PrintHintText(client, const String:format[], any:...)
 	VFormat(buffer, sizeof(buffer), format, 3);
 
 	
-	if(GetUserMessageType() == UM_Protobuf) {
+	if(GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available && GetUserMessageType() == UM_Protobuf) {
 		PbSetString(userMessage, "text", format);
 	}
 	else {
@@ -1765,7 +1765,7 @@ stock bool:Client_PrintKeyHintText(client, const String:format[], any:...)
 	SetGlobalTransTarget(client);
 	VFormat(buffer, sizeof(buffer), format, 3);
 
-	if(GetUserMessageType() == UM_Protobuf) {
+	if(GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available && GetUserMessageType() == UM_Protobuf) {
 		PbSetString(userMessage, "hints", format);
 	}
 	else {
@@ -1839,7 +1839,7 @@ stock Client_PrintToChatRaw(client, const String:message[], subject=0, bool:isCh
 	if (sayText2_supported) {
 		userMessage = StartMessageOne("SayText2", client, USERMSG_RELIABLE);
 		
-		if(GetUserMessageType() == UM_Protobuf) {
+		if(GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available && GetUserMessageType() == UM_Protobuf) {
 			PbSetInt(userMessage, "ent_idx", subject);
 			PbSetBool(userMessage, "chat", isChat);
 			PbSetString(userMessage, "msg_name", message);
@@ -1859,7 +1859,7 @@ stock Client_PrintToChatRaw(client, const String:message[], subject=0, bool:isCh
 	else {
 		userMessage = StartMessageOne("SayText", client, USERMSG_RELIABLE);
 
-		if(GetUserMessageType() == UM_Protobuf) {
+		if(GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available && GetUserMessageType() == UM_Protobuf) {
 			PbSetInt(userMessage, "ent_idx", subject);
 			PbSetString(userMessage, "text", message);
 			PbSetBool(userMessage, "chat", isChat);
@@ -2082,7 +2082,7 @@ stock Client_Print(client, ClientHudPrint:destination, const String:format[], an
 	new Handle:userMessage = INVALID_HANDLE;
 	userMessage = StartMessageOne("TextMsg", client, USERMSG_RELIABLE);
 
-	if(GetUserMessageType() == UM_Protobuf) {
+	if(GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available && GetUserMessageType() == UM_Protobuf) {
 		PbSetInt(userMessage, "msg_dst", _:destination);
 		PbAddString(userMessage, "params", buffer2);
 	}
@@ -2153,7 +2153,7 @@ stock bool:Client_Shake(client, command=SHAKE_START, Float:amplitude=50.0, Float
 		return false;
 	}
 	
-	if(GetUserMessageType() == UM_Protobuf) {
+	if(GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available && GetUserMessageType() == UM_Protobuf) {
 		PbSetInt(userMessage, "command", command);
 		PbSetFloat(userMessage, "local_amplitude", amplitude);
 		PbSetFloat(userMessage, "frequency", frequency);
