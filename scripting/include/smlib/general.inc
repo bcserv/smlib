@@ -236,4 +236,11 @@ stock bool:IsIPLocal(ip)
 	return false;
 }
 
-
+stock ClearHandle(&Handle:handle)
+{
+	if(handle != INVALID_HANDLE)
+	{
+		CloseHandle(handle);
+		handle = INVALID_HANDLE;
+	}
+}
