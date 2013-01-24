@@ -110,6 +110,16 @@ stock Color_ChatSetSubject(client)
 }
 
 /**
+ * Gets the subject used for the chat color parser.
+ *
+ * @return					Client Index/Subject, or CHATCOLOR_NOSUBJECT if none
+ */
+stock Color_ChatGetSubject()
+{
+	return chatSubject;
+}
+
+/**
  * Clears the subject used for the chat color parser.
  * Call this after Color_ParseChatText().
  *
@@ -204,7 +214,8 @@ stock Color_ParseChatText(const String:str[], String:buffer[], size)
  * @param subject			Subject variable to pass
  * @return					Chat Color Code char or 0 if the tag couldn't be found.
  */
-stock Color_TagToCode(const String:tag[], &subject=-1){
+stock Color_TagToCode(const String:tag[], &subject=-1)
+{
 	new n = Array_FindString(chatColorTags, sizeof(chatColorTags), tag);
 
 	if (n == -1) {

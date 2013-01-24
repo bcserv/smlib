@@ -635,9 +635,9 @@ stock Client_GetCount(bool:countInGameOnly=true, bool:countFakeClients=true)
  * The Scoreboard uses the goldSource corrected Ping, the net_graph doesn't
  * For Fake Clients 0 is returned.
  *
- * @param inGameOnly	Wether players not ingame yet are also counted
- * @param countBots		If true bots will be counted too.
- * @return				Client's ping or 0 for fake clients
+ * @param client		Client index
+ * @param goldSource	If true, get the ping as displayed in the player's scoreboard, false returns the net_graph variant.
+ * @return				Client's fake ping or 0 for fake clients
  */
 stock Client_GetFakePing(client, bool:goldSource=true)
 {
@@ -2204,7 +2204,7 @@ stock bool:Client_IsLookingAtWall(client, Float:distance=40.0) {
 
 		TR_GetEndPosition(posEnd, trace);
 		
-		if (GetVectorDistance(posEye, posEnd) <= distance) {
+		if (GetVectorDistance(posEye, posEnd, true) <= (distance * distance)) {
 			isClientLookingAtWall = true;
 		}
 	}
