@@ -2085,6 +2085,10 @@ stock Client_Print(client, ClientHudPrint:destination, const String:format[], an
 	if(GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available && GetUserMessageType() == UM_Protobuf) {
 		PbSetInt(userMessage, "msg_dst", _:destination);
 		PbAddString(userMessage, "params", buffer2);
+		PbAddString(userMessage, "params", "");
+		PbAddString(userMessage, "params", "");
+		PbAddString(userMessage, "params", "");
+		PbAddString(userMessage, "params", "");
 	}
 	else {
 		BfWriteByte(userMessage		, _:destination);
