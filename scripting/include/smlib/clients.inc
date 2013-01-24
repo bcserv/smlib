@@ -496,16 +496,19 @@ stock bool:Client_ScreenFade(client, duration, mode, holdtime=-1, r=0, g=0, b=0,
 		return false;
 	}
 
-	if(GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available && GetUserMessageType() == UM_Protobuf) {
-		PbSetInt(userMessage, "duration", duration);
-		PbSetInt(userMessage, "hold_time", holdtime);
-		PbSetInt(userMessage, "flags", mode);
+	if (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available &&
+		GetUserMessageType() == UM_Protobuf) {
+
 		new color[4];
 		color[0] = r;
 		color[1] = g;
 		color[2] = b;
 		color[3] = a;
-		PbSetColor(userMessage, "clr", color);
+
+		PbSetInt(userMessage,   "duration",   duration);
+		PbSetInt(userMessage,   "hold_time",  holdtime);
+		PbSetInt(userMessage,   "flags",      mode);
+		PbSetColor(userMessage, "clr",        color);
 	}
 	else {
 		BfWriteShort(userMessage,	duration);	// Fade duration
@@ -912,10 +915,12 @@ stock bool:Client_RawAudio(client, const emitter, const String:soundfile[], Floa
 		return false;
 	}
 
-	if(GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available && GetUserMessageType() == UM_Protobuf) {
-		PbSetInt(message, "pitch", pitch);
-		PbSetInt(message, "entidx", emitter);
-		PbSetFloat(message, "duration", length);
+	if (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available
+		&& GetUserMessageType() == UM_Protobuf) {
+
+		PbSetInt(message,    "pitch",          pitch);
+		PbSetInt(message,    "entidx",         emitter);
+		PbSetFloat(message,  "duration",       length );
 		PbSetString(message, "voice_filename", soundfile);
 	}
 	else {
@@ -948,7 +953,9 @@ stock bool:Client_RawAudioToAll(const emitter, const String:soundfile[], Float:l
 		return false;
 	}
 
-	if(GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available && GetUserMessageType() == UM_Protobuf) {
+	if (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available
+		&& GetUserMessageType() == UM_Protobuf) {
+
 		PbSetInt(message, "pitch", pitch);
 		PbSetInt(message, "entidx", emitter);
 		PbSetFloat(message, "duration", length);
@@ -1705,13 +1712,16 @@ stock bool:Client_PrintHintText(client, const String:format[], any:...)
 	VFormat(buffer, sizeof(buffer), format, 3);
 
 	
-	if(GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available && GetUserMessageType() == UM_Protobuf) {
+	if (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available
+		&& GetUserMessageType() == UM_Protobuf) {
+
 		PbSetString(userMessage, "text", format);
 	}
 	else {
 		BfWriteByte(userMessage, 1); 
 		BfWriteString(userMessage, buffer); 
 	}
+
 	EndMessage();
 	
 	return true;
@@ -1765,7 +1775,9 @@ stock bool:Client_PrintKeyHintText(client, const String:format[], any:...)
 	SetGlobalTransTarget(client);
 	VFormat(buffer, sizeof(buffer), format, 3);
 
-	if(GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available && GetUserMessageType() == UM_Protobuf) {
+	if (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available
+		&& GetUserMessageType() == UM_Protobuf) {
+
 		PbSetString(userMessage, "hints", format);
 	}
 	else {
@@ -1839,12 +1851,16 @@ stock Client_PrintToChatRaw(client, const String:message[], subject=0, bool:isCh
 	if (sayText2_supported) {
 		userMessage = StartMessageOne("SayText2", client, USERMSG_RELIABLE);
 		
-		if(GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available && GetUserMessageType() == UM_Protobuf) {
-			PbSetInt(userMessage, "ent_idx", subject);
-			PbSetBool(userMessage, "chat", isChat);
+		if (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available
+			&& GetUserMessageType() == UM_Protobuf) {
+
+			PbSetInt(userMessage,    "ent_idx",  subject);
+			PbSetBool(userMessage,   "chat",     isChat);
 			PbSetString(userMessage, "msg_name", message);
-			
-			// psychonic: Furthermore, some usermessages with repeated field, such as the commonly-used SayText2, expected an undocumented specific number of values added, else the client will crash when receiving.
+
+			// psychonic: Furthermore, some usermessages with repeated field,
+			// such as the commonly-used SayText2, expected an undocumented
+			// specific number of values added, else the client will crash when receiving.
 			PbAddString(userMessage, "params", "");
 			PbAddString(userMessage, "params", "");
 			PbAddString(userMessage, "params", "");
@@ -1859,7 +1875,9 @@ stock Client_PrintToChatRaw(client, const String:message[], subject=0, bool:isCh
 	else {
 		userMessage = StartMessageOne("SayText", client, USERMSG_RELIABLE);
 
-		if(GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available && GetUserMessageType() == UM_Protobuf) {
+		if (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available
+			&& GetUserMessageType() == UM_Protobuf) {
+
 			PbSetInt(userMessage, "ent_idx", subject);
 			PbSetString(userMessage, "text", message);
 			PbSetBool(userMessage, "chat", isChat);
@@ -2082,13 +2100,15 @@ stock Client_Print(client, ClientHudPrint:destination, const String:format[], an
 	new Handle:userMessage = INVALID_HANDLE;
 	userMessage = StartMessageOne("TextMsg", client, USERMSG_RELIABLE);
 
-	if(GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available && GetUserMessageType() == UM_Protobuf) {
-		PbSetInt(userMessage, "msg_dst", _:destination);
-		PbAddString(userMessage, "params", buffer2);
-		PbAddString(userMessage, "params", "");
-		PbAddString(userMessage, "params", "");
-		PbAddString(userMessage, "params", "");
-		PbAddString(userMessage, "params", "");
+	if (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available
+		&& GetUserMessageType() == UM_Protobuf) {
+
+		PbSetInt(userMessage,    "msg_dst", _:destination);
+		PbAddString(userMessage, "params",  buffer2);
+		PbAddString(userMessage, "params",  "");
+		PbAddString(userMessage, "params",  "");
+		PbAddString(userMessage, "params",  "");
+		PbAddString(userMessage, "params",  "");
 	}
 	else {
 		BfWriteByte(userMessage		, _:destination);
@@ -2157,11 +2177,13 @@ stock bool:Client_Shake(client, command=SHAKE_START, Float:amplitude=50.0, Float
 		return false;
 	}
 	
-	if(GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available && GetUserMessageType() == UM_Protobuf) {
-		PbSetInt(userMessage, "command", command);
+	if (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available
+		&& GetUserMessageType() == UM_Protobuf) {
+
+		PbSetInt(userMessage,   "command",         command);
 		PbSetFloat(userMessage, "local_amplitude", amplitude);
-		PbSetFloat(userMessage, "frequency", frequency);
-		PbSetFloat(userMessage, "duration", duration);
+		PbSetFloat(userMessage, "frequency",       frequency);
+		PbSetFloat(userMessage, "duration",        duration);
 	}
 	else {
 		BfWriteByte(userMessage,	command);	// Shake Command
@@ -2169,6 +2191,7 @@ stock bool:Client_Shake(client, command=SHAKE_START, Float:amplitude=50.0, Float
 		BfWriteFloat(userMessage,	frequency);	// shake noise frequency
 		BfWriteFloat(userMessage,	duration);	// shake lasts this long
 	}
+
 	EndMessage();
 
 	return true;
