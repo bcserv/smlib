@@ -236,10 +236,15 @@ stock bool:IsIPLocal(ip)
 	return false;
 }
 
+/*
+ * Closes the given hindle and sets it to INVALID_HANDLE.
+ * 
+ * @param handle   handle
+ * @noreturn
+ */
 stock ClearHandle(&Handle:handle)
 {
-	if(handle != INVALID_HANDLE)
-	{
+	if (handle != INVALID_HANDLE) {
 		CloseHandle(handle);
 		handle = INVALID_HANDLE;
 	}

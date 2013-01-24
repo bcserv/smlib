@@ -63,10 +63,11 @@ public Plugin:myinfo = {
 
 public OnPluginStart() {
 
-	new arr[1], String:arr_str[1][1];
+	new arr[1], String:arr_str[1][1], arr_4[4];
 	decl Float:vec[3];
 	decl String:buf[1], String:twoDimStrArr[1][1];
 	new var;
+	new Handle:handle;
 
 	// File: arrays.inc
 	Array_FindValue(arr, sizeof(arr), 1);
@@ -361,6 +362,8 @@ public OnPluginStart() {
 	Entity_GetTakeDamage(0);
 	Entity_SetMinHealthDamage(0,0);
 	Entity_GetMinHealthDamage(0);
+	Entity_GetRenderColor(0, arr_4);
+	Entity_SetRenderColor(0, 0, 0, 0, 0);
 	
 	// File: files.inc
 	File_GetBaseName("", buf, sizeof(buf));
@@ -389,6 +392,7 @@ public OnPluginStart() {
 	LongToIP(0, buf, sizeof(buf));
 	IPToLong("");
 	IsIPLocal(0);
+	ClearHandle(handle);
 
 	// File: math.inc
 	Math_Abs(0);
