@@ -39,6 +39,8 @@ We give people push access who have already done some successful pull requests.
 * Add used function `#include` dependencies at top to ensure single smlib include files can be included in plugins without having to include the whole `<smlib>`
 * If you are working on a bigger feature in smlib, that will require multiple commits to be made, consider creating a new feature branch ("feature-yourfeaturename") and make a pull request when you are done to merge it with the master
 * Write re-usable, capsulated, readable, clean code
+* Don't use the function "ServerCommand", unless you have a really really really good reason to do so.
+* Don't add code that messes with the client's settings (ie. console command hacks)
 
 
 ## Checklist before submitting pull requests / committing new code
