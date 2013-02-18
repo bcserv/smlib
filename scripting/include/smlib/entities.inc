@@ -831,6 +831,8 @@ stock Entity_SetSolidFlags(entity, SolidFlags_t:flags)
 	if (oldFlags == flags) {
 		return;
 	}
+	
+	SetEntProp(entity, Prop_Data, "m_usSolidFlags", flags, 2);
 
 	// These two flags, if changed, can produce different surrounding bounds
 	if ((oldFlags & (FSOLID_FORCE_WORLD_ALIGNED | FSOLID_USE_TRIGGER_BOUNDS)) !=
