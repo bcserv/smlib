@@ -3087,4 +3087,28 @@ stock Client_PrintToTopEx(clients[], numClients, r=255, g=255, b=255, a=255, Flo
 	}
 }
 
+/**
+ * Opens the scoreboard for a specific client
+ * 
+ * @tested csgo
+ * @param client	Client index
+ * @noreturn
+ */
+stock Client_ShowScoreboard(client, flags=USERMSG_RELIABLE | USERMSG_BLOCKHOOKS)
+{
+	new Handle:handle = StartMessageOne("VGUIMenu", client, flags);
 
+	if (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available &&
+			GetUserMessageType() == UM_Protobuf) {
+
+		PbSetString(handle, "name", "scores");
+		PbSetBool(handle, "show", true);	
+	}
+	else {
+         BfWriteString(handle, "scores");
+         BfWriteByte(handle, 1); // Show
+         BfWriteByte(handle, 0); // subkeys count
+	}
+
+	EndMessage();
+}

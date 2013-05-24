@@ -204,6 +204,7 @@ public OnPluginStart() {
 	Client_PrintToTop(0,0,0,0,0,0.0,"");
 	Client_PrintToTopAll(0,0,0,0,0.0,"");
 	Client_PrintToTopEx({ 0 },1,0,0,0,0,0.0,"");
+	Client_ShowScoreboard(0);
 
 	// File: convars.inc
 	ConCommand_HasFlags("", 0);
