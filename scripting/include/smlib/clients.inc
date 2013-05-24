@@ -3105,9 +3105,9 @@ stock Client_ShowScoreboard(client, flags=USERMSG_RELIABLE | USERMSG_BLOCKHOOKS)
 		PbSetBool(handle, "show", true);	
 	}
 	else {
-         BfWriteString(handle, "scores");
-         BfWriteByte(handle, 1); // Show
-         BfWriteByte(handle, 0); // subkeys count
+		BfWriteString(handle, "scores");
+		BfWriteByte(handle, 1); // Show
+		BfWriteByte(handle, 0); // subkeys count
 	}
 
 	EndMessage();
