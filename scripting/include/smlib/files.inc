@@ -4,7 +4,7 @@
 #define _smlib_files_included
 
 #include <sourcemod>
-#include <sdktools_stringtables>
+#include <sdktools>
 #include <smlib/arrays>
 
 /**
