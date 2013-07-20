@@ -68,6 +68,73 @@ stock Entity_FindByName(const const String:name[], const String:class[]="")
 }
 
 /**
+ * Finds an entity by its position on the map.
+ * You can optionally specify the classname to search for.
+ * Note: If the classname is specified it uses The Sourcemod native
+ * function FindEntityByClassname() which uses the engine's
+ * linked entity list for finding entities. This might be
+ * cheaper, use this if you call this function very often.
+ *
+ * @param name			Name of the entity you want so search.
+ * @param class			Optional: Classname of the entity
+ * @return				Entity index or INVALID_ENT_REFERENCE if not matching entity was found.
+ */
+stock Entity_FindByPosition(const Float:position[3], const String:class[]="")
+{
+	decl Float:entityPosition[3];
+	decl String:classname[MAX_NAME_LENGTH];
+	new offset = -1, PropFieldType:type = PropField_Unsupported, num_bits = 0;
+	
+	if (class[0] == '\0') {
+		
+		new maxEntities = GetMaxEntities();
+		for (new entity=MaxClients; entity < maxEntities; entity++) {
+			
+			if (!IsValidEdict(entity)) {
+				continue;
+			}
+			
+			Entity_GetClassName(entity, classname, sizeof(classname));
+			PrintToServer("classname: %s (%d)", classname, entity);
+			
+			offset = FindDataMapOffs(entity, "m_vecOrigin", type, num_bits);
+			PrintToServer("FindDataMapOffs: %d, type: %d, num_bits: %d", offset, type, num_bits);
+			
+			if (type != PropField_Vector) {
+				continue;
+			}
+			if (offset == -1) {
+				continue;
+			}
+			
+			GetEntDataVector(entity, offset, entityPosition);
+			
+			if (entityPosition[0] == position[0] && entityPosition[1] == position[1] && entityPosition[2] == position[2]) {
+				return entity;
+			}
+		}
+	}
+	else {
+		
+		new entity = INVALID_ENT_REFERENCE;
+		while ((entity = FindEntityByClassname(entity, class)) != INVALID_ENT_REFERENCE) {
+			
+			if (FindDataMapOffs(entity, "m_vecOrigin") == -1) {
+				continue;
+			}
+			
+			Entity_GetAbsOrigin(entity, entityPosition);
+			
+			if (entityPosition[0] == position[0] && entityPosition[1] == position[1] && entityPosition[2] == position[2]) {
+				return entity;
+			}
+		}
+	}
+
+	return INVALID_ENT_REFERENCE;
+}
+
+/**
  * Finds an entity by its HammerID.
  * The newer version of Valve's Hammer editor
  * sets a unique ID for each entity in a map.
@@ -1072,7 +1139,7 @@ stock Entity_SetCollisionGroup(entity, Collision_Group_t:value)
  */
 stock Entity_GetAbsOrigin(entity, Float:vec[3])
 {
-	GetEntPropVector(entity, Prop_Data, "m_vecOrigin", vec);
+	GetEntPropVector(entity, Prop_Send, "m_vecOrigin", vec);
 }
 
 /**
