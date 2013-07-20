@@ -247,6 +247,12 @@ public OnPluginStart() {
 	Effect_DrawBeamBox(arr, 1, NULL_VECTOR, NULL_VECTOR, 0, 0);
 	Effect_DrawBeamBoxToAll(NULL_VECTOR, NULL_VECTOR, 0, 0);
 	Effect_DrawBeamBoxToClient(0, NULL_VECTOR, NULL_VECTOR, 0, 0);
+	Effect_DrawBeamBoxRotatableToClient(0, NULL_VECTOR, NULL_VECTOR, NULL_VECTOR, NULL_VECTOR, 0, 0);
+	Effect_DrawBeamBoxRotatableToAll(NULL_VECTOR, NULL_VECTOR, NULL_VECTOR, NULL_VECTOR, 0, 0);
+	Effect_DrawBeamBoxRotatable(arr, 1, NULL_VECTOR, NULL_VECTOR, NULL_VECTOR, NULL_VECTOR, 0, 0);
+	Effect_DrawAxisOfRotationToClient(0, NULL_VECTOR, NULL_VECTOR, NULL_VECTOR, 0, 0);
+	Effect_DrawAxisOfRotationToAll(NULL_VECTOR, NULL_VECTOR, NULL_VECTOR, 0, 0);
+	Effect_DrawAxisOfRotation(arr, 1, NULL_VECTOR, NULL_VECTOR, NULL_VECTOR, 0, 0);
 	Effect_EnvSprite(NULL_VECTOR,0);
 
 	// File: entities.inc
@@ -410,6 +416,8 @@ public OnPluginStart() {
 	Math_MoveVector(vec, vec, 0.0, vec);
 	Math_UnitsToMeters(0.0);
 	Math_UnitsToFeet(0.0);
+	Math_RotateVector(vec, vec, vec);
+	Math_MakeVector(0.0, 0.0, 0.0, vec);
 
 	// File: server.inc
 	Server_GetIP();
