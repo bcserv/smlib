@@ -67,7 +67,7 @@ stock Edict_FindByHammerId(hammerId)
 stock Edict_GetClosest(Float:vecOrigin_center[3], bool:clientsOnly=false, ignoreEntity=-1)
 {	
 	decl Float:vecOrigin_edict[3];
-	new Float:distance = 0.0;
+	new Float:distance = 9999999.0;
 	new closestEdict = INVALID_ENT_REFERENCE;
 	
 	new maxEntities;
