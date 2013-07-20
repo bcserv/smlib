@@ -252,6 +252,7 @@ public OnPluginStart() {
 	// File: entities.inc
 	Entity_IsValid(0);
 	Entity_FindByName("");
+	Entity_FindByPosition(vec, "");
 	Entity_FindByHammerId(0);
 	Entity_FindByClassName(0, "");
 	Entity_ClassNameMatches(0, "");

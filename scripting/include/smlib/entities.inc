@@ -1072,7 +1072,7 @@ stock Entity_SetCollisionGroup(entity, Collision_Group_t:value)
  */
 stock Entity_GetAbsOrigin(entity, Float:vec[3])
 {
-	GetEntPropVector(entity, Prop_Data, "m_vecOrigin", vec);
+	GetEntPropVector(entity, Prop_Send, "m_vecOrigin", vec);
 }
 
 /**

@@ -308,9 +308,11 @@ stock Effect_DrawBeamBox(
 	}
 
 	corners[1][0] = upperCorner[0];
-	corners[2][0] = upperCorner[0]; corners[2][1] = upperCorner[1];
+	corners[2][0] = upperCorner[0]; 
+	corners[2][1] = upperCorner[1];
 	corners[3][1] = upperCorner[1];
-	corners[4][0] = bottomCorner[0]; corners[4][1] = bottomCorner[1];
+	corners[4][0] = bottomCorner[0]; 
+	corners[4][1] = bottomCorner[1];
 	corners[5][1] = bottomCorner[1];
 	corners[7][0] = bottomCorner[0];
 
