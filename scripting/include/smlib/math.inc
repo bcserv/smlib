@@ -242,7 +242,7 @@ stock Math_MakeVector(const Float:x, const Float:y, const Float:z, Float:result[
  * @param result		Output vector.
  * @noreturn
  */
-stock Math_RotateVector(const Float:vec[3], const Float:angles[3], Float:result[3], bool:playerAngles=false)
+stock Math_RotateVector(const Float:vec[3], const Float:angles[3], Float:result[3])
 {
 	// First the angle/radiant calculations
 	decl Float:rad[3];
