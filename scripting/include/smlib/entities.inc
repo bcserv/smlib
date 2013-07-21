@@ -2117,3 +2117,20 @@ stock Entity_SetRenderColor(entity, r=-1, g=-1, b=-1, a=-1)
 		SetEntData(entity, offset + 3, a, 1, true);
 	}
 }
+
+/**
+ * Sends the 'addouput' command to an entity.
+ *
+ * @param entity		Entity Index.
+ * @param input			Input command.
+ * @param activator		Entity index which initiated the sequence of actions (-1 for a NULL entity).
+ * @param caller		Entity index from which this event is sent (-1 for a NULL entity).
+ * @param outputid		Unknown.
+ * @return				True if successful, otherwise false.
+ */
+stock bool:Entity_AddOutput(entity, const String:input[], activator=-1, caller=-1, outputid=0)
+{
+	SetVariantString(input);
+	return AcceptEntityInput(entity, "addoutput", activator, caller, outputid);
+}
+
