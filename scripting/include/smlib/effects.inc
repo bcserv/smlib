@@ -340,6 +340,336 @@ stock Effect_DrawBeamBox(
 	}
 }
 
+
+/**
+ * Sends a boxed beam effect to one player.
+ * 
+ * Ported from eventscripts vecmath library.
+ *
+ * @param client        The client to show the box to.
+ * @param origin 		Origin/center of the box.
+ * @param mins			Min size Vector
+ * @param maxs			Max size Vector
+ * @param angles 		Angles used to rotate the box.
+ * @param modelIndex	Precached model index.
+ * @param haloIndex		Precached model index.
+ * @param startFrame	Initital frame to render.
+ * @param frameRate		Beam frame rate.
+ * @param life			Time duration of the beam.
+ * @param width			Initial beam width.
+ * @param endWidth		Final beam width.
+ * @param fadeLength	Beam fade time duration.
+ * @param amplitude		Beam amplitude.
+ * @param color			Color array (r, g, b, a).
+ * @param speed			Speed of the beam.
+ * @noreturn
+ */
+stock Effect_DrawBeamBoxRotatableToClient(
+	client,
+	const Float:origin[3],
+	const Float:mins[3],
+	const Float:maxs[3],
+	const Float:angles[3],
+	modelIndex,
+	haloIndex,
+	startFrame=0,
+	frameRate=30,
+	Float:life=5.0,
+	Float:width=5.0,
+	Float:endWidth=5.0,
+	fadeLength=2,
+	Float:amplitude=1.0,
+	const color[4]={ 255, 0, 0, 255 },
+	speed=0
+) {
+    new clients[1];
+    clients[0] = client;
+    Effect_DrawBeamBoxRotatable(clients, 1, origin, mins, maxs, angles, modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, color, speed);
+}
+
+
+
+/**
+ * Sends a boxed beam effect to all players.
+ * 
+ * Ported from eventscripts vecmath library.
+ *
+ * @param origin 		Origin/center of the box.
+ * @param mins			Min size Vector
+ * @param maxs			Max size Vector
+ * @param angles 		Angles used to rotate the box.
+ * @param modelIndex	Precached model index.
+ * @param haloIndex		Precached model index.
+ * @param startFrame	Initital frame to render.
+ * @param frameRate		Beam frame rate.
+ * @param life			Time duration of the beam.
+ * @param width			Initial beam width.
+ * @param endWidth		Final beam width.
+ * @param fadeLength	Beam fade time duration.
+ * @param amplitude		Beam amplitude.
+ * @param color			Color array (r, g, b, a).
+ * @param speed			Speed of the beam.
+ * @noreturn
+ */
+stock Effect_DrawBeamBoxRotatableToAll(
+	const Float:origin[3],
+	const Float:mins[3],
+	const Float:maxs[3],
+	const Float:angles[3],
+	modelIndex,
+	haloIndex,
+	startFrame=0,
+	frameRate=30,
+	Float:life=5.0,
+	Float:width=5.0,
+	Float:endWidth=5.0,
+	fadeLength=2,
+	Float:amplitude=1.0,
+	const color[4]={ 255, 0, 0, 255 },
+	speed=0
+)
+{
+	new clients[MaxClients];
+	new numClients = Client_Get(clients, CLIENTFILTER_INGAME);
+
+	Effect_DrawBeamBoxRotatable(clients, numClients, origin, mins, maxs, angles, modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, color, speed);
+}
+
+/**
+ * Sends a boxed beam effect to a list of players.
+ * 
+ * Ported from eventscripts vecmath library.
+ *
+ * @param clients       An array of clients to show the box to.
+ * @param numClients    Number of players in the array.
+ * @param origin 		Origin/center of the box.
+ * @param mins			Min size Vector
+ * @param maxs			Max size Vector
+ * @param angles 		Angles used to rotate the box.
+ * @param modelIndex	Precached model index.
+ * @param haloIndex		Precached model index.
+ * @param startFrame	Initital frame to render.
+ * @param frameRate		Beam frame rate.
+ * @param life			Time duration of the beam.
+ * @param width			Initial beam width.
+ * @param endWidth		Final beam width.
+ * @param fadeLength	Beam fade time duration.
+ * @param amplitude		Beam amplitude.
+ * @param color			Color array (r, g, b, a).
+ * @param speed			Speed of the beam.
+ * @noreturn
+ */
+stock Effect_DrawBeamBoxRotatable(
+	clients[],
+	numClients,
+	const Float:origin[3],
+	const Float:mins[3],
+	const Float:maxs[3],
+	const Float:angles[3],
+	modelIndex,
+	haloIndex,
+	startFrame=0,
+	frameRate=30,
+	Float:life=5.0,
+	Float:width=5.0,
+	Float:endWidth=5.0,
+	fadeLength=2,
+	Float:amplitude=1.0,
+	const color[4]={ 255, 0, 0, 255 },
+	speed=0
+) {
+	// Create the additional corners of the box
+	decl Float:corners[8][3];
+	Array_Copy(mins, corners[0], 3);
+	Math_MakeVector(maxs[0], mins[1], mins[2], corners[1]);
+	Math_MakeVector(maxs[0], maxs[1], mins[2], corners[2]);
+	Math_MakeVector(mins[0], maxs[1], mins[2], corners[3]);
+	Math_MakeVector(mins[0], mins[1], maxs[2], corners[4]);
+	Math_MakeVector(maxs[0], mins[1], maxs[2], corners[5]);
+	Array_Copy(maxs, corners[6], 3);
+	Math_MakeVector(mins[0], maxs[1], maxs[2], corners[7]);
+
+	// Rotate all edges
+	for (new i=0; i < sizeof(corners); i++) {
+		Math_RotateVector(corners[i], angles, corners[i]);
+	}
+
+	// Apply world offset (after rotation)
+	for (new i=0; i < sizeof(corners); i++) {
+		AddVectors(origin, corners[i], corners[i]);
+	}
+
+    // Draw all the edges
+	// Horizontal Lines
+	// Bottom
+	for (new i=0; i < 4; i++) {
+		new j = ( i == 3 ? 0 : i+1 );
+		TE_SetupBeamPoints(corners[i], corners[j], modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, color, speed);
+		TE_Send(clients, numClients);
+	}
+
+	// Top
+	for (new i=4; i < 8; i++) {
+		new j = ( i == 7 ? 4 : i+1 );
+		TE_SetupBeamPoints(corners[i], corners[j], modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, color, speed);
+		TE_Send(clients, numClients);
+	}
+
+	// All Vertical Lines
+	for (new i=0; i < 4; i++) {
+		TE_SetupBeamPoints(corners[i], corners[i+4], modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, color, speed);
+		TE_Send(clients, numClients);
+	}
+}
+
+/**
+ * Displays the given axis of rotation as beam effect to one player.
+ * 
+ * @param client        The client to show the box to.
+ * @param origin 		Origin/center of the box.
+ * @param angles 		Angles used to rotate the box.
+ * @param length 		The length in each direction.
+ * @param modelIndex	Precached model index.
+ * @param haloIndex		Precached model index.
+ * @param startFrame	Initital frame to render.
+ * @param frameRate		Beam frame rate.
+ * @param life			Time duration of the beam.
+ * @param width			Initial beam width.
+ * @param endWidth		Final beam width.
+ * @param fadeLength	Beam fade time duration.
+ * @param amplitude		Beam amplitude.
+ * @param color			Color array (r, g, b, a).
+ * @param speed			Speed of the beam.
+ * @noreturn
+ */
+stock Effect_DrawAxisOfRotationToClient(
+	client,
+	const Float:origin[3],
+	const Float:length[3],
+	const Float:angles[3],
+	modelIndex,
+	haloIndex,
+	startFrame=0,
+	frameRate=30,
+	Float:life=5.0,
+	Float:width=5.0,
+	Float:endWidth=5.0,
+	fadeLength=2,
+	Float:amplitude=1.0,
+	speed=0
+) {
+    new clients[1];
+    clients[0] = client;
+    Effect_DrawAxisOfRotation(clients, 1, origin, length, angles, modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, speed);
+}
+
+/**
+ * Displays the given axis of rotation as beam effect to all players.
+ *
+ * @param origin 		Origin/center of the box.
+ * @param angles 		Angles used to rotate the box.
+ * @param length 		The length in each direction.
+ * @param modelIndex	Precached model index.
+ * @param haloIndex		Precached model index.
+ * @param startFrame	Initital frame to render.
+ * @param frameRate		Beam frame rate.
+ * @param life			Time duration of the beam.
+ * @param width			Initial beam width.
+ * @param endWidth		Final beam width.
+ * @param fadeLength	Beam fade time duration.
+ * @param amplitude		Beam amplitude.
+ * @param color			Color array (r, g, b, a).
+ * @param speed			Speed of the beam.
+ * @noreturn
+ */
+stock Effect_DrawAxisOfRotationToAll(
+	const Float:origin[3],
+	const Float:length[3],
+	const Float:angles[3],
+	modelIndex,
+	haloIndex,
+	startFrame=0,
+	frameRate=30,
+	Float:life=5.0,
+	Float:width=5.0,
+	Float:endWidth=5.0,
+	fadeLength=2,
+	Float:amplitude=1.0,
+	speed=0
+)
+{
+	new clients[MaxClients];
+	new numClients = Client_Get(clients, CLIENTFILTER_INGAME);
+
+	Effect_DrawAxisOfRotation(clients, numClients, origin, length, angles, modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, speed);
+}
+
+/**
+ * Displays the given axis of rotation as beam effect to a list of players.
+ *
+ * @param clients       An array of clients to show the box to.
+ * @param numClients    Number of players in the array.
+ * @param origin 		Origin/center of the box.
+ * @param angles 		Angles used to rotate the box.
+ * @param length 		The length in each direction.
+ * @param modelIndex	Precached model index.
+ * @param haloIndex		Precached model index.
+ * @param startFrame	Initital frame to render.
+ * @param frameRate		Beam frame rate.
+ * @param life			Time duration of the beam.
+ * @param width			Initial beam width.
+ * @param endWidth		Final beam width.
+ * @param fadeLength	Beam fade time duration.
+ * @param amplitude		Beam amplitude.
+ * @param color			Color array (r, g, b, a).
+ * @param speed			Speed of the beam.
+ * @noreturn
+ */
+stock Effect_DrawAxisOfRotation(
+	clients[],
+	numClients,
+	const Float:origin[3],
+	const Float:angles[3],
+	const Float:length[3],
+	modelIndex,
+	haloIndex,
+	startFrame=0,
+	frameRate=30,
+	Float:life=5.0,
+	Float:width=5.0,
+	Float:endWidth=5.0,
+	fadeLength=2,
+	Float:amplitude=1.0,
+	speed=0
+) {
+	// Create the additional corners of the box
+	new Float:xAxis[3], Float:yAxis[3], Float:zAxis[3];
+	xAxis[0] = length[0];
+	yAxis[1] = length[1];
+	zAxis[2] = length[2];
+
+	// Rotate all edges
+	Math_RotateVector(xAxis, angles, xAxis);
+	Math_RotateVector(yAxis, angles, yAxis);
+	Math_RotateVector(zAxis, angles, zAxis);
+
+	// Apply world offset (after rotation)
+	AddVectors(origin, xAxis, xAxis);
+	AddVectors(origin, yAxis, yAxis);
+	AddVectors(origin, zAxis, zAxis);
+
+    // Draw all
+	TE_SetupBeamPoints(origin, xAxis, modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, {255, 0, 0, 255}, speed);
+	TE_Send(clients, numClients);
+
+	TE_SetupBeamPoints(origin, yAxis, modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, {0, 255, 0, 255}, speed);
+	TE_Send(clients, numClients);
+
+	TE_SetupBeamPoints(origin, zAxis, modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, {0, 0, 255, 255}, speed);
+	TE_Send(clients, numClients);
+}
+
+
 /**
  * Creates an env_sprite.
  *
