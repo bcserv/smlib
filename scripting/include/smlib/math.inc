@@ -214,6 +214,79 @@ stock Math_MoveVector(const Float:start[3], const Float:end[3], Float:scale, Flo
 }
 
 /**
+ * Puts x, y and z into a vector.
+ * 
+ * @param x				Float value.
+ * @param y				Float value.
+ * @param z				Float value.
+ * @param result		Output vector.
+ * @noreturn
+ */
+stock Math_MakeVector(const Float:x, const Float:y, const Float:z, Float:result[3])
+{
+	result[0] = x;
+	result[1] = y;
+	result[2] = z;
+}
+
+/**
+ * Rotates a vector around its zero-point.
+ * Note: As example you can rotate mins and maxs of an entity and then add its origin to mins and maxs to get its bounding box in relation to the world and its rotation.
+ * When used with players use the following angle input:
+ *   angles[0] = 0.0;
+ *   angles[1] = 0.0;
+ *   angles[2] = playerEyeAngles[1];
+ * 
+ * @param vec 			Vector to rotate.
+ * @param angles 		How to rotate the vector.
+ * @param result		Output vector.
+ * @noreturn
+ */
+stock Math_RotateVector(const Float:vec[3], const Float:angles[3], Float:result[3])
+{
+	// First the angle/radiant calculations
+	decl Float:rad[3];
+	// I don't really know why, but the alpha, beta, gamma order of the angles are messed up...
+	// 2 = xAxis
+	// 0 = yAxis
+	// 1 = zAxis
+	rad[0] = DegToRad(angles[2]);
+	rad[1] = DegToRad(angles[0]);
+	rad[2] = DegToRad(angles[1]);
+
+	// Pre-calc function calls
+	new Float:cosAlpha = Cosine(rad[0]);
+	new Float:sinAlpha = Sine(rad[0]);
+	new Float:cosBeta = Cosine(rad[1]);
+	new Float:sinBeta = Sine(rad[1]);
+	new Float:cosGamma = Cosine(rad[2]);
+	new Float:sinGamma = Sine(rad[2]);
+
+	// 3D rotation matrix for more information: http://en.wikipedia.org/wiki/Rotation_matrix#In_three_dimensions
+	new Float:x = vec[0], Float:y = vec[1], Float:z = vec[2];
+	new Float:newX, Float:newY, Float:newZ;
+	newY = cosAlpha*y - sinAlpha*z;
+	newZ = cosAlpha*z + sinAlpha*y;
+	y = newY;
+	z = newZ;
+
+	newX = cosBeta*x + sinBeta*z;
+	newZ = cosBeta*z - sinBeta*x;
+	x = newX;
+	z = newZ;
+
+	newX = cosGamma*x - sinGamma*y;
+	newY = cosGamma*y + sinGamma*x;
+	x = newX;
+	y = newY;
+	
+	// Store everything...
+	result[0] = x;
+	result[1] = y;
+	result[2] = z;
+}
+
+/**
  * Converts Source Game Units to metric Meters
  * 
  * @param units			Float value
