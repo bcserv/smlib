@@ -371,6 +371,7 @@ public OnPluginStart() {
 	Entity_GetMinHealthDamage(0);
 	Entity_GetRenderColor(0, arr_4);
 	Entity_SetRenderColor(0, 0, 0, 0, 0);
+	Entity_AddOutput(0, "");
 	
 	// File: files.inc
 	File_GetBaseName("", buf, sizeof(buf));
