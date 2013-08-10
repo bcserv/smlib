@@ -29,7 +29,7 @@ stock SQL_TQueryF(Handle:database, SQLTCallback:callback, any:data, DBPriority:p
 	decl String:query[16384];
 	VFormat(query, sizeof(query), format, 6);
 	
-	SQL_TQuery(database, callback, query, data, DBPrio_Normal);
+	SQL_TQuery(database, callback, query, data, priority);
 }
 
 /**

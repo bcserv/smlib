@@ -4,7 +4,7 @@
 #define _smlib_files_included
 
 #include <sourcemod>
-#include <sdktools_stringtables>
+#include <sdktools>
 #include <smlib/arrays>
 
 /**
@@ -145,7 +145,7 @@ stock File_AddToDownloadsTable(const String:path[], bool:recursive=true, const S
 
 	if (FileExists(path)) {
 		
-		new String:fileExtension[4];
+		new String:fileExtension[5];
 		File_GetExtension(path, fileExtension, sizeof(fileExtension));
 		
 		if (StrEqual(fileExtension, "bz2", false) || StrEqual(fileExtension, "ztmp", false)) {
