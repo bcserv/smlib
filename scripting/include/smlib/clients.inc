@@ -50,8 +50,9 @@
  *
  * @param 1		Client Index for who to get the observers.
  * @param 2		Name of the observer client index variable (will be only valid in the loop).
+ * @param 3		CLIENTFILTER_ flags to check.
  */
-#define LOOP_OBSERVERS(%1,%2) for (new %2=Client_GetNextObserver(%1); %2 >= 1 && %2 <= MaxClients; %2=Client_GetNextObserver(%1, ++%2))
+#define LOOP_OBSERVERS(%1,%2,%3) for (new %2=Client_GetNextObserver(%1, 1, %3); %2 >= 1 && %2 <= MaxClients; %2=Client_GetNextObserver(%1, ++%2, %3))
 
 /**
  * Very useful macro to iterate all weapons of a client.
@@ -2660,13 +2661,14 @@ stock Client_SetMoney(client, value)
  *
  * @param client		Client Index.
  * @param observers		Array with size of MaxClients or MAXPLAYERS.
+ * @param flags			Client Filter Flags (Use the CLIENTFILTER_ constants).
  * @return				Number of observers found.
  */
-stock Client_GetObservers(client, observers[])
+stock Client_GetObservers(client, observers[], flags=CLIENTFILTER_ALL)
 {
 	new count = 0;
 
-	LOOP_CLIENTS(player, CLIENTFILTER_OBSERVERS) {
+	LOOP_CLIENTS(player, CLIENTFILTER_OBSERVERS | flags) {
 
 		if (Client_GetObserverTarget(player) == client) {
 			observers[count++] = player;
@@ -2731,13 +2733,14 @@ public __smlib_GetPlayersInRadius_Sort(player1, player2, const clients[], Handle
  *
  * @param client		Client Index (Observer Target)
  * @param start			Start Index.
+ * @param flags			Client Filter Flags (Use the CLIENTFILTER_ constants).
  * @return				Client Index or -1 if no client was found
  */
-stock Client_GetNextObserver(client, start=1)
+stock Client_GetNextObserver(client, start=1, flags=CLIENTFILTER_ALL)
 {
 	for (new player=start; player <= MaxClients; player++) {
 
-		if (Client_MatchesFilter(player, CLIENTFILTER_OBSERVERS)) {
+		if (Client_MatchesFilter(player, CLIENTFILTER_OBSERVERS | flags)) {
 
 			if (Client_GetObserverTarget(player) == client) {
 				return player;
