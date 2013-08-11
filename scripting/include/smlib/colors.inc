@@ -110,6 +110,16 @@ stock Color_ChatSetSubject(client)
 }
 
 /**
+ * Gets the subject used for the chat color parser.
+ *
+ * @return					Client Index/Subject, or CHATCOLOR_NOSUBJECT if none
+ */
+stock Color_ChatGetSubject()
+{
+	return chatSubject;
+}
+
+/**
  * Clears the subject used for the chat color parser.
  * Call this after Color_ParseChatText().
  *
@@ -126,23 +136,27 @@ stock Color_ChatClearSubject()
  * table. The support colors are hardcoded, but can be overriden for each game by
  * creating the file gamedata/smlib_colors.games.txt.
  *
- * @param str				Chat String.
+ * @param str				Chat String
  * @param subject			Output Buffer
  * @param size				Output Buffer size
- * return
+ * @return					Returns a value for the subject
  */
 stock Color_ParseChatText(const String:str[], String:buffer[], size)
 {
 	new
 		bool:inBracket = false,
 		x = 0, x_buf = 0, x_tag = 0,
-		currentColor = '\x01', // Initialize with normal color
-		code = -1,
 		subject = CHATCOLOR_NOSUBJECT;
 
-	decl String:sTag[4] = "";
+	decl
+		String:sTag[10]         = "",     // This should be able to hold "\x08RRGGBBAA"\0
+		String:colorCode[10]    = "",     // This should be able to hold "\x08RRGGBBAA"\0
+		String:currentColor[10] = "\x01"; // Initialize with normal color
 
 	size--;
+
+	// Every chat message has to start with a
+	// color code, otherwise it will ignore all colors.
 	buffer[x_buf++] = '\x01';
 
 	while (str[x] != '\0') {
@@ -154,25 +168,44 @@ stock Color_ParseChatText(const String:str[], String:buffer[], size)
 		new char = str[x++];
 		
 		if (inBracket) {
-			if (char == '}' || x_tag > 2) {
-				inBracket = false;
+			// We allow up to 9 characters in the tag (#RRGGBBAA)
+			if (char == '}' || x_tag > 9) {
+				inBracket   = false;
 				sTag[x_tag] = '\0';
-				x_tag = 0;
-				
+				x_tag       = 0;
+
 				if (char == '}') {
-					code = Color_TagToCode(sTag, subject);
-					if (code == 0) {
-						buffer[x_buf+1] = '\0';
+					Color_TagToCode(sTag, subject, colorCode);
+
+					if (colorCode[0] == '\0') {
+						// We got an unknown tag, ignore this
+						// and forward it to the buffer.
+
+						// Terminate buffer with \0 so Format can handle it.
+						buffer[x_buf] = '\0';
 						x_buf = Format(buffer, size, "%s{%s}", buffer, sTag);
+
+						// We 'r done here
 						continue;
 					}
-					else if (code != currentColor) {
-						buffer[x_buf++] = code;
-						currentColor = code;
+					else if (!StrEqual(colorCode, currentColor)) {
+						// If we are already using this color,
+						// we don't need to set it again.
+
+						// Write the color code to our buffer.
+						// x_buf will be increased by the number of cells written.
+						x_buf += strcopy(buffer[x_buf], size - x_buf, colorCode);
+
+						// Remember the current color.
+						strcopy(currentColor, sizeof(currentColor), colorCode);
 					}
 				}
 				else {
-					buffer[x_buf+1] = '\0';
+					// If the tag character limit exceeds 9,
+					// we have to do something.
+
+					// Terminate buffer with \0 so Format can handle it.
+					buffer[x_buf] = '\0';
 					x_buf = Format(buffer, size, "%s{%s%c", buffer, sTag, char);
 				}
 			}
@@ -192,6 +225,13 @@ stock Color_ParseChatText(const String:str[], String:buffer[], size)
 		}
 	}
 
+	// Write remaining text to the buffer,
+	// if we have been inside brackets.
+	if (inBracket) {
+		buffer[x_buf] = '\0';
+		x_buf = Format(buffer, size, "%s{%s", buffer, sTag);
+	}
+
 	buffer[x_buf] = '\0';
 	
 	return subject;
@@ -202,18 +242,63 @@ stock Color_ParseChatText(const String:str[], String:buffer[], size)
  *
  * @param tag				Color Tag String.
  * @param subject			Subject variable to pass
- * @return					Chat Color Code char or 0 if the tag couldn't be found.
+ * @param result            The result as character sequence (string). This will be \0 if the tag is unkown.
+ * @noreturn
  */
-stock Color_TagToCode(const String:tag[], &subject=-1){
-	new n = Array_FindString(chatColorTags, sizeof(chatColorTags), tag);
+stock Color_TagToCode(const String:tag[], &subject=-1, String:result[10])
+{
+	// Check if the tag starts with a '#'.
+	// We will handle it has RGB(A)-color code then.
+	if (tag[0] == '#') {
+		new length_tag = strlen(tag);
+		switch (length_tag - 1) {
+			// #RGB      -> \07RRGGBB
+			case 3: {
+				FormatEx(
+					result, sizeof(result), "\x07%c%c%c%c%c%c",
+					tag[1], tag[1], tag[2], tag[2], tag[3], tag[3]
+				);
+			}
+			// #RGBA     -> \08RRGGBBAA
+			case 4: {
+				FormatEx(
+					result, sizeof(result), "\x08%c%c%c%c%c%c%c%c",
+					tag[1], tag[1], tag[2], tag[2], tag[3], tag[3], tag[4], tag[4]
+				);
+			}
+			// #RRGGBB   -> \07RRGGBB
+			case 6: {
+				FormatEx(result, sizeof(result), "\x07%s", tag[1]);
+			}
+			// #RRGGBBAA -> \08RRGGBBAA
+			case 8: {
+				FormatEx(result, sizeof(result), "\x08%s", tag[1]);
+			}
+			default: {
+				result[0] = '\0';
+			}
+		}
 
-	if (n == -1) {
-		return 0;
+		return;
+	}
+	else {
+		// Try to handle this string as color name
+		new n = Array_FindString(chatColorTags, sizeof(chatColorTags), tag);
+
+		// Check if this tag is invalid
+		if (n == -1) {
+			result[0] = '\0';
+			return;
+		}
+
+		// Check if the color is actually supported 'n stuff.
+		Color_GetChatColorInfo(n, subject);
+
+		result[0] = chatColorInfo[n][ChatColorInfo_Code];
+		result[1] = '\0';
 	}
 
-	Color_GetChatColorInfo(n, subject);
-
-	return chatColorInfo[n][ChatColorInfo_Code];
+	return;
 }
 
 /**
@@ -245,6 +330,15 @@ stock Color_StripFromChatText(const String:input[], String:output[], size)
 	output[x] = '\0';
 }
 
+/**
+ * Checks the gamename and sets default values.
+ * For example if some colors are supported, or
+ * if a game uses another color code for a specific color.
+ * All those hardcoded default values can be overriden in
+ * smlib's color gamedata file.
+ *
+ * @noreturn
+ */
 static stock Color_ChatInitialize()
 {
 	static initialized = false;
@@ -258,7 +352,7 @@ static stock Color_ChatInitialize()
 	decl String:gameFolderName[32];
 	GetGameFolderName(gameFolderName, sizeof(gameFolderName));
 
-	chatColorInfo[ChatColor_Black][ChatColorInfo_Supported]		= false;
+	chatColorInfo[ChatColor_Black][ChatColorInfo_Supported]		    = false;
 
 	if (strncmp(gameFolderName, "left4dead", 9, false) != 0 &&
 		!StrEqual(gameFolderName, "cstrike", false) &&
@@ -348,6 +442,15 @@ static stock Color_ChatInitialize()
 	mp_teamplay = FindConVar("mp_teamplay");
 }
 
+/**
+ * Checks if the passed color index is actually supported
+ * for the current game. If not, the index will be overwritten
+ * The color resolving works recursively until a valid color is found.
+ * 
+ * @param index
+ * @param subject A client index or CHATCOLOR_NOSUBJECT
+ * @noreturn
+ */
 static stock Color_GetChatColorInfo(&index, &subject=CHATCOLOR_NOSUBJECT)
 {
 	Color_ChatInitialize();
