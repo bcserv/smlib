@@ -1837,6 +1837,10 @@ stock Entity_GetNextChild(parent, start=0)
 			continue;
 		}
 
+		if (entity > 0 && entity <= MaxClients && !IsClientConnected(entity)) {
+			continue;
+		}
+
 		if (Entity_GetParent(entity) == parent) {
 			return entity;
 		}
