@@ -313,6 +313,20 @@ stock Entity_GetHammerId(entity)
 }
 
 /**
+ * Sets the Hammer-ID of an entity.
+ * The Hammer Editor gives every entity a unique ID.
+ * Note: Old maps don't have Hammer-ID's set for entities
+ *
+ * @param entity			Entity index.
+ * @param hammerId			Hammer ID.
+ * @noreturn
+ */
+stock Entity_SetHammerId(entity, hammerId)
+{	
+	return SetEntProp(entity, Prop_Data, "m_iHammerID", hammerId);
+}
+
+/**
  * Gets the radius (m_flRadius) of an entity.
  *
  * @param entity			Entity index.
