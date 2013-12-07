@@ -273,6 +273,7 @@ public OnPluginStart() {
 	Entity_GetParentName(0, buf, sizeof(buf));
 	Entity_SetParentName(0, "");
 	Entity_GetHammerId(0);
+	Entity_SetHammerId(0,0);
 	Entity_GetRadius(0);
 	Entity_SetRadius(0, 0.0);
 	Entity_GetMinSize(0, vec);
