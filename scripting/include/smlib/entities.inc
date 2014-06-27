@@ -35,12 +35,12 @@ stock Entity_IsValid(entity)
  * cheaper, use this if you call this function very often.
  *
  * @param name			Name of the entity you want so search.
- * @param class			Optional: Classname of the entity
+ * @param className		Optional: Classname of the entity
  * @return				Entity index or INVALID_ENT_REFERENCE if not matching entity was found.
  */
-stock Entity_FindByName(const const String:name[], const String:class[]="")
+stock Entity_FindByName(const const String:name[], const String:className[]="")
 {
-	if (class[0] == '\0') {
+	if (className[0] == '\0') {
 		// Hack: Double the limit to gets none-networked entities too.
 		new realMaxEntities = GetMaxEntities() * 2;
 		for (new entity=0; entity < realMaxEntities; entity++) {
@@ -56,7 +56,7 @@ stock Entity_FindByName(const const String:name[], const String:class[]="")
 	}
 	else {
 		new entity = INVALID_ENT_REFERENCE;
-		while ((entity = FindEntityByClassname(entity, class)) != INVALID_ENT_REFERENCE) {
+		while ((entity = FindEntityByClassname(entity, className)) != INVALID_ENT_REFERENCE) {
 
 			if (Entity_NameMatches(entity, name)) {
 				return entity;
@@ -78,12 +78,12 @@ stock Entity_FindByName(const const String:name[], const String:class[]="")
  * cheaper, use this if you call this function very often.
  *
  * @param hammerId		Hammer editor ID
- * @param class			Optional: Classname of the entity
+ * @param className		Optional: Classname of the entity
  * @return				Edict Index or INVALID_ENT_REFERENCE if no entity was found.
  */
-stock Entity_FindByHammerId(hammerId, const String:class[]="")
+stock Entity_FindByHammerId(hammerId, const String:className[]="")
 {
-	if (class[0] == '\0') {
+	if (className[0] == '\0') {
 		// Hack: Double the limit to gets none-networked entities too.
 		new realMaxEntities = GetMaxEntities() * 2;
 		for (new entity=0; entity < realMaxEntities; entity++) {
@@ -99,7 +99,7 @@ stock Entity_FindByHammerId(hammerId, const String:class[]="")
 	}
 	else {
 		new entity = INVALID_ENT_REFERENCE;
-		while ((entity = FindEntityByClassname(entity, class)) != INVALID_ENT_REFERENCE) {
+		while ((entity = FindEntityByClassname(entity, className)) != INVALID_ENT_REFERENCE) {
 			
 			if (Entity_GetHammerId(entity) == hammerId) {
 				return entity;

@@ -2342,19 +2342,20 @@ stock Client_GetClass(client)
  * Other games maybe work too, but are not tested.
  * 
  * @param client		Client Index.
+ * @param playerClass	The class number to set the player to. Depends on game.
  * @param persistant	If true changes the players desired class so the change stays after death (probably TF2 only).
  * @return				Class Index.
  */
-stock Client_SetClass(client, class, bool:persistant=false)
+stock Client_SetClass(client, playerClass, bool:persistant=false)
 {
 	if (GuessSDKVersion() == SOURCE_SDK_DARKMESSIAH) {
-		GetEntProp(client, Prop_Send, "m_iPlayerClass");
+		SetEntProp(client, Prop_Send, "m_iPlayerClass", playerClass);
 	}
 	else {
-		SetEntProp(client, Prop_Send, "m_iClass", class);
+		SetEntProp(client, Prop_Send, "m_iClass", playerClass);
 		
 		if (persistant) {
-			SetEntProp(client, Prop_Send, "m_iDesiredPlayerClass", class);
+			SetEntProp(client, Prop_Send, "m_iDesiredPlayerClass", playerClass);
 		}
 	}
 }
