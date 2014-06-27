@@ -1655,7 +1655,12 @@ stock Client_SetWeaponAmmo(client, const String:className[], primaryAmmo=-1, sec
 		return false;
 	}
 	
-	Weapon_SetClips(weapon, primaryClip, secondaryClip);
+	if (primaryClip != -1) {
+		Weapon_SetPrimaryClip(weapon, primaryClip);
+	}
+	if (secondaryClip != -1) {
+		Weapon_SetSecondaryClip(weapon, secondaryClip);
+	}
 	Client_SetWeaponPlayerAmmoEx(client, weapon, primaryAmmo, secondaryAmmo);
 	
 	return true;
