@@ -1,4 +1,5 @@
 # smlib
+[![Build Status](https://travis-ci.org/bcserv/smlib.svg)](https://travis-ci.org/bcserv/smlib)
 
 Function Stock Library for Sourcemod with over 350 functions.
 
