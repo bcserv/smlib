@@ -64,7 +64,7 @@ We give people push access who have already done some successful pull requests.
 * Make a line break if the line is already too long (we don't have a specific width)
 
 ### smlib code style example
-```php
+```sourcepawn
 /**
  * Returns the index for the first occurance of the given value.
  * If the value cannot be found, -1 will be returned.
