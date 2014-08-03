@@ -38,7 +38,7 @@ stock Entity_IsValid(entity)
  * @param className		Optional: Classname of the entity
  * @return				Entity index or INVALID_ENT_REFERENCE if not matching entity was found.
  */
-stock Entity_FindByName(const const String:name[], const String:className[]="")
+stock Entity_FindByName(const String:name[], const String:className[]="")
 {
 	if (className[0] == '\0') {
 		// Hack: Double the limit to gets none-networked entities too.
