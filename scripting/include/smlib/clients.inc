@@ -2090,9 +2090,11 @@ stock Client_Print(client, ClientHudPrint:destination, const String:format[], an
 		return;
 	}
 
+	new EngineVersion:engineVersion = GetEngineVersion();
 	if (client == 0 ||
-		(destination != ClientHudPrint_Console) ||
-		(destination == ClientHudPrint_Console && GuessSDKVersion() < SOURCE_SDK_LEFT4DEAD))
+		destination != ClientHudPrint_Console ||
+		(destination == ClientHudPrint_Console
+			&& engineVersion != Engine_Left4Dead && engineVersion != Engine_Left4Dead2))
 	{
 		Color_StripFromChatText(buffer2, buffer2, sizeof(buffer2));
 
@@ -2334,7 +2336,7 @@ public bool:_smlib_TraceEntityFilter(entity, contentsMask)
  */
 stock Client_GetClass(client)
 {
-	if (GuessSDKVersion() == SOURCE_SDK_DARKMESSIAH) {
+	if (GetEngineVersion() == Engine_DarkMessiah) {
 		GetEntProp(client, Prop_Send, "m_iPlayerClass");
 	}
 
@@ -2353,10 +2355,9 @@ stock Client_GetClass(client)
  */
 stock Client_SetClass(client, playerClass, bool:persistant=false)
 {
-	if (GuessSDKVersion() == SOURCE_SDK_DARKMESSIAH) {
+	if (GetEngineVersion() == Engine_DarkMessiah) {
 		SetEntProp(client, Prop_Send, "m_iPlayerClass", playerClass);
-	}
-	else {
+	} else {
 		SetEntProp(client, Prop_Send, "m_iClass", playerClass);
 		
 		if (persistant) {
