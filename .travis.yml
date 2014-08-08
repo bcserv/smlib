@@ -26,7 +26,6 @@ before_script:
     - chmod +x spcomp
 
 script: 
-    - ./spcomp tests/test_colors.sp
     - ./spcomp tests/test_compile-all.sp
 
 after_script:
