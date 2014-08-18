@@ -352,7 +352,7 @@ public OnPluginStart() {
 	Entity_GetParent(0);
 	Entity_ClearParent(0);
 	Entity_SetParent(0, 0);
-	Entity_ChangeOverTime(0, 0.1, Entity_ChangeOverTimeCallback:0);
+	Entity_ChangeOverTime(0, 0.1, INVALID_FUNCTION);
 	Entity_GetNextChild(0);
 	Entity_GetMoveDirection(0,NULL_VECTOR);
 	Entity_SetMoveDirection(0,NULL_VECTOR);
@@ -426,7 +426,7 @@ public OnPluginStart() {
 	Server_GetHostName(buf, sizeof(buf));
 
 	// File: sql.inc
-	SQL_TQueryF(INVALID_HANDLE, SQLTCallback:0, 0, DBPrio_Normal, "");
+	SQL_TQueryF(INVALID_HANDLE, INVALID_FUNCTION, 0, DBPrio_Normal, "");
 	SQL_FetchIntByName(INVALID_HANDLE, "");
 	SQL_FetchBoolByName(INVALID_HANDLE, "");
 	SQL_FetchFloatByName(INVALID_HANDLE, "");
@@ -473,7 +473,7 @@ public OnPluginStart() {
 	Weapon_IsValid(0);
 	Weapon_Create("", vec, vec);
 	Weapon_CreateForOwner(0, "");
-	Weapon_GetSubType(0, 0);
+	Weapon_GetSubType(0);
 	Weapon_IsReloading(0);
 	Weapon_GetState(0);
 	Weapon_FiresUnderWater(0);

@@ -1785,7 +1785,11 @@ stock Entity_ChangeOverTime(entity, Float:interval=0.1, Entity_ChangeOverTimeCal
 	WritePackCell(dataPack, EntIndexToEntRef(entity));
 	WritePackFloat(dataPack, interval);
 	WritePackCell(dataPack, 0);
+#if SOURCEMOD_V_MAJOR >= 1 && SOURCEMOD_V_MINOR >= 7
+	WritePackFunction(dataPack, valueCallback);
+#else
 	WritePackCell(dataPack, _:valueCallback);
+#endif
 	ResetPack(dataPack);
 	__smlib_Timer_ChangeOverTime(INVALID_HANDLE,dataPack);
 }
@@ -1799,7 +1803,12 @@ public Action:__smlib_Timer_ChangeOverTime(Handle:Timer, Handle:dataPack)
 	
 	new Float:interval = ReadPackFloat(dataPack);
 	new currentCall = ReadPackCell(dataPack);
-	new Entity_ChangeOverTimeCallback:callback = Entity_ChangeOverTimeCallback:ReadPackCell(dataPack);
+#if SOURCEMOD_V_MAJOR >= 1 && SOURCEMOD_V_MINOR >= 7
+	new Function:callback = ReadPackFunction(dataPack);
+#else
+	new Function:callback = Function:ReadPackCell(dataPack);
+#endif
+	
 	new any:result;
 	Call_StartFunction(INVALID_HANDLE, callback);
 	Call_PushCellRef(entity);
@@ -1815,7 +1824,11 @@ public Action:__smlib_Timer_ChangeOverTime(Handle:Timer, Handle:dataPack)
 	WritePackCell(dataPack, EntIndexToEntRef(entity));
 	WritePackFloat(dataPack, interval);
 	WritePackCell(dataPack, currentCall+1);
+#if SOURCEMOD_V_MAJOR >= 1 && SOURCEMOD_V_MINOR >= 7
+	WritePackFunction(dataPack, callback);
+#else
 	WritePackCell(dataPack, _:callback);
+#endif
 	ResetPack(dataPack);
 	CreateTimer(interval,__smlib_Timer_ChangeOverTime,dataPack);
 	return Plugin_Stop;
