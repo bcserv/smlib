@@ -2337,7 +2337,7 @@ public bool:_smlib_TraceEntityFilter(entity, contentsMask)
 stock Client_GetClass(client)
 {
 	if (GetEngineVersion() == Engine_DarkMessiah) {
-		GetEntProp(client, Prop_Send, "m_iPlayerClass");
+		return GetEntProp(client, Prop_Send, "m_iPlayerClass");
 	}
 
 	return GetEntProp(client, Prop_Send, "m_iClass");
