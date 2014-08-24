@@ -1,14 +1,14 @@
 /**************************************************
- * 
+ *
  *            SMLIB Testing Suite
- * 
+ *
  * ************************************************
- * 
+ *
  * Warning: This plugin is only for testing if all
  * function stocks are compile-able without any
  * errors/warnings, do not load this on a production
  * server or it will likely crash it.
- * 
+ *
  */
 
 // enforce semicolons after each code statement
@@ -372,7 +372,7 @@ public OnPluginStart() {
 	Entity_GetRenderColor(0, arr_4);
 	Entity_SetRenderColor(0, 0, 0, 0, 0);
 	Entity_AddOutput(0, "");
-	
+
 	// File: files.inc
 	File_GetBaseName("", buf, sizeof(buf));
 	File_GetDirName("", buf, sizeof(buf));
@@ -418,6 +418,10 @@ public OnPluginStart() {
 	Math_UnitsToFeet(0.0);
 	Math_RotateVector(vec, vec, vec);
 	Math_MakeVector(0.0, 0.0, 0.0, vec);
+
+	// File: menus.inc
+	Menu_AddIntItem(INVALID_HANDLE, 0, "");
+	Menu_GetIntItem(INVALID_HANDLE, 0);
 
 	// File: server.inc
 	Server_GetIP();
@@ -496,7 +500,7 @@ public OnPluginStart() {
 	Weapon_SetAmmoCounts(0, 0, 0);
 	Weapon_GetViewModelIndex(0);
 	Weapon_SetViewModelIndex(0, 0);
-	
+
 	// File: world.inc
 	World_GetMaxs(vec);
 }
