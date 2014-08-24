@@ -1,11 +1,11 @@
 #if defined _smlib_menus_included
-    #endinput
+	#endinput
 #endif
 #define _smlib_menus_included
 
 #include <sourcemod>
 
-#define _smlib_max_int_digits 20
+#define INT_MAX_DIGITS 10
 
 /**
  * Adds an option to a menu with a String display but an integer
@@ -16,12 +16,13 @@
  * @param   display     Display text for the menu
  * @noreturn
  */
-stock Menu_AddIntOption(Handle:menu, any:value, String:display[])
+stock Menu_AddIntItem(Handle:menu, any:value, String:display[])
 {
-    decl String:buffer[_smlib_max_int_digits];
-    IntToString(value, buffer, sizeof(buffer));
-    AddMenuItem(menu, buffer, display);
+	decl String:buffer[MAX_INT_DIGITS + 1];
+	IntToString(value, buffer, sizeof(buffer));
+	AddMenuItem(menu, buffer, display);
 }
+
 /**
  * Retrieves an integer-value choice from a menu, where the
  * menu's information strings were created as integers.
@@ -30,9 +31,9 @@ stock Menu_AddIntOption(Handle:menu, any:value, String:display[])
  * @param   param2       The item position selected from the menu.
  * @return               Integer choice from the menu, or 0 if the integer could not be parsed.
  */
-stock any:Menu_GetIntOption(Handle:menu, any:param2)
+stock any:Menu_GetIntItem(Handle:menu, any:param2)
 {
-    decl String:buffer[_smlib_max_int_digits];
-    GetMenuItem(menu, param2, buffer, sizeof(buffer));
-    return StringToInt(buffer);
+	decl String:buffer[MAX_INT_DIGITS + 1];
+	GetMenuItem(menu, param2, buffer, sizeof(buffer));
+	return StringToInt(buffer);
 }
