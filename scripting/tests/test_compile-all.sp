@@ -420,8 +420,8 @@ public OnPluginStart() {
 	Math_MakeVector(0.0, 0.0, 0.0, vec);
 
 	// File: menus.inc
-	Menu_AddIntOption(INVALID_HANDLE, 0, "");
-	Menu_GetIntOption(INVALID_HANDLE, 0);
+	Menu_AddIntItem(INVALID_HANDLE, 0, "");
+	Menu_GetIntItem(INVALID_HANDLE, 0);
 
 	// File: server.inc
 	Server_GetIP();
