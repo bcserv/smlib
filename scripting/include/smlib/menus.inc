@@ -4,8 +4,7 @@
 #define _smlib_menus_included
 
 #include <sourcemod>
-
-#define INT_MAX_DIGITS 10
+#include <math.inc>
 
 /**
  * Adds an option to a menu with a String display but an integer
