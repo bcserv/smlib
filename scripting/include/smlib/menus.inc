@@ -4,7 +4,7 @@
 #define _smlib_menus_included
 
 #include <sourcemod>
-#include <math.inc>
+#include <smlib/math>
 
 /**
  * Adds an option to a menu with a String display but an integer
