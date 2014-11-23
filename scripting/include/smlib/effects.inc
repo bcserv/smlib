@@ -117,7 +117,11 @@ stock Effect_Fade(entity, fadeOut=true, kill=false, fast=true, EffectCallback:ca
 		
 		WritePackCell(dataPack, EntIndexToEntRef(entity));
 		WritePackCell(dataPack, kill);
+#if SOURCEMOD_V_MAJOR >= 1 && SOURCEMOD_V_MINOR >= 7
+		WritePackFunction(dataPack, callback);
+#else
 		WritePackCell(dataPack, _:callback);
+#endif
 		WritePackCell(dataPack, data);
 		ResetPack(dataPack);
 	}
@@ -159,7 +163,11 @@ public Action:_smlib_Timer_Effect_Fade(Handle:Timer, Handle:dataPack)
 {
 	new entity = ReadPackCell(dataPack);
 	new kill = ReadPackCell(dataPack);
-	new EffectCallback:callback = EffectCallback:ReadPackCell(dataPack);
+#if SOURCEMOD_V_MAJOR >= 1 && SOURCEMOD_V_MINOR >= 7
+	new Function:callback = ReadPackFunction(dataPack);
+#else
+	new Function:callback = Function:ReadPackCell(dataPack);
+#endif
 	new any:data = any:ReadPackCell(dataPack);
 	
 	if (callback != INVALID_FUNCTION) {

@@ -113,7 +113,7 @@ stock Weapon_CreateForOwner(client, const String:className[])
  * @param weapon		Weapon Entity.
  * @return				Subtype of the weapon.
  */
-stock Weapon_GetSubType(weapon, value)
+stock Weapon_GetSubType(weapon)
 {
 	return GetEntProp(weapon, Prop_Data, "m_iSubType");
 }

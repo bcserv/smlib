@@ -165,16 +165,16 @@ stock Color_ParseChatText(const String:str[], String:buffer[], size)
 			break;
 		}
 
-		new char = str[x++];
+		new character = str[x++];
 		
 		if (inBracket) {
 			// We allow up to 9 characters in the tag (#RRGGBBAA)
-			if (char == '}' || x_tag > 9) {
+			if (character == '}' || x_tag > 9) {
 				inBracket   = false;
 				sTag[x_tag] = '\0';
 				x_tag       = 0;
 
-				if (char == '}') {
+				if (character == '}') {
 					Color_TagToCode(sTag, subject, colorCode);
 
 					if (colorCode[0] == '\0') {
@@ -206,22 +206,22 @@ stock Color_ParseChatText(const String:str[], String:buffer[], size)
 
 					// Terminate buffer with \0 so Format can handle it.
 					buffer[x_buf] = '\0';
-					x_buf = Format(buffer, size, "%s{%s%c", buffer, sTag, char);
+					x_buf = Format(buffer, size, "%s{%s%c", buffer, sTag, character);
 				}
 			}
-			else if (char == '{' && !x_tag) {
+			else if (character == '{' && !x_tag) {
 				buffer[x_buf++] = '{';
 				inBracket = false;
 			}
 			else {
-				sTag[x_tag++] = char;
+				sTag[x_tag++] = character;
 			}
 		}
-		else if (char == '{') {
+		else if (character == '{') {
 			inBracket = true;
 		}
 		else {
-			buffer[x_buf++] = char;
+			buffer[x_buf++] = character;
 		}
 	}
 
@@ -320,10 +320,10 @@ stock Color_StripFromChatText(const String:input[], String:output[], size)
 			break;
 		}
 
-		new char = input[i];
+		new character = input[i];
 		
-		if (char > 0x08) {
-			output[x++] = char;
+		if (character > 0x08) {
+			output[x++] = character;
 		}
 	}
 	

@@ -1655,7 +1655,12 @@ stock Client_SetWeaponAmmo(client, const String:className[], primaryAmmo=-1, sec
 		return false;
 	}
 	
-	Weapon_SetClips(weapon, primaryClip, secondaryClip);
+	if (primaryClip != -1) {
+		Weapon_SetPrimaryClip(weapon, primaryClip);
+	}
+	if (secondaryClip != -1) {
+		Weapon_SetSecondaryClip(weapon, secondaryClip);
+	}
 	Client_SetWeaponPlayerAmmoEx(client, weapon, primaryAmmo, secondaryAmmo);
 	
 	return true;
@@ -1778,7 +1783,7 @@ stock bool:Client_PrintKeyHintText(client, const String:format[], any:...)
 	if (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available
 		&& GetUserMessageType() == UM_Protobuf) {
 
-		PbSetString(userMessage, "hints", format);
+		PbSetString(userMessage, "hints", buffer);
 	}
 	else {
 		BfWriteByte(userMessage, 1); 
@@ -2085,9 +2090,11 @@ stock Client_Print(client, ClientHudPrint:destination, const String:format[], an
 		return;
 	}
 
+	new EngineVersion:engineVersion = GetEngineVersion();
 	if (client == 0 ||
-		(destination != ClientHudPrint_Console) ||
-		(destination == ClientHudPrint_Console && GuessSDKVersion() < SOURCE_SDK_LEFT4DEAD))
+		destination != ClientHudPrint_Console ||
+		(destination == ClientHudPrint_Console
+			&& engineVersion != Engine_Left4Dead && engineVersion != Engine_Left4Dead2))
 	{
 		Color_StripFromChatText(buffer2, buffer2, sizeof(buffer2));
 
@@ -2329,8 +2336,8 @@ public bool:_smlib_TraceEntityFilter(entity, contentsMask)
  */
 stock Client_GetClass(client)
 {
-	if (GuessSDKVersion() == SOURCE_SDK_DARKMESSIAH) {
-		GetEntProp(client, Prop_Send, "m_iPlayerClass");
+	if (GetEngineVersion() == Engine_DarkMessiah) {
+		return GetEntProp(client, Prop_Send, "m_iPlayerClass");
 	}
 
 	return GetEntProp(client, Prop_Send, "m_iClass");
@@ -2342,19 +2349,19 @@ stock Client_GetClass(client)
  * Other games maybe work too, but are not tested.
  * 
  * @param client		Client Index.
+ * @param playerClass	The class number to set the player to. Depends on game.
  * @param persistant	If true changes the players desired class so the change stays after death (probably TF2 only).
  * @return				Class Index.
  */
-stock Client_SetClass(client, class, bool:persistant=false)
+stock Client_SetClass(client, playerClass, bool:persistant=false)
 {
-	if (GuessSDKVersion() == SOURCE_SDK_DARKMESSIAH) {
-		GetEntProp(client, Prop_Send, "m_iPlayerClass");
-	}
-	else {
-		SetEntProp(client, Prop_Send, "m_iClass", class);
+	if (GetEngineVersion() == Engine_DarkMessiah) {
+		SetEntProp(client, Prop_Send, "m_iPlayerClass", playerClass);
+	} else {
+		SetEntProp(client, Prop_Send, "m_iClass", playerClass);
 		
 		if (persistant) {
-			SetEntProp(client, Prop_Send, "m_iDesiredPlayerClass", class);
+			SetEntProp(client, Prop_Send, "m_iDesiredPlayerClass", playerClass);
 		}
 	}
 }
