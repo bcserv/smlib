@@ -1,0 +1,35 @@
+language: c
+
+env:
+    - SMVERSION=1.5
+    - SMVERSION=1.6
+    - SMVERSION=1.7
+
+matrix:
+    fast_finish: true
+    allow_failures:
+        - env: SMVERSION=1.7
+
+before_install:
+    - sudo apt-get update
+    - sudo apt-get install gcc-multilib
+    - sudo apt-get install lynx
+
+before_script:
+    - SMPATTERN="http:.*sourcemod-.*-linux.*"
+    - SMURL="http://www.sourcemod.net/smdrop/$SMVERSION/"
+    - SMPACKAGE=`lynx -dump "$SMURL" | egrep -o "$SMPATTERN" | tail -1`
+    - wget $SMPACKAGE
+    - tar -xzf $(basename "$SMPACKAGE")
+    - cp -R scripting/ addons/sourcemod/
+    - cd addons/sourcemod/scripting/
+    - chmod +x spcomp
+
+script: 
+    - ./spcomp tests/test_compile-all.sp
+
+after_script:
+    - ls *.smx
+
+notifications:
+    email: false

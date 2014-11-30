@@ -5,7 +5,8 @@
 
 #include <sourcemod>
 
-#define SIZE_OF_INT		2147483647		// without 0
+#define SIZE_OF_INT         2147483647 // without 0
+#define INT_MAX_DIGITS      10
 
 #define GAMEUNITS_TO_METERS	0.01905
 #define METERS_TO_GAMEUNITS	52.49343832020997

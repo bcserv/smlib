@@ -1,14 +1,14 @@
 /**************************************************
- * 
+ *
  *            SMLIB Testing Suite
- * 
+ *
  * ************************************************
- * 
+ *
  * Warning: This plugin is only for testing if all
  * function stocks are compile-able without any
  * errors/warnings, do not load this on a production
  * server or it will likely crash it.
- * 
+ *
  */
 
 // enforce semicolons after each code statement
@@ -273,6 +273,7 @@ public OnPluginStart() {
 	Entity_GetParentName(0, buf, sizeof(buf));
 	Entity_SetParentName(0, "");
 	Entity_GetHammerId(0);
+	Entity_SetHammerId(0,0);
 	Entity_GetRadius(0);
 	Entity_SetRadius(0, 0.0);
 	Entity_GetMinSize(0, vec);
@@ -352,7 +353,7 @@ public OnPluginStart() {
 	Entity_GetParent(0);
 	Entity_ClearParent(0);
 	Entity_SetParent(0, 0);
-	Entity_ChangeOverTime(0, 0.1, Entity_ChangeOverTimeCallback:0);
+	Entity_ChangeOverTime(0, 0.1, INVALID_FUNCTION);
 	Entity_GetNextChild(0);
 	Entity_GetMoveDirection(0,NULL_VECTOR);
 	Entity_SetMoveDirection(0,NULL_VECTOR);
@@ -372,7 +373,7 @@ public OnPluginStart() {
 	Entity_GetRenderColor(0, arr_4);
 	Entity_SetRenderColor(0, 0, 0, 0, 0);
 	Entity_AddOutput(0, "");
-	
+
 	// File: files.inc
 	File_GetBaseName("", buf, sizeof(buf));
 	File_GetDirName("", buf, sizeof(buf));
@@ -419,6 +420,10 @@ public OnPluginStart() {
 	Math_RotateVector(vec, vec, vec);
 	Math_MakeVector(0.0, 0.0, 0.0, vec);
 
+	// File: menus.inc
+	Menu_AddIntItem(INVALID_HANDLE, 0, "");
+	Menu_GetIntItem(INVALID_HANDLE, 0);
+
 	// File: server.inc
 	Server_GetIP();
 	Server_GetIPString(buf, sizeof(buf));
@@ -426,7 +431,7 @@ public OnPluginStart() {
 	Server_GetHostName(buf, sizeof(buf));
 
 	// File: sql.inc
-	SQL_TQueryF(INVALID_HANDLE, SQLTCallback:0, 0, DBPrio_Normal, "");
+	SQL_TQueryF(INVALID_HANDLE, INVALID_FUNCTION, 0, DBPrio_Normal, "");
 	SQL_FetchIntByName(INVALID_HANDLE, "");
 	SQL_FetchBoolByName(INVALID_HANDLE, "");
 	SQL_FetchFloatByName(INVALID_HANDLE, "");
@@ -473,7 +478,7 @@ public OnPluginStart() {
 	Weapon_IsValid(0);
 	Weapon_Create("", vec, vec);
 	Weapon_CreateForOwner(0, "");
-	Weapon_GetSubType(0, 0);
+	Weapon_GetSubType(0);
 	Weapon_IsReloading(0);
 	Weapon_GetState(0);
 	Weapon_FiresUnderWater(0);
@@ -496,7 +501,7 @@ public OnPluginStart() {
 	Weapon_SetAmmoCounts(0, 0, 0);
 	Weapon_GetViewModelIndex(0);
 	Weapon_SetViewModelIndex(0, 0);
-	
+
 	// File: world.inc
 	World_GetMaxs(vec);
 }

@@ -35,12 +35,12 @@ stock Entity_IsValid(entity)
  * cheaper, use this if you call this function very often.
  *
  * @param name			Name of the entity you want so search.
- * @param class			Optional: Classname of the entity
+ * @param className		Optional: Classname of the entity
  * @return				Entity index or INVALID_ENT_REFERENCE if not matching entity was found.
  */
-stock Entity_FindByName(const const String:name[], const String:class[]="")
+stock Entity_FindByName(const String:name[], const String:className[]="")
 {
-	if (class[0] == '\0') {
+	if (className[0] == '\0') {
 		// Hack: Double the limit to gets none-networked entities too.
 		new realMaxEntities = GetMaxEntities() * 2;
 		for (new entity=0; entity < realMaxEntities; entity++) {
@@ -56,7 +56,7 @@ stock Entity_FindByName(const const String:name[], const String:class[]="")
 	}
 	else {
 		new entity = INVALID_ENT_REFERENCE;
-		while ((entity = FindEntityByClassname(entity, class)) != INVALID_ENT_REFERENCE) {
+		while ((entity = FindEntityByClassname(entity, className)) != INVALID_ENT_REFERENCE) {
 
 			if (Entity_NameMatches(entity, name)) {
 				return entity;
@@ -78,12 +78,12 @@ stock Entity_FindByName(const const String:name[], const String:class[]="")
  * cheaper, use this if you call this function very often.
  *
  * @param hammerId		Hammer editor ID
- * @param class			Optional: Classname of the entity
+ * @param className		Optional: Classname of the entity
  * @return				Edict Index or INVALID_ENT_REFERENCE if no entity was found.
  */
-stock Entity_FindByHammerId(hammerId, const String:class[]="")
+stock Entity_FindByHammerId(hammerId, const String:className[]="")
 {
-	if (class[0] == '\0') {
+	if (className[0] == '\0') {
 		// Hack: Double the limit to gets none-networked entities too.
 		new realMaxEntities = GetMaxEntities() * 2;
 		for (new entity=0; entity < realMaxEntities; entity++) {
@@ -99,7 +99,7 @@ stock Entity_FindByHammerId(hammerId, const String:class[]="")
 	}
 	else {
 		new entity = INVALID_ENT_REFERENCE;
-		while ((entity = FindEntityByClassname(entity, class)) != INVALID_ENT_REFERENCE) {
+		while ((entity = FindEntityByClassname(entity, className)) != INVALID_ENT_REFERENCE) {
 			
 			if (Entity_GetHammerId(entity) == hammerId) {
 				return entity;
@@ -310,6 +310,20 @@ stock Entity_SetParentName(entity, const String:name[], any:...)
 stock Entity_GetHammerId(entity)
 {	
 	return GetEntProp(entity, Prop_Data, "m_iHammerID");
+}
+
+/**
+ * Sets the Hammer-ID of an entity.
+ * The Hammer Editor gives every entity a unique ID.
+ * Note: Old maps don't have Hammer-ID's set for entities
+ *
+ * @param entity			Entity index.
+ * @param hammerId			Hammer ID.
+ * @noreturn
+ */
+stock Entity_SetHammerId(entity, hammerId)
+{	
+	return SetEntProp(entity, Prop_Data, "m_iHammerID", hammerId);
 }
 
 /**
@@ -1785,7 +1799,11 @@ stock Entity_ChangeOverTime(entity, Float:interval=0.1, Entity_ChangeOverTimeCal
 	WritePackCell(dataPack, EntIndexToEntRef(entity));
 	WritePackFloat(dataPack, interval);
 	WritePackCell(dataPack, 0);
+#if SOURCEMOD_V_MAJOR >= 1 && SOURCEMOD_V_MINOR >= 7
+	WritePackFunction(dataPack, valueCallback);
+#else
 	WritePackCell(dataPack, _:valueCallback);
+#endif
 	ResetPack(dataPack);
 	__smlib_Timer_ChangeOverTime(INVALID_HANDLE,dataPack);
 }
@@ -1799,7 +1817,12 @@ public Action:__smlib_Timer_ChangeOverTime(Handle:Timer, Handle:dataPack)
 	
 	new Float:interval = ReadPackFloat(dataPack);
 	new currentCall = ReadPackCell(dataPack);
-	new Entity_ChangeOverTimeCallback:callback = Entity_ChangeOverTimeCallback:ReadPackCell(dataPack);
+#if SOURCEMOD_V_MAJOR >= 1 && SOURCEMOD_V_MINOR >= 7
+	new Function:callback = ReadPackFunction(dataPack);
+#else
+	new Function:callback = Function:ReadPackCell(dataPack);
+#endif
+	
 	new any:result;
 	Call_StartFunction(INVALID_HANDLE, callback);
 	Call_PushCellRef(entity);
@@ -1815,7 +1838,11 @@ public Action:__smlib_Timer_ChangeOverTime(Handle:Timer, Handle:dataPack)
 	WritePackCell(dataPack, EntIndexToEntRef(entity));
 	WritePackFloat(dataPack, interval);
 	WritePackCell(dataPack, currentCall+1);
+#if SOURCEMOD_V_MAJOR >= 1 && SOURCEMOD_V_MINOR >= 7
+	WritePackFunction(dataPack, callback);
+#else
 	WritePackCell(dataPack, _:callback);
+#endif
 	ResetPack(dataPack);
 	CreateTimer(interval,__smlib_Timer_ChangeOverTime,dataPack);
 	return Plugin_Stop;
@@ -1834,6 +1861,10 @@ stock Entity_GetNextChild(parent, start=0)
 	for (new entity=start; entity <= 2048; entity++) {
 
 		if (!Entity_IsValid(entity)) {
+			continue;
+		}
+
+		if (entity > 0 && entity <= MaxClients && !IsClientConnected(entity)) {
 			continue;
 		}
 
