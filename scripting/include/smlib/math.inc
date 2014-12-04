@@ -308,3 +308,15 @@ stock Float:Math_UnitsToFeet(Float:units)
 {
 	return (Math_UnitsToMeters(units) * METERS_TO_FEET);
 }
+
+/**
+ * Converts Source Game Units to Centimeters
+ * 
+ * @param units			Float value
+ * @return				Centimeters as Float value.
+ */
+stock Float:Math_UnitsToCentimeters(Float:units)
+{
+	return (Math_UnitsToMeters(units) * 100.0);
+}
+

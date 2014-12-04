@@ -416,6 +416,7 @@ public OnPluginStart() {
 	Math_MoveVector(vec, vec, 0.0, vec);
 	Math_UnitsToMeters(0.0);
 	Math_UnitsToFeet(0.0);
+	Math_UnitsToCentimeters(0.0);
 	Math_RotateVector(vec, vec, vec);
 	Math_MakeVector(0.0, 0.0, 0.0, vec);
 
