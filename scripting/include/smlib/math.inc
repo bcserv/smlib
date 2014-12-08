@@ -12,6 +12,7 @@
 #define METERS_TO_GAMEUNITS	52.49343832020997
 #define METERS_TO_FEET		3.2808399
 #define FEET_TO_METERS		0.3048
+#define KILOMETERS_TO_MILES	0.62137
 
 enum VecAngle
 {
@@ -320,3 +321,24 @@ stock Float:Math_UnitsToCentimeters(Float:units)
 	return (Math_UnitsToMeters(units) * 100.0);
 }
 
+/**
+ * Converts Source Game Units to Kilometers
+ * 
+ * @param units			Float value
+ * @return				Kilometers as Float value.
+ */
+stock Float:Math_UnitsToKilometers(Float:units)
+{
+	return (Math_UnitsToMeters(units) / 1000.0);
+}
+
+/**
+ * Converts Source Game Units to Miles
+ * 
+ * @param units			Float value
+ * @return				Miles as Float value.
+ */
+stock Float:Math_UnitsToMiles(Float:units)
+{
+	return (Math_UnitsToKilometers(units) * KILOMETERS_TO_MILES);
+}
