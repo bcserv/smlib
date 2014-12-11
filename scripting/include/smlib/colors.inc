@@ -339,7 +339,7 @@ stock Color_StripFromChatText(const String:input[], String:output[], size)
  *
  * @noreturn
  */
-static stock Color_ChatInitialize()
+static Color_ChatInitialize()
 {
 	static initialized = false;
 
@@ -451,7 +451,7 @@ static stock Color_ChatInitialize()
  * @param subject A client index or CHATCOLOR_NOSUBJECT
  * @noreturn
  */
-static stock Color_GetChatColorInfo(&index, &subject=CHATCOLOR_NOSUBJECT)
+static Color_GetChatColorInfo(&index, &subject=CHATCOLOR_NOSUBJECT)
 {
 	Color_ChatInitialize();
 
