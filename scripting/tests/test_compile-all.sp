@@ -212,7 +212,7 @@ public OnPluginStart() {
 	Color_ChatGetSubject();
 	Color_ChatClearSubject();
 	Color_ParseChatText("", "", 0);
-	Color_TagToCode("", var, buf_10);
+	Color_TagToCode("", variable, buf_10);
 	Color_StripFromChatText("", "", 0);
 
 	// File: convars.inc
