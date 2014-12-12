@@ -159,7 +159,11 @@ stock Client_FindBySteamId(const String:auth[])
 			continue;
 		}
 		
-		GetClientAuthString(client, clientAuth, sizeof(clientAuth));
+		#if SOURCEMOD_V_MAJOR >= 1 && SOURCEMOD_V_MINOR >= 7
+			GetClientAuthId(client, AuthId_Steam2, clientAuth, sizeof(clientAuth));
+		#else
+			GetClientAuthString(client, clientAuth, sizeof(clientAuth));
+		#endif
 
 		if (StrEqual(auth, clientAuth)) {
 			return client;
