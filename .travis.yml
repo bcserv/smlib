@@ -14,21 +14,8 @@ before_install:
     - sudo apt-get update
     - sudo apt-get install gcc-multilib lib32stdc++6 lib32z1 lynx
 
-before_script:
-    - SMPATTERN="http:.*sourcemod-.*-linux.*"
-    - SMURL="http://www.sourcemod.net/smdrop/$SMVERSION/"
-    - SMPACKAGE=`lynx -dump "$SMURL" | egrep -o "$SMPATTERN" | tail -1`
-    - wget $SMPACKAGE
-    - tar -xzf $(basename "$SMPACKAGE")
-    - cp -R scripting/ addons/sourcemod/
-    - cd addons/sourcemod/scripting/
-    - chmod +x spcomp
-
-script: 
-    - ./spcomp tests/test_compile-all.sp
-
-after_script:
-    - ls *.smx
+script:
+    - ./scripting/tests/test_compile-all.sh
 
 notifications:
     email: false
