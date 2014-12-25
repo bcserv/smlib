@@ -416,7 +416,7 @@ static stock MD5Transform_HH(&a, &b, &c, &d, x, s, ac)
 	a += b;
 }
 
-static MD5Transform_II(&a, &b, &c, &d, x, s, ac)
+static stock MD5Transform_II(&a, &b, &c, &d, x, s, ac)
 {
 	a += ((c) ^ ((b) | (~d))) + x + ac;
 	a = (((a) << (s)) | ((a) >>> (32-(s))));
