@@ -395,21 +395,21 @@ stock Crypt_MD5(const String:str[], String:output[], maxlen)
 		digest[8], digest[9], digest[10], digest[11], digest[12], digest[13], digest[14], digest[15]);
 }
 
-static MD5Transform_FF(&a, &b, &c, &d, x, s, ac)
+static stock MD5Transform_FF(&a, &b, &c, &d, x, s, ac)
 	{
 	a += (((b) & (c)) | ((~b) & (d))) + x + ac;
 	a = (((a) << (s)) | ((a) >>> (32-(s))));
 	a += b;
 }
 
-static MD5Transform_GG(&a, &b, &c, &d, x, s, ac)
+static stock MD5Transform_GG(&a, &b, &c, &d, x, s, ac)
 	{
 	a += (((b) & (d)) | ((c) & (~d))) + x + ac;
 	a = (((a) << (s)) | ((a) >>> (32-(s))));
 	a += b;
 }
 
-static MD5Transform_HH(&a, &b, &c, &d, x, s, ac)
+static stock MD5Transform_HH(&a, &b, &c, &d, x, s, ac)
 	{
 	a += ((b) ^ (c) ^ (d)) + x + ac;
 	a = (((a) << (s)) | ((a) >>> (32-(s))));
@@ -423,7 +423,7 @@ static MD5Transform_II(&a, &b, &c, &d, x, s, ac)
 	a += b;
 }
 
-static MD5Transform(buf[], input[]){
+static stock MD5Transform(buf[], input[]){
 	new a = buf[0];
 	new b = buf[1];
 	new c = buf[2];

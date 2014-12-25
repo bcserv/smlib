@@ -405,7 +405,7 @@ stock bool:File_CopyRecursive(const String:path[], const String:destination[], b
 	}
 }
 
-static bool:Sub_File_CopyRecursive(const String:path[], const String:destination[], bool:stop_on_error=false, FileType:fileType, dirMode)
+static stock bool:Sub_File_CopyRecursive(const String:path[], const String:destination[], bool:stop_on_error=false, FileType:fileType, dirMode)
 {
 	if (fileType == FileType_File) {
 		return File_Copy(path, destination);
