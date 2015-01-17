@@ -18,7 +18,7 @@ chmod +x spcomp
 sed -i 's/^\tnew i, len/\tnew i, len;/' ./include/string.inc
 
 # Verify all functions stocks have been added to the test file
-functions=$(grep -oP --color=never --no-filename 'stock\s*(\w+:)?\K\w+(?=\()' include/smlib/*.inc)
+functions=$(grep -oP --color=never --no-filename '^(?!static\s+)stock\s*(\w+:)?\K\w+(?=\()' include/smlib/*.inc)
 
 # Temporarily disable bash immediate exit
 set +e
