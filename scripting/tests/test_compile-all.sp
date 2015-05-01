@@ -65,8 +65,8 @@ public OnPluginStart() {
 
 	new arr[1], String:arr_str[1][1], arr_4[4];
 	decl Float:vec[3];
-	decl String:buf[1], String:twoDimStrArr[1][1];
-	new var;
+	decl String:buf[1], String:buf_10[10], String:twoDimStrArr[1][1];
+	new variable;
 	new Handle:handle;
 
 	// File: arrays.inc
@@ -77,7 +77,7 @@ public OnPluginStart() {
 	Array_Fill(arr, sizeof(arr), 0);
 	Array_Copy(arr, arr, 1);
 
-	// File: 0s.inc
+	// File: clients.inc
 	Client_SetHideHud(0, 0);
 	Client_IsValid(0);
 	Client_IsIngame(0);
@@ -155,7 +155,7 @@ public OnPluginStart() {
 	Client_SetWeaponPlayerAmmo(0, "");
 	Client_SetWeaponPlayerAmmoEx(0, 0);
 	Client_SetWeaponAmmo(0, "");
-	Client_GetNextWeapon(0, var);
+	Client_GetNextWeapon(0, variable);
 	Client_PrintHintText(0, "");
 	Client_PrintHintTextToAll("");
 	Client_PrintKeyHintText(0, "");
@@ -186,6 +186,7 @@ public OnPluginStart() {
 	Client_IsMuted(0);
 	Client_PrintToConsole(0, "");
 	Client_Print(0, ClientHudPrint:0, "");
+	Client_PrintToChatExclude(0);
 	Client_Reply(0, "");
 	Client_MatchesFilter(0, 0);
 	Client_Get({ 0 }, 0);
@@ -205,6 +206,14 @@ public OnPluginStart() {
 	Client_PrintToTopAll(0,0,0,0,0.0,"");
 	Client_PrintToTopEx({ 0 },1,0,0,0,0,0.0,"");
 	Client_ShowScoreboard(0);
+
+	// File: colors.inc
+	Color_ChatSetSubject(0);
+	Color_ChatGetSubject();
+	Color_ChatClearSubject();
+	Color_ParseChatText("", "", 0);
+	Color_TagToCode("", variable, buf_10);
+	Color_StripFromChatText("", "", 0);
 
 	// File: convars.inc
 	ConCommand_HasFlags("", 0);
@@ -373,6 +382,7 @@ public OnPluginStart() {
 	Entity_GetRenderColor(0, arr_4);
 	Entity_SetRenderColor(0, 0, 0, 0, 0);
 	Entity_AddOutput(0, "");
+	Entity_TakeHealth(0, 0);
 
 	// File: files.inc
 	File_GetBaseName("", buf, sizeof(buf));
@@ -417,8 +427,12 @@ public OnPluginStart() {
 	Math_MoveVector(vec, vec, 0.0, vec);
 	Math_UnitsToMeters(0.0);
 	Math_UnitsToFeet(0.0);
+	Math_UnitsToCentimeters(0.0);
+	Math_UnitsToKilometers(0.0);
+	Math_UnitsToMiles(0.0);
 	Math_RotateVector(vec, vec, vec);
 	Math_MakeVector(0.0, 0.0, 0.0, vec);
+	Math_Overflow(0, 0, 0);
 
 	// File: menus.inc
 	Menu_AddIntItem(INVALID_HANDLE, 0, "");
@@ -450,7 +464,7 @@ public OnPluginStart() {
 	// File: teams.inc
 	Team_HaveAllPlayers();
 	Team_GetClientCount(0);
-	Team_GetClientCounts(var, var);
+	Team_GetClientCounts(variable, variable);
 	Team_GetName(0, buf, sizeof(buf));
 	Team_SetName(0, "");
 	Team_GetScore(0);
@@ -459,6 +473,7 @@ public OnPluginStart() {
 	Team_IsValid(0);
 	Team_EdictIsValid(0);
 	Team_GetEdict(0);
+	Team_GetAnyClient(0);
 
 	// File: 0s.inc
 	Vehicle_GetDriver(0);

@@ -553,8 +553,8 @@ stock Effect_DrawBeamBoxRotatable(
 stock Effect_DrawAxisOfRotationToClient(
 	client,
 	const Float:origin[3],
-	const Float:length[3],
 	const Float:angles[3],
+	const Float:length[3],
 	modelIndex,
 	haloIndex,
 	startFrame=0,
@@ -568,7 +568,7 @@ stock Effect_DrawAxisOfRotationToClient(
 ) {
     new clients[1];
     clients[0] = client;
-    Effect_DrawAxisOfRotation(clients, 1, origin, length, angles, modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, speed);
+    Effect_DrawAxisOfRotation(clients, 1, origin, angles, length, modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, speed);
 }
 
 /**
@@ -592,8 +592,8 @@ stock Effect_DrawAxisOfRotationToClient(
  */
 stock Effect_DrawAxisOfRotationToAll(
 	const Float:origin[3],
-	const Float:length[3],
 	const Float:angles[3],
+	const Float:length[3],
 	modelIndex,
 	haloIndex,
 	startFrame=0,
@@ -609,7 +609,7 @@ stock Effect_DrawAxisOfRotationToAll(
 	new clients[MaxClients];
 	new numClients = Client_Get(clients, CLIENTFILTER_INGAME);
 
-	Effect_DrawAxisOfRotation(clients, numClients, origin, length, angles, modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, speed);
+	Effect_DrawAxisOfRotation(clients, numClients, origin, angles, length, modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, speed);
 }
 
 /**
