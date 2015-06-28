@@ -43,7 +43,7 @@ stock bool:Game_EndRound(team=0, bool:forceMapReset=false, bool:switchTeams=fals
 	new game_round_win = FindEntityByClassname(-1, "game_round_win");
 
 	if (game_round_win == -1) {
-		game_round_win = CreateEntityByName("game_end");
+		game_round_win = CreateEntityByName("game_round_win");
 
 		if (game_round_win == -1) {
 			ThrowError("Unable to find or create entity \"game_round_win\"");

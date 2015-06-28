@@ -193,9 +193,9 @@ stock String_GetRandom(String:buffer[], size, length=32, const String:chrs[]="ab
 stock bool:String_StartsWith(const String:str[], const String:subString[])
 {
 	new n = 0;
-	while (str[n] != '\0' && subString[n] != '\0') {
+	while (subString[n] != '\0') {
 
-		if (str[n] != subString[n]) {
+		if (str[n] == '\0' || str[n] != subString[n]) {
 			return false;
 		}
 
@@ -217,6 +217,10 @@ stock bool:String_EndsWith(const String:str[], const String:subString[])
 {
 	new n_str = strlen(str) - 1;
 	new n_subString = strlen(subString) - 1;
+
+	if(n_str < n_subString) {
+		return false;
+	}
 
 	while (n_str != 0 && n_subString != 0) {
 
