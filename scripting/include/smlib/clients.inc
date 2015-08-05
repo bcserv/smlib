@@ -158,8 +158,8 @@ stock Client_FindBySteamId(const String:auth[])
 		if (!IsClientAuthorized(client)) {
 			continue;
 		}
-		
-		GetClientAuthString(client, clientAuth, sizeof(clientAuth));
+	
+		GetClientAuthId(client, AuthId_Steam2, clientAuth, sizeof(clientAuth));
 
 		if (StrEqual(auth, clientAuth)) {
 			return client;
