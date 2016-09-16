@@ -215,7 +215,7 @@ stock Weapon_GetPrimaryAmmoType(weapon)
  */
 stock Weapon_SetPrimaryAmmoType(weapon,type)
 {
-	return SetEntProp(weapon, Prop_Data, "m_iPrimaryAmmoType", type);
+	SetEntProp(weapon, Prop_Data, "m_iPrimaryAmmoType", type);
 }
 
 /*
@@ -237,7 +237,7 @@ stock Weapon_GetSecondaryAmmoType(weapon)
  */
 stock Weapon_SetSecondaryAmmoType(weapon,type)
 {
-	return SetEntProp(weapon, Prop_Data, "m_iSecondaryAmmoType", type);
+	SetEntProp(weapon, Prop_Data, "m_iSecondaryAmmoType", type);
 }
 
 /*
