@@ -13,7 +13,7 @@
  * extension available at http://forums.alliedmods.net/showthread.php?t=129763
  * to get the public IP. <steamtools> has to be included BEFORE <smlib>.
  * If the server is not behind NAT, the public IP is the same as the private IP.
- * 
+ *
  * @param public		Set to true to retrieve the server's public/external IP, false otherwise.
  * @return				Long IP or 0 if the IP couldn't be retrieved.
  */
@@ -66,7 +66,7 @@ stock Server_GetIP(bool:public_=true)
  * to get the public IP. <steamtools> has to be included BEFORE <smlib>.
  * If the public IP couldn't be found, an empty String is returned.
  * If the server is not behind NAT, the public IP is the same as the private IP.
- * 
+ *
  * @param buffer		String buffer (size=16)
  * @param size			String buffer size.
  * @param public		Set to true to retrieve the server's public/external IP, false otherwise.
@@ -75,7 +75,7 @@ stock Server_GetIP(bool:public_=true)
 stock bool:Server_GetIPString(String:buffer[], size, bool:public_=true)
 {
 	new ip;
-	
+
 	if ((ip = Server_GetIP(public_)) == 0) {
 		buffer[0] = '\0';
 		return false;
@@ -95,7 +95,7 @@ stock bool:Server_GetIPString(String:buffer[], size, bool:public_=true)
 stock Server_GetPort()
 {
 	static Handle:cvHostport = INVALID_HANDLE;
-	
+
 	if (cvHostport == INVALID_HANDLE) {
 		cvHostport = FindConVar("hostport");
 	}
@@ -117,9 +117,9 @@ stock Server_GetPort()
  * @return				True on success, false otherwise.
  */
 stock bool:Server_GetHostName(String:buffer[], size)
-{	
+{
 	static Handle:cvHostname = INVALID_HANDLE;
-	
+
 	if (cvHostname == INVALID_HANDLE) {
 		cvHostname = FindConVar("hostname");
 	}

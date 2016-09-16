@@ -21,7 +21,7 @@
 
 /*
  * Gets the owner (usually a client) of the weapon
- * 
+ *
  * @param weapon		Weapon Entity.
  * @return				Owner of the weapon or INVALID_ENT_REFERENCE if the weapon has no owner.
  */
@@ -32,7 +32,7 @@ stock Weapon_GetOwner(weapon)
 
 /*
  * Sets the owner (usually a client) of the weapon
- * 
+ *
  * @param weapon		Weapon Entity.
  * @param entity		Entity Index.
  * @noreturn
@@ -44,7 +44,7 @@ stock Weapon_SetOwner(weapon, entity)
 
 /*
  * Checks whether the entity is a valid weapon or not.
- * 
+ *
  * @param weapon		Weapon Entity.
  * @return				True if the entity is a valid weapon, false otherwise.
  */
@@ -53,13 +53,13 @@ stock Weapon_IsValid(weapon)
 	if (!IsValidEdict(weapon)) {
 		return false;
 	}
-	
+
 	return Entity_ClassNameMatches(weapon, "weapon_", true);
 }
 
 /*
  * Create's a weapon and spawns it in the world at the specified location.
- * 
+ *
  * @param className		Classname String of the weapon to spawn
  * @param absOrigin		Absolute Origin Vector where to spawn the weapon.
  * @param absAngles		Absolute Angles Vector.
@@ -68,22 +68,22 @@ stock Weapon_IsValid(weapon)
 stock Weapon_Create(const String:className[], Float:absOrigin[3], Float:absAngles[3])
 {
 	new weapon = Entity_Create(className);
-	
+
 	if (weapon == INVALID_ENT_REFERENCE) {
 		return INVALID_ENT_REFERENCE;
 	}
-	
+
 	Entity_SetAbsOrigin(weapon, absOrigin);
 	Entity_SetAbsAngles(weapon, absAngles);
-	
+
 	DispatchSpawn(weapon);
-	
+
 	return weapon;
 }
 
 /*
  * Create's a weapon and spawns it in the world at the specified location.
- * 
+ *
  * @param className		Classname String of the weapon to spawn
  * @param absOrigin		Absolute Origin Vector where to spawn the weapon.
  * @param absAngles		Absolute Angles Vector.
@@ -94,22 +94,22 @@ stock Weapon_CreateForOwner(client, const String:className[])
 	decl Float:absOrigin[3], Float:absAngles[3];
 	Entity_GetAbsOrigin(client, absOrigin);
 	Entity_GetAbsAngles(client, absAngles);
-	
+
 	new weapon = Weapon_Create(className, absOrigin, absAngles);
-	
+
 	if (weapon == INVALID_ENT_REFERENCE) {
 		return INVALID_ENT_REFERENCE;
 	}
 
 	Entity_SetOwner(weapon, client);
-	
+
 	return weapon;
 }
 
 /*
  * Gets the weapon's subtype.
  * The subtype is only used when a player has multiple weapons of the same type.
- * 
+ *
  * @param weapon		Weapon Entity.
  * @return				Subtype of the weapon.
  */
@@ -120,7 +120,7 @@ stock Weapon_GetSubType(weapon)
 
 /*
  * Is the weapon currently reloading ?
- * 
+ *
  * @param weapon		Weapon Entity.
  * @return				True if weapon is currently reloading, false if not.
  */
@@ -141,7 +141,7 @@ stock bool:Weapon_IsReloading(weapon)
  * Get's the state of the weapon.
  * This returns whether the weapon is currently carried by a client,
  * if it is active and if it is on a target.
- * 
+ *
  * @param weapon		Weapon Entity.
  * @return				Weapon State.
  */
@@ -152,7 +152,7 @@ stock Weapon_GetState(weapon)
 
 /*
  * Returns whether the weapon can fire primary ammo under water.
- * 
+ *
  * @param weapon		Weapon Entity.
  * @return				True or False.
  */
@@ -163,7 +163,7 @@ stock bool:Weapon_FiresUnderWater(weapon)
 
 /*
  * Sets if the weapon can fire primary ammo under water.
- * 
+ *
  * @param weapon		Weapon Entity.
  * @param can			True or False.
  * @noreturn
@@ -175,7 +175,7 @@ stock Weapon_SetFiresUnderWater(weapon, bool:can=true)
 
 /*
  * Returns whether the weapon can fire secondary ammo under water.
- * 
+ *
  * @param weapon		Weapon Entity.
  * @return				True or False.
  */
@@ -186,7 +186,7 @@ stock bool:Weapon_FiresUnderWaterAlt(weapon)
 
 /*
  * Sets if the weapon can fire secondary ammo under water.
- * 
+ *
  * @param weapon		Weapon Entity.
  * @param can			True or False.
  * @noreturn
@@ -198,7 +198,7 @@ stock Weapon_SetFiresUnderWaterAlt(weapon, bool:can=true)
 
 /*
  * Gets the primary ammo Type (int offset)
- * 
+ *
  * @param weapon		Weapon Entity.
  * @return				Primary ammo type value.
  */
@@ -209,7 +209,7 @@ stock Weapon_GetPrimaryAmmoType(weapon)
 
 /*
  * Sets the primary ammo Type (int offset)
- * 
+ *
  * @param weapon		Weapon Entity.
  * @param type			Primary ammo type value.
  */
@@ -220,7 +220,7 @@ stock Weapon_SetPrimaryAmmoType(weapon,type)
 
 /*
  * Gets the secondary ammo Type (int offset)
- * 
+ *
  * @param weapon		Weapon Entity.
  * @return				Secondary ammo type value.
  */
@@ -231,7 +231,7 @@ stock Weapon_GetSecondaryAmmoType(weapon)
 
 /*
  * Sets the secondary ammo Type (int offset)
- * 
+ *
  * @param weapon		Weapon Entity.
  * @param type			Secondary ammo type value.
  */
@@ -242,7 +242,7 @@ stock Weapon_SetSecondaryAmmoType(weapon,type)
 
 /*
  * Gets the primary clip count of a weapon.
- * 
+ *
  * @param weapon		Weapon Entity.
  * @return				Primary Clip count.
  */
@@ -253,7 +253,7 @@ stock Weapon_GetPrimaryClip(weapon)
 
 /*
  * Sets the primary clip count of a weapon.
- * 
+ *
  * @param weapon		Weapon Entity.
  * @param value			Clip Count value.
  */
@@ -264,7 +264,7 @@ stock Weapon_SetPrimaryClip(weapon, value)
 
 /*
  * Gets the secondary clip count of a weapon.
- * 
+ *
  * @param weapon		Weapon Entity.
  * @return				Secondy Clip count.
  */
@@ -275,7 +275,7 @@ stock Weapon_GetSecondaryClip(weapon)
 
 /*
  * Sets the secondary clip count of a weapon.
- * 
+ *
  * @param weapon		Weapon Entity.
  * @param value			Clip Count value.
  */
@@ -286,7 +286,7 @@ stock Weapon_SetSecondaryClip(weapon, value)
 
 /*
  * Sets the primary & secondary clip count of a weapon.
- * 
+ *
  * @param weapon		Weapon Entity.
  * @param primary		Primary Clip Count value.
  * @param secondary		Primary Clip Count value.
@@ -302,7 +302,7 @@ stock Weapon_SetClips(weapon, primary, secondary)
  * This is only used when the weapon is not carried
  * by a player to give a player ammo when he picks up
  * the weapon.
- * 
+ *
  * @param weapon		Weapon Entity.
  * @return				Primary Ammo Count.
  */
@@ -316,7 +316,7 @@ stock Weapon_GetPrimaryAmmoCount(weapon)
  * This is only used when the weapon is not carried
  * by a player to give a player ammo when he picks up
  * the weapon.
- * 
+ *
  * @param weapon		Weapon Entity.
  * @param value			Primary Ammo Count.
  * @noreturn
@@ -331,7 +331,7 @@ stock Weapon_SetPrimaryAmmoCount(weapon, value)
  * This is only used when the weapon is not carried
  * by a player to give a player ammo when he picks up
  * the weapon.
- * 
+ *
  * @param weapon		Weapon Entity.
  * @return				Secondary Ammo Count.
  */
@@ -345,7 +345,7 @@ stock Weapon_GetSecondaryAmmoCount(weapon)
  * This is only used when the weapon is not carried
  * by a player to give a player ammo when he picks up
  * the weapon.
- * 
+ *
  * @param weapon		Weapon Entity.
  * @param value			Secondary Ammo Count.
  * @noreturn
@@ -360,7 +360,7 @@ stock Weapon_SetSecondaryAmmoCount(weapon, value)
  * This is only used when the weapon is not carried
  * by a player to give a player ammo when he picks up
  * the weapon.
- * 
+ *
  * @param weapon		Weapon Entity.
  * @value primary		Primary Ammo Count.
  * @value secondary		Secondary Ammo Count.
@@ -374,7 +374,7 @@ stock Weapon_SetAmmoCounts(weapon, primary, secondary)
 
 /*
  * Gets the Model Index of the weapon's view model.
- * 
+ *
  * @param weapon		Weapon Entity.
  * @return				View Model Index.
  */
@@ -386,7 +386,7 @@ stock Weapon_GetViewModelIndex(weapon)
 /*
  * Sets the Model Index of the weapon's view model.
  * You can get the Model Index by precaching a model with PrecacheModel().
- * 
+ *
  * @param weapon		Weapon Entity.
  * @param index			Model Index.
  * @noreturn
@@ -396,4 +396,3 @@ stock Weapon_SetViewModelIndex(weapon, index)
 	SetEntProp(weapon, Prop_Data, "m_nViewModelIndex", index);
 	ChangeEdictState(weapon, FindDataMapOffs(weapon, "m_nViewModelIndex"));
 }
-

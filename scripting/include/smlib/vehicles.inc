@@ -44,7 +44,7 @@ stock bool:Vehicle_ExitDriver(vehicle)
 	if (!Vehicle_HasDriver(vehicle)) {
 		return false;
 	}
-	
+
 	return AcceptEntityInput(vehicle, "ExitVehicle");
 }
 
@@ -56,7 +56,7 @@ stock bool:Vehicle_ExitDriver(vehicle)
  */
 stock bool:Vehicle_TurnOn(vehicle)
 {
-	
+
 	return AcceptEntityInput(vehicle, "TurnOn");
 }
 
@@ -68,7 +68,7 @@ stock bool:Vehicle_TurnOn(vehicle)
  */
 stock bool:Vehicle_TurnOff(vehicle)
 {
-	
+
 	return AcceptEntityInput(vehicle, "TurnOff");
 }
 
@@ -80,7 +80,7 @@ stock bool:Vehicle_TurnOff(vehicle)
  */
 stock bool:Vehicle_Lock(vehicle)
 {
-	
+
 	return AcceptEntityInput(vehicle, "Lock");
 }
 
@@ -92,7 +92,7 @@ stock bool:Vehicle_Lock(vehicle)
  */
 stock bool:Vehicle_Unlock(vehicle)
 {
-	
+
 	return AcceptEntityInput(vehicle, "Unlock");
 }
 
@@ -107,7 +107,7 @@ stock bool:Vehicle_IsValid(vehicle)
 	if (!Entity_IsValid(vehicle)) {
 		return false;
 	}
-	
+
 	return Entity_ClassNameMatches(vehicle, "prop_vehicle", true);
 }
 
@@ -130,7 +130,7 @@ stock bool:Vehicle_GetScript(vehicle, String:buffer[], size)
  * Sets the script of a vehicle.
  * This script contains all the vehicle settings like its speed
  * and that stuff.
- * 
+ *
  * @param vehicle			Entity index.
  * @param buffer			Vehicle Script path.
  * @noreturn

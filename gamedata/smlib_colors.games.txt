@@ -16,7 +16,7 @@
  * 	"bluered",			// Blue, Red
  * 	"team",				// Team
  * 	"lightgreen",			// Light green
- * 	"gray",				// GRAy 
+ * 	"gray",				// GRAy
  * 	"green",			// Green
  * 	"olivegreen",			// Olive green
  * 	"black"				// BLAck
