@@ -34,6 +34,6 @@ done <<< "$functions"
 set -e
 
 
-./spcomp -\; "$TEST_SCRIPT"
+./spcomp "$TEST_SCRIPT"
 
 ls *.smx
