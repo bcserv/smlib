@@ -23,18 +23,18 @@
  * If one team is empty its assumed single team mode is enabled and the game won't start.
  *
  * @noparam
- * @return			True if one team is empty, false otherwise.			
+ * @return			True if one team is empty, false otherwise.
  */
 stock bool:Team_HaveAllPlayers(bool:countFakeClients=true) {
 
 	new teamCount = GetTeamCount();
 	for (new i=2; i < teamCount; i++) {
-		
+
 		if (Team_GetClientCount(i, ((countFakeClients) ? CLIENTFILTER_ALL : CLIENTFILTER_NOBOTS)) == 0) {
 			return false;
 		}
 	}
-	
+
 	return true;
 }
 
@@ -105,14 +105,14 @@ stock Team_GetClientCounts(&team1=0, &team2=0, flags=0)
 stock bool:Team_GetName(index, String:str[], size)
 {
 	new edict = Team_GetEdict(index);
-	
+
 	if (edict == -1) {
 		str[0] = '\0';
 		return false;
 	}
 
 	GetEntPropString(edict, Prop_Send, "m_szTeamname", str, size);
-	
+
 	return true;
 }
 
@@ -129,14 +129,14 @@ stock bool:Team_GetName(index, String:str[], size)
 stock bool:Team_SetName(index, const String:name[])
 {
 	new edict = Team_GetEdict(index);
-	
+
 	if (edict == -1) {
 		return false;
 	}
 
 	SetEntPropString(edict, Prop_Send, "m_szTeamname", name);
 	ChangeEdictState(edict, GetEntSendPropOffs(edict, "m_szTeamname", true));
-	
+
 	return true;
 }
 
@@ -150,7 +150,7 @@ stock bool:Team_SetName(index, const String:name[])
 stock Team_GetScore(index)
 {
 	new edict = Team_GetEdict(index);
-	
+
 	if (edict == -1) {
 		return -1;
 	}
@@ -169,15 +169,15 @@ stock Team_GetScore(index)
 stock bool:Team_SetScore(index, score)
 {
 	new edict = Team_GetEdict(index);
-	
+
 	if (edict == -1) {
 		return false;
 	}
 
 	SetEntProp(edict, Prop_Send, "m_iScore", score);
-	
+
 	ChangeEdictState(edict, GetEntSendPropOffs(edict, "m_iScore", true));
-	
+
 	return true;
 }
 
@@ -289,7 +289,7 @@ stock Team_GetAnyClient(index)
 		client = client_cache[index];
 
 		if (client > 0 && client <= MaxClients) {
-			
+
 			if (IsClientInGame(client) && GetClientTeam(client) == index) {
 				return client;
 			}
@@ -300,11 +300,11 @@ stock Team_GetAnyClient(index)
 	}
 
 	for (client=1; client <= MaxClients; client++) {
-		
+
 		if (!IsClientInGame(client)) {
 			continue;
 		}
-		
+
 		if (GetClientTeam(client) != index) {
 			continue;
 		}
@@ -313,6 +313,6 @@ stock Team_GetAnyClient(index)
 
 		return client;
 	}
-	
+
 	return -1;
 }

@@ -19,20 +19,20 @@
  * @noreturn
  */
 stock bool:File_GetBaseName(const String:path[], String:buffer[], size)
-{	
+{
 	if (path[0] == '\0') {
 		buffer[0] = '\0';
 		return;
 	}
-	
+
 	new pos_start = FindCharInString(path, '/', true);
-	
+
 	if (pos_start == -1) {
 		pos_start = FindCharInString(path, '\\', true);
 	}
-	
+
 	pos_start++;
-	
+
 	strcopy(buffer, size, path[pos_start]);
 }
 
@@ -49,23 +49,23 @@ stock bool:File_GetBaseName(const String:path[], String:buffer[], size)
  * @noreturn
  */
 stock bool:File_GetDirName(const String:path[], String:buffer[], size)
-{	
+{
 	if (path[0] == '\0') {
 		buffer[0] = '\0';
 		return;
 	}
-	
+
 	new pos_start = FindCharInString(path, '/', true);
-	
+
 	if (pos_start == -1) {
 		pos_start = FindCharInString(path, '\\', true);
-		
+
 		if (pos_start == -1) {
 			buffer[0] = '\0';
 			return;
 		}
 	}
-	
+
 	strcopy(buffer, size, path);
 	buffer[pos_start] = '\0';
 }
@@ -81,14 +81,14 @@ stock bool:File_GetDirName(const String:path[], String:buffer[], size)
  * @noreturn
  */
 stock bool:File_GetFileName(const String:path[], String:buffer[], size)
-{	
+{
 	if (path[0] == '\0') {
 		buffer[0] = '\0';
 		return;
 	}
-	
+
 	File_GetBaseName(path, buffer, size);
-	
+
 	new pos_ext = FindCharInString(buffer, '.', true);
 
 	if (pos_ext != -1) {
@@ -110,7 +110,7 @@ stock bool:File_GetFileName(const String:path[], String:buffer[], size)
 stock File_GetExtension(const String:path[], String:buffer[], size)
 {
 	new extpos = FindCharInString(path, '.', true);
-	
+
 	if (extpos == -1) {
 		buffer[0] = '\0';
 		return;
@@ -144,14 +144,14 @@ stock File_AddToDownloadsTable(const String:path[], bool:recursive=true, const S
 	}
 
 	if (FileExists(path)) {
-		
+
 		new String:fileExtension[5];
 		File_GetExtension(path, fileExtension, sizeof(fileExtension));
-		
+
 		if (StrEqual(fileExtension, "bz2", false) || StrEqual(fileExtension, "ztmp", false)) {
 			return;
 		}
-		
+
 		if (Array_FindString(ignoreExts, size, fileExtension) != -1) {
 			return;
 		}
@@ -172,15 +172,15 @@ stock File_AddToDownloadsTable(const String:path[], bool:recursive=true, const S
 			if (StrEqual(dirEntry, ".") || StrEqual(dirEntry, "..")) {
 				continue;
 			}
-			
+
 			Format(dirEntry, sizeof(dirEntry), "%s/%s", path, dirEntry);
 			File_AddToDownloadsTable(dirEntry, recursive, ignoreExts, size);
 		}
-		
+
 		CloseHandle(__dir);
 	}
 	else if (FindCharInString(path, '*', true)) {
-		
+
 		new String:fileExtension[4];
 		File_GetExtension(path, fileExtension, sizeof(fileExtension));
 
@@ -227,7 +227,7 @@ stock File_AddToDownloadsTable(const String:path[], bool:recursive=true, const S
 stock File_ReadDownloadList(const String:path[])
 {
 	new Handle:file = OpenFile(path, "r");
-	
+
 	if (file  == INVALID_HANDLE) {
 		return;
 	}
@@ -235,13 +235,13 @@ stock File_ReadDownloadList(const String:path[])
 	new String:buffer[PLATFORM_MAX_PATH];
 	while (!IsEndOfFile(file)) {
 		ReadFileLine(file, buffer, sizeof(buffer));
-		
+
 		new pos;
 		pos = StrContains(buffer, "//");
 		if (pos != -1) {
 			buffer[pos] = '\0';
 		}
-		
+
 		pos = StrContains(buffer, "#");
 		if (pos != -1) {
 			buffer[pos] = '\0';
@@ -251,9 +251,9 @@ stock File_ReadDownloadList(const String:path[])
 		if (pos != -1) {
 			buffer[pos] = '\0';
 		}
-		
+
 		TrimString(buffer);
-		
+
 		if (buffer[0] == '\0') {
 			continue;
 		}

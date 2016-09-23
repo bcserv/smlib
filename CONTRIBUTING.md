@@ -78,7 +78,7 @@ function SlapAllPlayers(bool:hard=true)
 	var anotherVar2  = 2;
 
 	for (new client=1; client <= MaxClients; client++) { // for, while, do, switch etc. brackets on same line
-	
+
 		if () { // if, else brackets on same line
 			 // Some code
 		}

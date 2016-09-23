@@ -51,9 +51,9 @@ public Plugin:myinfo = {
 *****************************************************************/
 
 public APLRes:AskPluginLoad2(Handle:myself, bool:late, String:error[], err_max)
-{ 
+{
     MarkNativeAsOptional("GetUserMessageType");
-    return APLRes_Success; 
+    return APLRes_Success;
 }
 
 public OnPluginStart()
@@ -91,4 +91,3 @@ public Action:Command_TestColors(client, args)
 
 
 *****************************************************************/
-

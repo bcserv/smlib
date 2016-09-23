@@ -27,7 +27,7 @@ stock Array_FindValue(any:array[], size, any:value, start=0)
 			return i;
 		}
 	}
-	
+
 	return -1;
 }
 
@@ -53,7 +53,7 @@ stock Array_FindString(const String:array[][], size, const String:str[], bool:ca
 			return i;
 		}
 	}
-	
+
 	return -1;
 }
 
@@ -74,18 +74,18 @@ stock Array_FindLowestValue(any:array[], size, start=0)
 	new any:value = array[start];
 	new any:tempValue;
 	new x = start;
-	
+
 	for (new i=start; i < size; i++) {
-		
+
 		tempValue = array[i];
-		
+
 		if (tempValue < value) {
 			value = tempValue;
 			x = i;
 		}
-		
+
 	}
-	
+
 	return x;
 }
 
@@ -106,18 +106,18 @@ stock Array_FindHighestValue(any:array[], size, start=0)
 	new any:value = array[start];
 	new any:tempValue;
 	new x = start;
-	
+
 	for (new i=start; i < size; i++) {
-		
+
 		tempValue = array[i];
-		
+
 		if (tempValue > value) {
 			value = tempValue;
 			x = i;
 		}
-		
+
 	}
-	
+
 	return x;
 }
 

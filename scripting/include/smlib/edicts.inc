@@ -17,7 +17,7 @@ stock Edict_FindByName(const String:name[])
 {
 	new maxEntities = GetMaxEntities();
 	for (new edict=0; edict < maxEntities; edict++) {
-		
+
 		if (!IsValidEdict(edict)) {
 			continue;
 		}
@@ -43,11 +43,11 @@ stock Edict_FindByHammerId(hammerId)
 {
 	new maxEntities = GetMaxEntities();
 	for (new edict=0; edict < maxEntities; edict++) {
-		
+
 		if (!IsValidEdict(edict)) {
 			continue;
 		}
-		
+
 		if (Entity_GetHammerId(edict) == hammerId) {
 			return edict;
 		}
@@ -65,13 +65,13 @@ stock Edict_FindByHammerId(hammerId)
  * @return					Edict Index or INVALID_ENT_REFERENCE if no entity was found.
  */
 stock Edict_GetClosest(Float:vecOrigin_center[3], bool:clientsOnly=false, ignoreEntity=-1)
-{	
+{
 	decl Float:vecOrigin_edict[3];
 	new Float:smallestDistance = 0.0;
 	new closestEdict = INVALID_ENT_REFERENCE;
-	
+
 	new maxEntities;
-	
+
 	if (clientsOnly) {
 		maxEntities = MaxClients;
 	}
@@ -80,29 +80,29 @@ stock Edict_GetClosest(Float:vecOrigin_center[3], bool:clientsOnly=false, ignore
 	}
 
 	for (new edict=1; edict <= maxEntities; edict++) {
-		
+
 		if (!IsValidEdict(edict)) {
 			continue;
 		}
-		
+
 		if (ignoreEntity >= 0 && edict == ignoreEntity) {
 			continue;
 		}
-			
+
 		if (GetEntSendPropOffs(edict, "m_vecOrigin") == -1) {
 			continue;
 		}
 
 		Entity_GetAbsOrigin(edict, vecOrigin_edict);
-		
+
 		new Float:edict_distance = GetVectorDistance(vecOrigin_center, vecOrigin_edict, true);
-		
+
 		if (edict_distance < smallestDistance || smallestDistance == 0.0) {
 			smallestDistance = edict_distance;
 			closestEdict = edict;
 		}
 	}
-	
+
 	return closestEdict;
 }
 
@@ -114,13 +114,13 @@ stock Edict_GetClosest(Float:vecOrigin_center[3], bool:clientsOnly=false, ignore
  * @return					The closest edict or INVALID_ENT_REFERENCE
  */
 stock Edict_GetClosestToEdict(edict, bool:clientsOnly=false)
-{	
+{
 	decl Float:vecOrigin[3];
-	
+
 	if (GetEntSendPropOffs(edict, "m_vecOrigin") == -1) {
 		return INVALID_ENT_REFERENCE;
 	}
-	
+
 	Entity_GetAbsOrigin(edict, vecOrigin);
 
 	return Edict_GetClosest(vecOrigin, clientsOnly, edict);

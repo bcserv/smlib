@@ -62,7 +62,7 @@ stock bool:Effect_DissolvePlayerRagDoll(client, DissolveType:dissolveType=DISSOL
 	if (m_hRagdoll == -1) {
 		return false;
 	}
-	
+
 	return Effect_DissolveEntity(m_hRagdoll, dissolveType);
 }
 
@@ -87,7 +87,7 @@ functag EffectCallback public(entity, any:data);
 stock Effect_Fade(entity, fadeOut=true, kill=false, fast=true, EffectCallback:callback=INVALID_FUNCTION, any:data=0)
 {
 	new Float:timerTime = 0.0;
-	
+
 	if (fast) {
 		timerTime = 0.6;
 
@@ -114,7 +114,7 @@ stock Effect_Fade(entity, fadeOut=true, kill=false, fast=true, EffectCallback:ca
 	if (kill || callback != INVALID_FUNCTION) {
 		new Handle:dataPack = INVALID_HANDLE;
 		CreateDataTimer(timerTime, _smlib_Timer_Effect_Fade, dataPack, TIMER_FLAG_NO_MAPCHANGE | TIMER_DATA_HNDL_CLOSE);
-		
+
 		WritePackCell(dataPack, EntIndexToEntRef(entity));
 		WritePackCell(dataPack, kill);
 #if SOURCEMOD_V_MAJOR >= 1 && SOURCEMOD_V_MINOR >= 7
@@ -141,7 +141,7 @@ stock Effect_FadeIn(entity, fast=true, EffectCallback:callback=INVALID_FUNCTION,
 {
 	Effect_Fade(entity, false, false, fast, callback, data);
 }
-	
+
 /**
  * Fades the entity out.
  * A wrapper function around Effect_Fade().
@@ -169,7 +169,7 @@ public Action:_smlib_Timer_Effect_Fade(Handle:Timer, Handle:dataPack)
 	new Function:callback = Function:ReadPackCell(dataPack);
 #endif
 	new any:data = any:ReadPackCell(dataPack);
-	
+
 	if (callback != INVALID_FUNCTION) {
 		Call_StartFunction(INVALID_HANDLE, callback);
 		Call_PushCell(entity);
@@ -186,7 +186,7 @@ public Action:_smlib_Timer_Effect_Fade(Handle:Timer, Handle:dataPack)
 
 /**
  * Sends a boxed beam effect to one player.
- * 
+ *
  * Ported from eventscripts vecmath library.
  *
  * @param client        The client to show the box to.
@@ -228,7 +228,7 @@ stock Effect_DrawBeamBoxToClient(
 
 /**
  * Sends a boxed beam effect to all players.
- * 
+ *
  * Ported from eventscripts vecmath library.
  *
  * @param bottomCorner	One bottom corner of the box.
@@ -270,7 +270,7 @@ stock Effect_DrawBeamBoxToAll(
 
 /**
  * Sends a boxed beam effect to a list of players.
- * 
+ *
  * Ported from eventscripts vecmath library.
  *
  * @param clients       An array of clients to show the box to.
@@ -316,10 +316,10 @@ stock Effect_DrawBeamBox(
 	}
 
 	corners[1][0] = upperCorner[0];
-	corners[2][0] = upperCorner[0]; 
+	corners[2][0] = upperCorner[0];
 	corners[2][1] = upperCorner[1];
 	corners[3][1] = upperCorner[1];
-	corners[4][0] = bottomCorner[0]; 
+	corners[4][0] = bottomCorner[0];
 	corners[4][1] = bottomCorner[1];
 	corners[5][1] = bottomCorner[1];
 	corners[7][0] = bottomCorner[0];
@@ -351,7 +351,7 @@ stock Effect_DrawBeamBox(
 
 /**
  * Sends a boxed beam effect to one player.
- * 
+ *
  * Ported from eventscripts vecmath library.
  *
  * @param client        The client to show the box to.
@@ -399,7 +399,7 @@ stock Effect_DrawBeamBoxRotatableToClient(
 
 /**
  * Sends a boxed beam effect to all players.
- * 
+ *
  * Ported from eventscripts vecmath library.
  *
  * @param origin 		Origin/center of the box.
@@ -445,7 +445,7 @@ stock Effect_DrawBeamBoxRotatableToAll(
 
 /**
  * Sends a boxed beam effect to a list of players.
- * 
+ *
  * Ported from eventscripts vecmath library.
  *
  * @param clients       An array of clients to show the box to.
@@ -532,7 +532,7 @@ stock Effect_DrawBeamBoxRotatable(
 
 /**
  * Displays the given axis of rotation as beam effect to one player.
- * 
+ *
  * @param client        The client to show the box to.
  * @param origin 		Origin/center of the box.
  * @param angles 		Angles used to rotate the box.
@@ -697,24 +697,24 @@ stock Effect_DrawAxisOfRotation(
  */
 stock Effect_EnvSprite(
 	const Float:origin[3],
-	modelIndex, 
+	modelIndex,
 	const color[4]={255, 255, 255, 255},
-	Float:scale=0.25, 
+	Float:scale=0.25,
 	const String:targetName[MAX_NAME_LENGTH]="",
 	parent=-1,
-	RenderMode:renderMode=RENDER_WORLDGLOW, 
-	RenderFx:renderFx=RENDERFX_NONE, 
-	Float:glowProxySize=2.0, 
-	Float:framerate=10.0, 
+	RenderMode:renderMode=RENDER_WORLDGLOW,
+	RenderFx:renderFx=RENDERFX_NONE,
+	Float:glowProxySize=2.0,
+	Float:framerate=10.0,
 	Float:hdrColorScale=1.0,
 	bool:receiveShadows = true
 ) {
 	new entity = Entity_Create("env_sprite");
-	
+
 	if (entity == INVALID_ENT_REFERENCE) {
 		return INVALID_ENT_REFERENCE;
 	}
-	
+
 	DispatchKeyValue		(entity, "disablereceiveshadows", (receiveShadows) ? "0" : "1");
 	DispatchKeyValueFloat	(entity, "framerate", framerate);
 	DispatchKeyValueFloat	(entity, "GlowProxySize", glowProxySize);
@@ -723,21 +723,20 @@ stock Effect_EnvSprite(
 	DispatchKeyValue		(entity, "maxdxlevel", "0");
 	DispatchKeyValue		(entity, "mindxlevel", "0");
 	DispatchKeyValueFloat	(entity, "scale", scale);
-	
+
 	DispatchSpawn(entity);
-	
+
 	SetEntityRenderMode(entity, renderMode);
 	SetEntityRenderColor(entity, color[0], color[1], color[2], color[3]);
 	SetEntityRenderFx(entity, renderFx);
-	
+
 	Entity_SetName(entity, targetName);
 	Entity_SetModelIndex(entity, modelIndex);
 	Entity_SetAbsOrigin(entity, origin);
-	
+
 	if (parent != -1) {
 		Entity_SetParent(entity, parent);
 	}
-	
+
 	return entity;
 }
-

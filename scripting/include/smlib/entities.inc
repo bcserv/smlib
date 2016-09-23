@@ -44,11 +44,11 @@ stock Entity_FindByName(const String:name[], const String:className[]="")
 		// Hack: Double the limit to gets none-networked entities too.
 		new realMaxEntities = GetMaxEntities() * 2;
 		for (new entity=0; entity < realMaxEntities; entity++) {
-			
+
 			if (!IsValidEntity(entity)) {
 				continue;
 			}
-			
+
 			if (Entity_NameMatches(entity, name)) {
 				return entity;
 			}
@@ -87,11 +87,11 @@ stock Entity_FindByHammerId(hammerId, const String:className[]="")
 		// Hack: Double the limit to gets none-networked entities too.
 		new realMaxEntities = GetMaxEntities() * 2;
 		for (new entity=0; entity < realMaxEntities; entity++) {
-			
+
 			if (!IsValidEntity(entity)) {
 				continue;
 			}
-			
+
 			if (Entity_GetHammerId(entity) == hammerId) {
 				return entity;
 			}
@@ -100,7 +100,7 @@ stock Entity_FindByHammerId(hammerId, const String:className[]="")
 	else {
 		new entity = INVALID_ENT_REFERENCE;
 		while ((entity = FindEntityByClassname(entity, className)) != INVALID_ENT_REFERENCE) {
-			
+
 			if (Entity_GetHammerId(entity) == hammerId) {
 				return entity;
 			}
@@ -119,7 +119,7 @@ stock Entity_FindByHammerId(hammerId, const String:className[]="")
  * @param classname		Classname of the entity to find.
  * @return				Entity index >= 0 if found, -1 otherwise.
  */
- 
+
 stock Entity_FindByClassName(startEntity, const String:className[])
 {
 	return FindEntityByClassname(startEntity, className);
@@ -200,7 +200,7 @@ stock Entity_SetName(entity, const String:name[], any:...)
  */
 stock Entity_GetClassName(entity, String:buffer[], size)
 {
-	return GetEntPropString(entity, Prop_Data, "m_iClassname", buffer, size);	
+	return GetEntPropString(entity, Prop_Data, "m_iClassname", buffer, size);
 }
 
 /**
@@ -308,7 +308,7 @@ stock Entity_SetParentName(entity, const String:name[], any:...)
  * @return					Hammer ID.
  */
 stock Entity_GetHammerId(entity)
-{	
+{
 	return GetEntProp(entity, Prop_Data, "m_iHammerID");
 }
 
@@ -344,7 +344,7 @@ stock Entity_SetRadius(entity, Float:radius)
  */
 stock Entity_GetMinSize(entity, Float:vec[3])
 {
-	GetEntPropVector(entity, Prop_Send, "m_vecMins", vec);	
+	GetEntPropVector(entity, Prop_Send, "m_vecMins", vec);
 }
 
 /**
@@ -404,7 +404,7 @@ stock Entity_SetMinMaxSize(entity, Float:vecMins[3], Float:vecMaxs[3])
 			ThrowError("Error: mins[%d] > maxs[%d] of entity %d", i, i, EntRefToEntIndex(entity));
 		}
 	}
-	
+
 	decl Float:m_vecMins[3], Float:m_vecMaxs[3];
 	Entity_GetMinSize(entity, m_vecMins);
 	Entity_GetMaxSize(entity, m_vecMaxs);
@@ -415,7 +415,7 @@ stock Entity_SetMinMaxSize(entity, Float:vecMins[3], Float:vecMaxs[3])
 
 	Entity_SetMinSize(entity, vecMins);
 	Entity_SetMaxSize(entity, vecMaxs);
-	
+
 	decl Float:vecSize[3];
 	SubtractVectors(vecMaxs, vecMins, vecSize);
 	Entity_SetRadius(entity, GetVectorLength(vecSize) * 0.5);
@@ -446,7 +446,7 @@ stock Entity_SetMinMaxSize(entity, Float:vecMins[3], Float:vecMaxs[3])
 #define SF_PHYSPROP_HAS_ATTACHED_RAGDOLLS		0x000800		// Need to remove attached ragdolls on enable motion/etc
 #define SF_PHYSPROP_FORCE_TOUCH_TRIGGERS		0x001000		// Override normal debris behavior and respond to triggers anyway
 #define SF_PHYSPROP_FORCE_SERVER_SIDE			0x002000		// Force multiplayer physics object to be serverside
-#define SF_PHYSPROP_RADIUS_PICKUP				0x004000		// For Xbox, makes small objects easier to pick up by allowing them to be found 
+#define SF_PHYSPROP_RADIUS_PICKUP				0x004000		// For Xbox, makes small objects easier to pick up by allowing them to be found
 #define SF_PHYSPROP_ALWAYS_PICK_UP				0x100000		// Physcannon can always pick this up, no matter what mass or constraints may apply.
 #define SF_PHYSPROP_NO_COLLISIONS				0x200000		// Don't enable collisions on spawn
 #define SF_PHYSPROP_IS_GIB						0x400000		// Limit # of active gibs
@@ -556,7 +556,7 @@ stock Entity_ClearSpawnFlags(entity)
  * @return					True if the entity has the spawnflags set, false otherwise.
  */
 stock bool:Entity_HasSpawnFlags(entity, flags)
-{	
+{
 	return bool:(Entity_GetSpawnFlags(entity) & flags);
 }
 
@@ -586,7 +586,7 @@ enum Entity_Flags
 	EFL_BOT_FROZEN =						(1<<8),	 // This is set on bots that are frozen.
 	EFL_SERVER_ONLY =						(1<<9),	 // Non-networked entity.
 	EFL_NO_AUTO_EDICT_ATTACH =				(1<<10), // Don't attach the edict; we're doing it explicitly
-	
+
 	// Some dirty bits with respect to abs computations
 	EFL_DIRTY_ABSTRANSFORM =				(1<<11),
 	EFL_DIRTY_ABSVELOCITY =					(1<<12),
@@ -677,7 +677,7 @@ stock Entity_RemoveEFlags(entity, Entity_Flags:flags)
 stock bool:Entity_HasEFlags(entity, Entity_Flags:flags)
 {
 	new Entity_Flags:currentEFlags = Entity_GetEFlags(entity);
-	
+
 	return bool:(currentEFlags & flags);
 }
 
@@ -787,7 +787,7 @@ stock Entity_ClearFlags(entity)
  * NOTE: These numerical values are used in the FGD by the prop code (see prop_dynamic)
  * Taken from: hl2sdk-ob-valve\public\const.h
  */
- 
+
 enum SolidFlags_t
 {
 	FSOLID_CUSTOMRAYTEST		= 0x0001,	// Ignore solid type + always call into the entity for ray tests
@@ -824,14 +824,14 @@ stock SolidFlags_t:Entity_GetSolidFlags(entity)
  * @noreturn
  */
 stock Entity_SetSolidFlags(entity, SolidFlags_t:flags)
-{	
+{
 	new SolidFlags_t:oldFlags = Entity_GetSolidFlags(entity);
 	flags = flags & SolidFlags_t:0xFFFF;
 
 	if (oldFlags == flags) {
 		return;
 	}
-	
+
 	SetEntProp(entity, Prop_Data, "m_usSolidFlags", flags, 2);
 
 	// These two flags, if changed, can produce different surrounding bounds
@@ -951,7 +951,7 @@ stock bool:Entity_IsSolid(entity)
  * @return				Number of non-null bytes written.
  */
 stock Entity_GetModel(entity, String:buffer[], size)
-{	
+{
 	return GetEntPropString(entity, Prop_Data, "m_ModelName", buffer, size);
 }
 
@@ -962,7 +962,7 @@ stock Entity_GetModel(entity, String:buffer[], size)
  *
  * @param entity		Entity index
  * @param model			Model name
- * @noreturn				
+ * @noreturn
  */
 stock Entity_SetModel(entity, const String:model[])
 {
@@ -1101,7 +1101,7 @@ stock Entity_SetAbsOrigin(entity, const Float:vec[3])
  * @param entity			Entity index.
  * @param vec				3 dimensional vector array.
  * @noreturn
- */ 
+ */
 stock Entity_GetAbsAngles(entity, Float:vec[3])
 {
 	GetEntPropVector(entity, Prop_Data, "m_angAbsRotation", vec);
@@ -1113,7 +1113,7 @@ stock Entity_GetAbsAngles(entity, Float:vec[3])
  * @param entity			Entity index.
  * @param vec				3 dimensional vector array.
  * @noreturn
- */ 
+ */
 stock Entity_SetAbsAngles(entity, const Float:vec[3])
 {
 	// We use TeleportEntity to set the angles more safely
@@ -1252,7 +1252,7 @@ stock Entity_UnLock(entity)
  * @return				current health points
  */
 stock Entity_GetHealth(entity)
-{	
+{
 	return GetEntProp(entity, Prop_Data, "m_iHealth");
 }
 
@@ -1266,10 +1266,10 @@ stock Entity_GetHealth(entity)
 stock Entity_SetHealth(entity, value, ignoreMax=false, kill=true)
 {
 	new health = value;
-	
+
 	if (!ignoreMax) {
 		new maxHealth = Entity_GetMaxHealth(entity);
-		
+
 		if (health > maxHealth) {
 			health = maxHealth;
 		}
@@ -1278,13 +1278,13 @@ stock Entity_SetHealth(entity, value, ignoreMax=false, kill=true)
 	if (health < 0) {
 		health = 0;
 	}
-	
+
 	SetEntProp(entity, Prop_Data, "m_iHealth", health);
 
 	if (health <= 0) {
 		Entity_Kill(entity);
 	}
-	
+
 	return health;
 }
 
@@ -1298,7 +1298,7 @@ stock Entity_SetHealth(entity, value, ignoreMax=false, kill=true)
 stock Entity_AddHealth(entity, value, ignoreMax=false, kill=true)
 {
 	new health = Entity_GetHealth(entity);
-	
+
 	health += value;
 
 	return Entity_SetHealth(entity, health, ignoreMax, kill);
@@ -1314,9 +1314,9 @@ stock Entity_AddHealth(entity, value, ignoreMax=false, kill=true)
 stock Entity_TakeHealth(entity, value, ignoreMax=false, kill=true)
 {
 	new health = Entity_GetHealth(entity);
-	
+
 	health -= value;
-	
+
 	return Entity_SetHealth(entity, health, ignoreMax, kill);
 }
 
@@ -1327,7 +1327,7 @@ stock Entity_TakeHealth(entity, value, ignoreMax=false, kill=true)
  * @return				Max health points
  */
 stock Entity_GetMaxHealth(entity)
-{	
+{
 	return GetEntProp(entity, Prop_Data, "m_iMaxHealth");
 }
 
@@ -1340,7 +1340,7 @@ stock Entity_GetMaxHealth(entity)
  * @noreturn
  */
 stock Entity_SetMaxHealth(entity, value)
-{	
+{
 	SetEntProp(entity, Prop_Data, "m_iMaxHealth", value);
 	return value;
 }
@@ -1357,7 +1357,7 @@ stock Float:Entity_GetDistanceOrigin(entity, const Float:vec[3])
 {
 	new Float:entityVec[3];
 	Entity_GetAbsOrigin(entity, entityVec);
-	
+
 	return GetVectorDistance(entityVec, vec);
 }
 
@@ -1373,7 +1373,7 @@ stock Float:Entity_GetDistance(entity, target)
 {
 	new Float:targetVec[3];
 	Entity_GetAbsOrigin(target, targetVec);
-	
+
 	return Entity_GetDistanceOrigin(entity, targetVec);
 }
 
@@ -1390,7 +1390,7 @@ stock bool:Entity_InRange(entity, target, Float:distance)
 	if (Entity_GetDistance(entity, target) > distance) {
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -1401,7 +1401,7 @@ stock bool:Entity_InRange(entity, target, Float:distance)
  * @return				True on success, false otherwise
  */
 stock bool:Entity_EnableMotion(entity)
-{	
+{
 	return AcceptEntityInput(entity, "enablemotion");
 }
 
@@ -1469,7 +1469,7 @@ stock Entity_PointAtTarget(entity, target, const String:name[]="")
 	else {
 		strcopy(targetName, sizeof(targetName), name);
 	}
-	
+
 	Entity_SetTargetName(entity, targetName);
 	Entity_SetName(target, targetName);
 }
@@ -1522,7 +1522,7 @@ stock bool:Entity_IsPlayer(entity)
 	if (entity < 1 || entity > MaxClients) {
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -1558,7 +1558,7 @@ stock bool:Entity_Kill(kenny, killChildren=false)
 		ForcePlayerSuicide(kenny);
 		return true;
 	}
-	
+
 	if(killChildren){
 		return AcceptEntityInput(kenny, "KillHierarchy");
 	}
@@ -1584,7 +1584,7 @@ stock Entity_KillAllByClassName(const String:className[])
 		AcceptEntityInput(entity, "kill");
 		x++;
 	}
-	
+
 	return x;
 }
 
@@ -1630,7 +1630,7 @@ stock Entity_GetGroundEntity(entity)
 #if !defined DMG_GENERIC
 
 #define DMG_GENERIC			0			// generic damage was done
-#define DMG_CRUSH			(1 << 0)	// crushed by falling or moving object. 
+#define DMG_CRUSH			(1 << 0)	// crushed by falling or moving object.
 										// NOTE: It's assumed crush damage is occurring as a result of physics collision, so no extra physics force is generated by crush damage.
 										// DON'T use DMG_CRUSH when damaging entities unless it's the result of a physics collision. You probably want DMG_CLUB instead.
 #define DMG_BULLET			(1 << 1)	// shot
@@ -1642,8 +1642,8 @@ stock Entity_GetGroundEntity(entity)
 #define DMG_CLUB			(1 << 7)	// crowbar, punch, headbutt
 #define DMG_SHOCK			(1 << 8)	// electric shock
 #define DMG_SONIC			(1 << 9)	// sound pulse shockwave
-#define DMG_ENERGYBEAM		(1 << 10)	// laser or other high energy beam 
-#define DMG_PREVENT_PHYSICS_FORCE		(1 << 11)	// Prevent a physics force 
+#define DMG_ENERGYBEAM		(1 << 10)	// laser or other high energy beam
+#define DMG_PREVENT_PHYSICS_FORCE		(1 << 11)	// Prevent a physics force
 #define DMG_NEVERGIB		(1 << 12)	// with this bit OR'd in, no damage type will be able to gib victims upon death
 #define DMG_ALWAYSGIB		(1 << 13)	// with this bit OR'd in, any damage type can be made to gib victims upon death.
 #define DMG_DROWN			(1 << 14)	// Drowning
@@ -1693,39 +1693,39 @@ stock Entity_GetGroundEntity(entity)
 stock bool:Entity_Hurt(entity, damage, attacker=0, damageType=DMG_GENERIC, const String:fakeClassName[]="")
 {
 	static point_hurt = INVALID_ENT_REFERENCE;
-	
+
 	if (point_hurt == INVALID_ENT_REFERENCE || !IsValidEntity(point_hurt)) {
 		point_hurt = EntIndexToEntRef(Entity_Create("point_hurt"));
-		
+
 		if (point_hurt == INVALID_ENT_REFERENCE) {
 			return false;
 		}
-		
+
 		DispatchSpawn(point_hurt);
 	}
-	
+
 	AcceptEntityInput(point_hurt, "TurnOn");
 	SetEntProp(point_hurt, Prop_Data, "m_nDamage", damage);
 	SetEntProp(point_hurt, Prop_Data, "m_bitsDamageType", damageType);
 	Entity_PointHurtAtTarget(point_hurt, entity);
-	
+
 	if (fakeClassName[0] != '\0') {
 		Entity_SetClassName(point_hurt, fakeClassName);
 	}
-	
+
 	AcceptEntityInput(point_hurt, "Hurt", attacker);
 	AcceptEntityInput(point_hurt, "TurnOff");
-	
+
 	if (fakeClassName[0] != '\0') {
 		Entity_SetClassName(point_hurt, "point_hurt");
 	}
-	
+
 	return true;
 }
 
 /*
  * Gets the parent entity of an entity.
- * 
+ *
  * @param entity		Entity Index.
  * @return				Entity Index of the parent.
  */
@@ -1736,7 +1736,7 @@ stock Entity_GetParent(entity)
 
 /*
  * Clears the parent of an entity.
- * 
+ *
  * @param entity		Entity Index.
  * @noreturn
  */
@@ -1748,7 +1748,7 @@ stock Entity_ClearParent(entity)
 
 /*
  * Sets the parent entity of an entity.
- * 
+ *
  * @param entity		Entity Index.
  * @param parentEntity	Entity Index of the new parent.
  * @noreturn
@@ -1764,7 +1764,7 @@ stock Entity_SetParent(entity, parent)
  * Callback for Change_OverTime.
  * Note that every parameter is a reference and can be changed during this callback.
  * You can get the elapsed time since start by multiply tick with currentCall.
- * 
+ *
  * @param entity		Entity Index.
  * @param interval		The current interval from the current game time to execute the next call of this function.
  * @param currentCall	The current call number (0 is the 1st call at 0.0 seconds, 1 the 2nd call at tick*1 seconds, ...).
@@ -1774,13 +1774,13 @@ functag Entity_ChangeOverTimeCallback bool:public(&entity, &Float:interval, &cur
 
 /*
  * Creates a timer and provides a callback to change various things about an entity over time.
- * 
+ *
  * @param entity			Entity Index.
  * @param interval			Interval from the current game time to execute the given function.
  * @noreturn
  */
 stock Entity_ChangeOverTime(entity, Float:interval=0.1, Entity_ChangeOverTimeCallback:valueCallback)
-{	
+{
 	new Handle:dataPack = CreateDataPack();
 	WritePackCell(dataPack, EntIndexToEntRef(entity));
 	WritePackFloat(dataPack, interval);
@@ -1800,7 +1800,7 @@ public Action:__smlib_Timer_ChangeOverTime(Handle:Timer, Handle:dataPack)
 	if(!Entity_IsValid(entity)){
 		return Plugin_Stop;
 	}
-	
+
 	new Float:interval = ReadPackFloat(dataPack);
 	new currentCall = ReadPackCell(dataPack);
 #if SOURCEMOD_V_MAJOR >= 1 && SOURCEMOD_V_MINOR >= 7
@@ -1808,18 +1808,18 @@ public Action:__smlib_Timer_ChangeOverTime(Handle:Timer, Handle:dataPack)
 #else
 	new Function:callback = Function:ReadPackCell(dataPack);
 #endif
-	
+
 	new any:result;
 	Call_StartFunction(INVALID_HANDLE, callback);
 	Call_PushCellRef(entity);
 	Call_PushFloatRef(interval);
 	Call_PushCellRef(currentCall);
 	Call_Finish(result);
-	
+
 	if(result == false){
 		return Plugin_Stop;
 	}
-	
+
 	ResetPack(dataPack,true);
 	WritePackCell(dataPack, EntIndexToEntRef(entity));
 	WritePackFloat(dataPack, interval);
@@ -1864,7 +1864,7 @@ stock Entity_GetNextChild(parent, start=0)
 /**
  * Gets the move/open direction of an entity (only available for func_door*, prop_door* and func_movelinear).
  * Ex: if vec[2] is 1.0 a func_door moves straight up.
- * 
+ *
  * @param entity			Entity index.
  * @param vec				Vector.
  * @noreturn
@@ -1876,7 +1876,7 @@ stock Entity_GetMoveDirection(entity, Float:vec[3])
 /**
  * Sets the move/open direction of an entity (only available for func_door*, prop_door* and func_movelinear).
  * Ex: if vec[2] is 1.0 a func_door moves straight up.
- * 
+ *
  * @param entity			Entity index.
  * @param vec				Vector.
  * @noreturn
@@ -1888,7 +1888,7 @@ stock Entity_SetMoveDirection(entity, const Float:vec[3])
 
 /**
  * Returns if the entity will force close (won't be blockable by players and/or objects) or not when triggered to move.
- * 
+ *
  * @param entity			Entity index.
  * @return					True if the door will force close, otherwise false.
  */
@@ -1899,7 +1899,7 @@ stock bool:Entity_GetForceClose(entity)
 
 /**
  * Sets if the door should force close (souldn't be blockable by players and/or objects) or not when triggered to move.
- * 
+ *
  * @param entity			Entity index.
  * @param forceClose		If true the door will force close, otherwise it won't.
  * @noreturn
@@ -1911,7 +1911,7 @@ stock Entity_SetForceClose(entity, bool:forceClose)
 
 /**
  * Gets the speed of a moving entity (like doors: open close speed).
- * 
+ *
  * @param entity			Entity index.
  * @return					Speed of the entity.
  */
@@ -1922,7 +1922,7 @@ stock Float:Entity_GetSpeed(entity)
 
 /**
  * Sets how fast an entity moves (like doors: open close speed).
- * 
+ *
  * @param entity			Entity index.
  * @param speed				The new speed of the entity.
  * @noreturn
@@ -1947,7 +1947,7 @@ stock Float:Entity_GetBlockDamage(entity)
 /**
  * Sets the damage of a moving entity when blocked (like doors when open or close and players and/or objects are between the entity and something else).
  * Note: Negative values add health to the blocking entity.
- * 
+ *
  * @param entity			Entity index.
  * @param damage			Damage.
  * @noreturn
@@ -1959,7 +1959,7 @@ stock Entity_SetBlockDamage(entity, Float:damage)
 
 /**
  * Returns if the given entity is disabled or not.
- * 
+ *
  * @param entity			Entity index.
  * @return					True if entity is disabled, otherwise false.
  */
@@ -1970,7 +1970,7 @@ stock bool:Entity_IsDisabled(entity)
 
 /**
  * Disables the given entity.
- * 
+ *
  * @param entity			Entity index.
  * @return					True if successful otherwise false.
  */
@@ -1981,7 +1981,7 @@ stock Entity_Disable(entity)
 
 /**
  * Enables the given entity.
- * 
+ *
  * @param entity			Entity index.
  * @return					True if successful otherwise false.
  */
@@ -2000,7 +2000,7 @@ stock Entity_Enable(entity)
 /**
  * Sets the mode for an entity to take damage.
  * Note: This is used to give a client god mode (DAMAGE_NO).
- * 
+ *
  * @param entity			Entity index.
  * @param value				Mode, use DAMAGE_* defines.
  * @noreturn
@@ -2013,7 +2013,7 @@ stock Entity_SetTakeDamage(entity, value)
 /**
  * Gets the mode for an entity to take damage.
  * Note: When the return value is DAMAGE_NO then the client is using godmode.
- * 
+ *
  * @param entity			Entity index.
  * @return					Take damage mode (DAMAGE_*).
  */
@@ -2025,7 +2025,7 @@ stock Entity_GetTakeDamage(entity)
 /**
  * Sets the minimum of damage required to hurt this entity.
  * Example: This is used to block any damage done by projectile weapons against a gun ship in Half-Life 2.
- * 
+ *
  * @param entity			Entity index.
  * @param minDamage			Minimum required damage.
  * @noreturn
@@ -2038,7 +2038,7 @@ stock Entity_SetMinHealthDamage(entity, minDamage)
 /**
  * Gets the minimum of damage required to hurt this entity.
  * Example: This is used to block any damage done by projectile weapons against a gun ship in Half-Life 2.
- * 
+ *
  * @param entity			Entity index.
  * @return					Minimum required damage.
  */
@@ -2068,7 +2068,7 @@ stock Entity_GetRenderColor(entity, color[4])
 		if (!exists) {
 			strcopy(prop, sizeof(prop), "m_clrRender");
 		}
-		
+
 		gotconfig = true;
 	}
 
@@ -2150,4 +2150,3 @@ stock bool:Entity_AddOutput(entity, const String:input[], activator=-1, caller=-
 	SetVariantString(input);
 	return AcceptEntityInput(entity, "addoutput", activator, caller, outputid);
 }
-

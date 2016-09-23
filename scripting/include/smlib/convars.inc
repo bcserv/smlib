@@ -60,11 +60,11 @@ stock bool:Convar_IsValidName(const String:name[])
 
 	new n=0;
 	while (name[n] != '\0') {
-		
+
 		if (!IsValidConVarChar(name[n])) {
 			return false;
 		}
-		
+
 		n++;
 	}
 
