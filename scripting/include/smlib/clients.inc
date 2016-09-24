@@ -997,7 +997,7 @@ stock Client_GetWeaponsOffset(client)
 	static offset = -1;
 
 	if (offset == -1) {
-		offset = FindDataMapOffs(client, "m_hMyWeapons");
+		offset = FindDataMapInfo(client, "m_hMyWeapons");
 	}
 
 	return offset;
@@ -1053,7 +1053,7 @@ stock Client_GetActiveWeaponName(client, String:buffer[], size)
 stock Client_SetActiveWeapon(client, weapon)
 {
 	SetEntPropEnt(client, Prop_Data, "m_hActiveWeapon", weapon);
-	ChangeEdictState(client, FindDataMapOffs(client, "m_hActiveWeapon"));
+	ChangeEdictState(client, FindDataMapInfo(client, "m_hActiveWeapon"));
 }
 
 /**
@@ -1156,7 +1156,7 @@ stock bool:Client_GetLastActiveWeaponName(client, String:buffer[], size)
 stock Client_SetLastActiveWeapon(client, weapon)
 {
 	SetEntPropEnt(client, Prop_Data, "m_hLastWeapon", weapon);
-	ChangeEdictState(client, FindDataMapOffs(client, "m_hLastWeapon"));
+	ChangeEdictState(client, FindDataMapInfo(client, "m_hLastWeapon"));
 }
 
 /**
@@ -1551,7 +1551,7 @@ stock bool:Client_GetWeaponPlayerAmmo(client, const String:className[], &primary
 		return false;
 	}
 
-	new offset_ammo = FindDataMapOffs(client, "m_iAmmo");
+	new offset_ammo = FindDataMapInfo(client, "m_iAmmo");
 
 	if (primaryAmmo != -1) {
 		new offset = offset_ammo + (Weapon_GetPrimaryAmmoType(weapon) * 4);
@@ -1577,7 +1577,7 @@ stock bool:Client_GetWeaponPlayerAmmo(client, const String:className[], &primary
  */
 stock Client_GetWeaponPlayerAmmoEx(client, weapon, &primaryAmmo=-1, &secondaryAmmo=-1)
 {
-	new offset_ammo = FindDataMapOffs(client, "m_iAmmo");
+	new offset_ammo = FindDataMapInfo(client, "m_iAmmo");
 
 	if (primaryAmmo != -1) {
 		new offset = offset_ammo + (Weapon_GetPrimaryAmmoType(weapon) * 4);
@@ -1623,7 +1623,7 @@ stock bool:Client_SetWeaponPlayerAmmo(client, const String:className[], primaryA
  */
 stock Client_SetWeaponPlayerAmmoEx(client, weapon, primaryAmmo=-1, secondaryAmmo=-1)
 {
-	new offset_ammo = FindDataMapOffs(client, "m_iAmmo");
+	new offset_ammo = FindDataMapInfo(client, "m_iAmmo");
 
 	if (primaryAmmo != -1) {
 		new offset = offset_ammo + (Weapon_GetPrimaryAmmoType(weapon) * 4);

@@ -394,5 +394,5 @@ stock Weapon_GetViewModelIndex(weapon)
 stock Weapon_SetViewModelIndex(weapon, index)
 {
 	SetEntProp(weapon, Prop_Data, "m_nViewModelIndex", index);
-	ChangeEdictState(weapon, FindDataMapOffs(weapon, "m_nViewModelIndex"));
+	ChangeEdictState(weapon, FindDataMapInfo(weapon, "m_nViewModelIndex"));
 }
