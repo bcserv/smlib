@@ -1720,7 +1720,7 @@ stock bool:Client_PrintHintText(client, const String:format[], any:...)
 	if (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available
 		&& GetUserMessageType() == UM_Protobuf) {
 
-		PbSetString(userMessage, "text", format);
+		PbSetString(userMessage, "text", buffer);
 	}
 	else {
 		BfWriteByte(userMessage, 1);
