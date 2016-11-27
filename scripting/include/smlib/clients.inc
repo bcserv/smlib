@@ -783,7 +783,7 @@ stock Client_SetArmor(client, value)
  * @param client			Client's index.
  * @return					Helmet value
  */
-stock Client_GetArmor(int client)
+stock Client_GetHelmet(int client)
 {
 	return GetEntProp(client, Prop_Send, "m_bHasHelmet");
 }
@@ -795,7 +795,7 @@ stock Client_GetArmor(int client)
  * @param value				Helmet value
  * @noreturn
  */
-stock Client_SetArmor(int client, int value)
+stock Client_SetHelmet(int client, int value)
 {
 	SetEntProp(client, Prop_Send, "m_bHasHelmet", value);
 }
