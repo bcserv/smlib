@@ -778,6 +778,29 @@ stock Client_SetArmor(client, value)
 }
 
 /**
+ * Returns the client's Helmet
+ *
+ * @param client			Client's index.
+ * @return					Helmet value
+ */
+stock Client_GetArmor(int client)
+{
+	return GetEntProp(client, Prop_Send, "m_bHasHelmet");
+}
+
+/**
+ * Sets the client's Helmet.
+ *
+ * @param client			Client's index.
+ * @param value				Helmet value
+ * @noreturn
+ */
+stock Client_SetArmor(int client, int value)
+{
+	SetEntProp(client, Prop_Send, "m_bHasHelmet", value);
+}
+
+/**
  * Returns the client's Suitpower
  *
  * @param client			Client's index.
