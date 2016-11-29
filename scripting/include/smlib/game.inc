@@ -13,7 +13,7 @@
  * @noparam
  * @return				True on success, false otherwise
  */
-stock bool:Game_End()
+stock bool Game_End()
 {
 	new game_end = FindEntityByClassname(-1, "game_end");
 
@@ -38,9 +38,9 @@ stock bool:Game_End()
  * @param switchTeams	If to switch the teams when the game is going to be reset.
  * @return				True on success, false otherwise
  */
-stock bool:Game_EndRound(team=0, bool:forceMapReset=false, bool:switchTeams=false)
+stock bool Game_EndRound(int team = 0, bool forceMapReset = false, bool switchTeams = false)
 {
-	new game_round_win = FindEntityByClassname(-1, "game_round_win");
+	int game_round_win = FindEntityByClassname(-1, "game_round_win");
 
 	if (game_round_win == -1) {
 		game_round_win = CreateEntityByName("game_round_win");

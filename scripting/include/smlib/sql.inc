@@ -19,14 +19,14 @@
  * @param ...			Variable number of format parameters.
  * @noreturn
  */
-stock SQL_TQueryF(Handle:database, SQLTCallback:callback, any:data, DBPriority:priority=DBPrio_Normal, const String:format[], any:...) {
+stock void SQL_TQueryF(Handle database, SQLTCallback callback, any data, DBPriority priority=DBPrio_Normal, const char[] format, any ...) {
 
 	if (database == INVALID_HANDLE) {
 		ThrowError("[SMLIB] Error: Invalid database handle.");
 		return;
 	}
 
-	decl String:query[16384];
+	char query[16384];
 	VFormat(query, sizeof(query), format, 6);
 
 	SQL_TQuery(database, callback, query, data, priority);
@@ -43,7 +43,7 @@ stock SQL_TQueryF(Handle:database, SQLTCallback:callback, any:data, DBPriority:p
  *						type conversion requested from the database,
  *						or no current result set.
  */
-stock SQL_FetchIntByName(Handle:query, String:fieldName[], &DBResult:result=DBVal_Error) {
+stock int SQL_FetchIntByName(Handle query, char[] fieldName, DBResult &result = DBVal_Error) {
 
 	new fieldNum;
 	SQL_FieldNameToNum(query, fieldName, fieldNum);
@@ -62,9 +62,9 @@ stock SQL_FetchIntByName(Handle:query, String:fieldName[], &DBResult:result=DBVa
  *						type conversion requested from the database,
  *						or no current result set.
  */
-stock bool:SQL_FetchBoolByName(Handle:query, String:fieldName[], &DBResult:result=DBVal_Error) {
+stock bool SQL_FetchBoolByName(Handle query, char[] fieldName, DBResult &result = DBVal_Error) {
 
-	return bool:SQL_FetchIntByName(query, fieldName, result);
+	return bool SQL_FetchIntByName(query, fieldName, result);
 }
 
 /**
@@ -78,9 +78,9 @@ stock bool:SQL_FetchBoolByName(Handle:query, String:fieldName[], &DBResult:resul
  *						type conversion requested from the database,
  *						or no current result set.
  */
-stock Float:SQL_FetchFloatByName(Handle:query, String:fieldName[], &DBResult:result=DBVal_Error) {
+stock float SQL_FetchFloatByName(Handle query, char[] fieldName, DBResult &result = DBVal_Error) {
 
-	new fieldNum;
+	int fieldNum;
 	SQL_FieldNameToNum(query, fieldName, fieldNum);
 
 	return SQL_FetchFloat(query, fieldNum, result);
@@ -99,9 +99,9 @@ stock Float:SQL_FetchFloatByName(Handle:query, String:fieldName[], &DBResult:res
  *						type conversion requested from the database,
  *						or no current result set.
  */
-stock SQL_FetchStringByName(Handle:query, String:fieldName[], String:buffer[], maxlength, &DBResult:result=DBVal_Error) {
+stock int SQL_FetchStringByName(Handle query, char[] fieldName, char[] buffer, int maxlength, DBResult &result = DBVal_Error) {
 
-	new fieldNum;
+	int fieldNum;
 	SQL_FieldNameToNum(query, fieldName, fieldNum);
 
 	return SQL_FetchString(query, fieldNum, buffer, maxlength, result);
