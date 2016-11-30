@@ -491,7 +491,7 @@ stock bool Client_ScreenFade(int client, int duration, int mode, int holdtime = 
 
 	if (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available
 		&& GetUserMessageType() == UM_Protobuf) {
-		
+
 		Protobuf pb = UserMessageToProtobuf(userMessage);
 
 		int color[4];
