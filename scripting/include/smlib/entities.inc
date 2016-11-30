@@ -21,7 +21,7 @@
  * @param entity		Entity Index.
  * @return				True if the entity is valid, false otherwise.
  */
-stock int Entity_IsValid(int entity)
+stock bool Entity_IsValid(int entity)
 {
 	return IsValidEntity(entity);
 }
@@ -210,7 +210,7 @@ stock int Entity_GetClassName(int entity, char[] buffer, int size)
  * @param name				The name you want to give.
  * @return					True on success, false otherwise.
  */
-stock bool ntity_SetClassName(int entity, const char[] className)
+stock bool Entity_SetClassName(int entity, const char[] className)
 {
 	return DispatchKeyValue(entity, "classname", className);
 }
@@ -405,7 +405,7 @@ stock void Entity_SetMinMaxSize(int entity, float vecMins[3], float vecMaxs[3])
 		}
 	}
 
-	float m_vecMins[3], float m_vecMaxs[3];
+	float m_vecMins[3], m_vecMaxs[3];
 	Entity_GetMinSize(entity, m_vecMins);
 	Entity_GetMaxSize(entity, m_vecMaxs);
 
@@ -557,7 +557,7 @@ stock void Entity_ClearSpawnFlags(int entity)
  */
 stock bool Entity_HasSpawnFlags(int entity, int flags)
 {
-	return bool (Entity_GetSpawnFlags(entity) & flags);
+	return (Entity_GetSpawnFlags(entity) & flags) == flags;
 }
 
 /*
@@ -624,7 +624,7 @@ enum Entity_Flags
  */
 stock Entity_Flags Entity_GetEFlags(int entity)
 {
-	return Entity_Flags GetEntProp(entity, Prop_Data, "m_iEFlags");
+	return view_as<Entity_Flags>(GetEntProp(entity, Prop_Data, "m_iEFlags"));
 }
 
 /**
@@ -678,7 +678,7 @@ stock bool Entity_HasEFlags(int entity, Entity_Flags flags)
 {
 	Entity_Flags currentEFlags = Entity_GetEFlags(entity);
 
-	return bool (currentEFlags & flags);
+	return (currentEFlags & flags) == flags;
 }
 
 /**
@@ -813,7 +813,7 @@ enum SolidFlags_t
  */
 stock SolidFlags_t Entity_GetSolidFlags(int entity)
 {
-	return SolidFlags_t GetEntProp(entity, Prop_Data, "m_usSolidFlags", 2);
+	return view_as<SolidFlags_t>(GetEntProp(entity, Prop_Data, "m_usSolidFlags", 2));
 }
 
 /**
@@ -826,7 +826,7 @@ stock SolidFlags_t Entity_GetSolidFlags(int entity)
 stock void Entity_SetSolidFlags(int entity, SolidFlags_t flags)
 {
 	SolidFlags_t oldFlags = Entity_GetSolidFlags(entity);
-	flags = flags & SolidFlags_t 0xFFFF;
+	flags = flags & 0xFFFF;
 
 	if (oldFlags == flags) {
 		return;
@@ -890,7 +890,7 @@ stock void Entity_ClearSolidFlags(int entity)
  */
 stock bool Entity_SolidFlagsSet(int entity, SolidFlags_t flagMask)
 {
-	return bool (Entity_GetSolidFlags(entity) & flagMask);
+	return (Entity_GetSolidFlags(entity) & flagMask) == flagMask;
 }
 
 enum SolidType_t
@@ -913,7 +913,7 @@ enum SolidType_t
  */
 stock SolidType_t Entity_GetSolidType(int entity)
 {
-	return SolidType_t GetEntProp(entity, Prop_Data, "m_nSolidType", 1);
+	return view_as<SolidType_t>(GetEntProp(entity, Prop_Data, "m_nSolidType", 1));
 }
 
 /**
@@ -1042,7 +1042,7 @@ enum Collision_Group_t
  */
 stock Collision_Group_t Entity_GetCollisionGroup(int entity)
 {
-	return Collision_Group_t GetEntProp(entity, Prop_Data, "m_CollisionGroup");
+	return view_as<Collision_Group_t>(GetEntProp(entity, Prop_Data, "m_CollisionGroup"));
 }
 
 /**
@@ -1221,7 +1221,7 @@ stock void Entity_SetAbsVelocity(int entity, const float vec[3])
  */
 stock bool Entity_IsLocked(int entity)
 {
-	return bool GetEntProp(entity, Prop_Data, "m_bLocked", 1);
+	return GetEntProp(entity, Prop_Data, "m_bLocked", 1) == 1;
 }
 
 /**
@@ -1420,9 +1420,8 @@ stock bool Entity_DisableMotion(int entity)
  * Freezes an entity by setting the FL_FROZEN flag.
  *
  * @param entity		Entity index.
- * @return				True on success, false otherwise
  */
-stock bool Entity_Freeze(int entity)
+stock void Entity_Freeze(int entity)
 {
 	Entity_AddFlags(entity, FL_FROZEN);
 }
@@ -1431,9 +1430,8 @@ stock bool Entity_Freeze(int entity)
  * Unfreezes an entity by removing the FL_FROZEN flag.
  *
  * @param entity		Entity index.
- * @return 				True on success, false otherwise
  */
-stock bool Entity_UnFreeze(int entity)
+stock void Entity_UnFreeze(int entity)
 {
 	Entity_RemoveFlags(entity, FL_FROZEN);
 }
@@ -1692,7 +1690,7 @@ stock int Entity_GetGroundEntity(int entity)
  */
 stock bool Entity_Hurt(int entity, int damage, int attacker = 0, int damageType = DMG_GENERIC, const char[] fakeClassName = "")
 {
-	static point_hurt = INVALID_ENT_REFERENCE;
+	static int point_hurt = INVALID_ENT_REFERENCE;
 
 	if (point_hurt == INVALID_ENT_REFERENCE || !IsValidEntity(point_hurt)) {
 		point_hurt = EntIndexToEntRef(Entity_Create("point_hurt"));

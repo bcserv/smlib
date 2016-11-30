@@ -233,7 +233,7 @@ enum Obs_Allow
  */
 stock Obs_Mode Client_GetObserverMode(int client)
 {
-	return Obs_Mode GetEntProp(client, Prop_Send, "m_iObserverMode");
+	return view_as<Obs_Mode>(GetEntProp(client, Prop_Send, "m_iObserverMode"));
 }
 
 
@@ -245,7 +245,7 @@ stock Obs_Mode Client_GetObserverMode(int client)
  * @param client			Client Index.
  * @param mode				New Observer mode value (Obs_Mode).
  * @param updateMoveType	Set to true (default) to allow this function updating the movetype, false otherwise.
- * @return					True or False
+ * @return					False if the mode isn't correct, True otherwise
  */
 stock bool Client_SetObserverMode(int client, Obs_Mode mode, bool updateMoveType = true)
 {
@@ -256,10 +256,10 @@ stock bool Client_SetObserverMode(int client, Obs_Mode mode, bool updateMoveType
 	// check mp_forcecamera settings for dead players
 	if (mode > OBS_MODE_FIXED && GetClientTeam(client) > TEAM_SPECTATOR)
 	{
-		Handle mp_forcecamera = FindConVar("mp_forcecamera");
+		ConVar mp_forcecamera = FindConVar("mp_forcecamera");
 
-		if (mp_forcecamera != INVALID_HANDLE) {
-			switch (GetConVarInt(mp_forcecamera))
+		if (mp_forcecamera != null) {
+			switch (mp_forcecamera.IntValue)
 			{
 				case OBS_ALLOW_TEAM: {
 					mode = OBS_MODE_IN_EYE;
@@ -277,7 +277,7 @@ stock bool Client_SetObserverMode(int client, Obs_Mode mode, bool updateMoveType
 		Client_SetObserverLastMode(client, observerMode);
 	}
 
-	SetEntProp(client, Prop_Send, "m_iObserverMode", _:mode);
+	SetEntProp(client, Prop_Send, "m_iObserverMode", view_as<int>(mode));
 
 	switch (mode) {
 		case OBS_MODE_NONE, OBS_MODE_FIXED, OBS_MODE_DEATHCAM: {
@@ -316,7 +316,7 @@ stock bool Client_SetObserverMode(int client, Obs_Mode mode, bool updateMoveType
  */
 stock Obs_Mode Client_GetObserverLastMode(int client)
 {
-	return Obs_Mode GetEntProp(client, Prop_Data, "m_iObserverLastMode");
+	return view_as<Obs_Mode>(GetEntProp(client, Prop_Data, "m_iObserverLastMode"));
 }
 
 /**
@@ -324,11 +324,10 @@ stock Obs_Mode Client_GetObserverLastMode(int client)
  *
  * @param client		Client Index.
  * @param mode			Last Observer mode
- * @noreturn
  */
 stock void Client_SetObserverLastMode(int client, Obs_Mode mode)
 {
-	SetEntProp(client, Prop_Data, "m_iObserverLastMode", _:mode);
+	SetEntProp(client, Prop_Data, "m_iObserverLastMode", view_as<int>(mode));
 }
 
 /**
@@ -337,7 +336,6 @@ stock void Client_SetObserverLastMode(int client, Obs_Mode mode)
  *
  * @param client		Client Index.
  * @param vec			Vector Buffer.
- * @noreturn
  */
 stock void Client_GetViewOffset(int client, float vec[3])
 {
@@ -350,7 +348,6 @@ stock void Client_GetViewOffset(int client, float vec[3])
  *
  * @param client		Client Index.
  * @param vec			Vector buffer.
- * @noreturn
  */
 stock void Client_SetViewOffset(int client, float vec[3])
 {
@@ -374,7 +371,6 @@ stock int Client_GetObserverTarget(int client)
  * @param client		Client Index.
  * @param entity		Observed Entity Index.
  * @param resetFOV		If to reset the client's field of view.
- * @noreturn
  */
 stock void Client_SetObserverTarget(int client, int entity, bool resetFOV = true)
 {
@@ -401,7 +397,6 @@ stock int Client_GetFOV(int client)
  *
  * @param client		Client Index.
  * @param value			Field Of View
- * @noreturn
  */
 stock void Client_SetFOV(int client, int value)
 {
@@ -416,7 +411,7 @@ stock void Client_SetFOV(int client, int value)
  */
 stock bool Client_DrawViewModel(int client)
 {
-	return bool GetEntProp(client, Prop_Send, "m_bDrawViewmodel");
+	return GetEntProp(client, Prop_Send, "m_bDrawViewmodel") == 1;
 }
 
 /**
@@ -424,7 +419,6 @@ stock bool Client_DrawViewModel(int client)
  *
  * @param client		Client Index.
  * @param drawViewModel	Set to true if to draw, false otherwise.
- * @noreturn
  */
 stock void Client_SetDrawViewModel(int client, bool drawViewModel)
 {
@@ -439,7 +433,6 @@ stock void Client_SetDrawViewModel(int client, bool drawViewModel)
  * @param client 		Client Index.
  * @param enable		If set to true, the client will be put into thirdperson mode,
  * 						if false the client will be put in firstperson mode.
- * @noreturn
  */
 stock void Client_SetThirdPersonMode(int client, bool enable = true)
 {
@@ -492,12 +485,14 @@ stock bool Client_ScreenFade(int client, int duration, int mode, int holdtime = 
 {
 	Handle userMessage = StartMessageOne("Fade", client, (reliable?USERMSG_RELIABLE:0));
 
-	if (userMessage == INVALID_HANDLE) {
+	if (userMessage == null) {
 		return false;
 	}
 
+
+
 	if (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available &&
-		GetUserMessageType() == UM_Protobuf) {
+		Protobuf pb = UserMessageToProtobuf(userMessage);
 
 		int color[4];
 		color[0] = r;
@@ -505,19 +500,21 @@ stock bool Client_ScreenFade(int client, int duration, int mode, int holdtime = 
 		color[2] = b;
 		color[3] = a;
 
-		PbSetInt(userMessage,   "duration",   duration);
-		PbSetInt(userMessage,   "hold_time",  holdtime);
-		PbSetInt(userMessage,   "flags",      mode);
-		PbSetColor(userMessage, "clr",        color);
+		pb.SetInt("duration",  duration);
+		pb.SetInt("hold_time", holdtime);
+		pb.SetInt("flags",     mode);
+		pb.SetColor("clr",     color);
 	}
 	else {
-		BfWriteShort(userMessage,	duration);	// Fade duration
-		BfWriteShort(userMessage,	holdtime);	// Fade hold time
-		BfWriteShort(userMessage,	mode);		// What to do
-		BfWriteByte(userMessage,	r);			// Color R
-		BfWriteByte(userMessage,	g);			// Color G
-		BfWriteByte(userMessage,	b);			// Color B
-		BfWriteByte(userMessage,	a);			// Color Alpha
+		BfWrite bfw = UserMessageToBfWrite(userMessage)
+
+		bfw.WriteShort(duration); // Fade duration
+		bfw.WriteShort(holdtime); // Fade hold time
+		bfw.WriteShort(mode);     // What to do
+		bfw.WriteByte(r);         // Color R
+		bfw.WriteByte(g);         // Color G
+		bfw.WriteByte(b);         // Color B
+		bfw.WriteByte(a);         // Color Alpha
 	}
 	EndMessage();
 
@@ -585,9 +582,9 @@ enum Water_level
  * @param client		Client index.
  * @return				Returns 0 if not in water. 1 if feets are in water. 2 if waist is in water. 3 if head is in water.
  */
-stock int Client_GetWaterLevel(int client)
+stock Water_Level Client_GetWaterLevel(int client)
 {
-	return GetEntProp(client, Prop_Send, "m_nWaterLevel");
+	return view_as<Water_Level>(GetEntProp(client, Prop_Send, "m_nWaterLevel"));
 }
 
 /*
@@ -606,7 +603,6 @@ stock float Client_GetSuitSprintPower(int client)
  *
  * @param client		Client index.
  * @param power			power (0.0 to 100.0)
- * @noreturn
  */
 stock void Client_SetSuitSprintPower(int client, float power)
 {
@@ -701,7 +697,6 @@ stock int Client_GetClosestToClient(int client)
  * @param entity			Entity index.
  * @param buffer			String buffer
  * @param size				Size of the String buffer
- * @noreturn
  */
 stock void Client_GetLastPlaceName(int client, char[] buffer, int size)
 {
@@ -724,7 +719,6 @@ stock int Client_GetScore(int client)
  *
  * @param client			Client's index.
  * @param value				Score.
- * @noreturn
  */
 stock void Client_SetScore(int client, int value)
 {
@@ -747,7 +741,6 @@ stock int Client_GetDeaths(int client)
  *
  * @param client			Client's index.
  * @param value				Death count
- * @noreturn
  */
 stock void Client_SetDeaths(int client, int value)
 {
@@ -770,7 +763,6 @@ stock int Client_GetArmor(int client)
  *
  * @param client			Client's index.
  * @param value				Armor value
- * @noreturn
  */
 stock void Client_SetArmor(int client, int value)
 {
@@ -785,7 +777,7 @@ stock void Client_SetArmor(int client, int value)
  */
 stock float Client_GetSuitPower(int client)
 {
-	return float GetEntPropFloat(client, Prop_Data, "m_flSuitPower");
+	return GetEntPropFloat(client, Prop_Data, "m_flSuitPower");
 }
 
 /**
@@ -793,7 +785,6 @@ stock float Client_GetSuitPower(int client)
  *
  * @param client			Client's index.
  * @param value				Suitpower
- * @noreturn
  */
 stock void Client_SetSuitPower(int client, float value)
 {
@@ -851,9 +842,7 @@ stock bool Client_CanSprayDecal(int client)
  */
 stock int Client_GetVehicle(int client)
 {
-	int m_hVehicle = GetEntPropEnt(client, Prop_Send, "m_hVehicle");
-
-	return m_hVehicle;
+	return GetEntPropEnt(client, Prop_Send, "m_hVehicle");
 }
 
 /**
@@ -871,7 +860,6 @@ stock bool Client_IsInVehicle(int client)
  * Removes all decals for a client
  *
  * @param client			Client's index.
- * @noreturn
  */
 stock void Client_RemoveAllDecals(int client)
 {
@@ -911,23 +899,27 @@ stock bool Client_RawAudio(int client, const int emitter, const char[] soundfile
 {
 	Handle message = StartMessageOne("RawAudio", client);
 
-	if (message == INVALID_HANDLE) {
+	if (message == null) {
 		return false;
 	}
 
 	if (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available
 		&& GetUserMessageType() == UM_Protobuf) {
 
-		PbSetInt(message,    "pitch",          pitch);
-		PbSetInt(message,    "entidx",         emitter);
-		PbSetFloat(message,  "duration",       length );
-		PbSetString(message, "voice_filename", soundfile);
+		Protobuf pb = UserMessageToProtobuf(message);
+
+		pb.SetInt("pitch",             pitch);
+		pb.SetInt("entidx",            emitter);
+		pb.SetFloat("duration",        length);
+		pb.SetString("voice_filename", soundfile);
 	}
 	else {
-		BfWriteByte(message,	pitch);
-		BfWriteByte(message,	emitter);
-		BfWriteFloat(message,	length);
-		BfWriteString(message,	soundfile);
+		BfWrite bfw = UserMessageToBfWrite(message)
+
+		bfw.WriteByte(pitch);
+		bfw.WriteByte(emitter);
+		bfw.WriteFloat(length);
+		bfw.WriteString(soundfile);
 	}
 	EndMessage();
 
@@ -949,23 +941,27 @@ stock bool Client_RawAudioToAll(const int emitter, const char[] soundfile, float
 {
 	Handle message = StartMessageAll("RawAudio");
 
-	if (message == INVALID_HANDLE) {
+	if (message == null) {
 		return false;
 	}
 
 	if (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available
 		&& GetUserMessageType() == UM_Protobuf) {
 
-		PbSetInt(message, "pitch", pitch);
-		PbSetInt(message, "entidx", emitter);
-		PbSetFloat(message, "duration", length);
-		PbSetString(message, "voice_filename", soundfile);
+		Protobuf pb = UserMessageToProtobuf(message);
+
+		pb.SetInt("pitch",             pitch);
+		pb.SetInt("entidx",            emitter);
+		pb.SetFloat("duration",        length);
+		pb.SetString("voice_filename", soundfile);
 	}
 	else {
-		BfWriteByte(message,	pitch);
-		BfWriteByte(message,	emitter);
-		BfWriteFloat(message,	length);
-		BfWriteString(message,	soundfile);
+		BfWrite bfw = UserMessageToBfWrite(message)
+
+		bfw.WriteByte(pitch);
+		bfw.WriteByte(emitter);
+		bfw.WriteFloat(length);
+		bfw.WriteString(soundfile);
 	}
 	EndMessage();
 
@@ -978,7 +974,6 @@ stock bool Client_RawAudioToAll(const int emitter, const char[] soundfile, float
  *
  * @param client		Client Index
  * @param value			The impulse command value.
- * @noreturn
  */
 stock void Client_Impulse(int client, int value)
 {
@@ -994,7 +989,7 @@ stock void Client_Impulse(int client, int value)
  */
 stock int Client_GetWeaponsOffset(int client)
 {
-	static offset = -1;
+	static int offset = -1;
 
 	if (offset == -1) {
 		offset = FindDataMapInfo(client, "m_hMyWeapons");
@@ -1025,7 +1020,7 @@ stock int Client_GetActiveWeapon(int client)
  *
  * @param client		Client Index.
  * @param buffer		String Buffer to store the weapon's classname.
- * @param size			Max size of char  buffer.
+ * @param size			Max size of char buffer.
  * @return				Weapon Entity Index on success or INVALID_ENT_REFERENCE otherwise
  */
 stock int Client_GetActiveWeaponName(int client, char[] buffer, int size)
@@ -1048,7 +1043,6 @@ stock int Client_GetActiveWeaponName(int client, char[] buffer, int size)
  *
  * @param client		Client Index.
  * @param weapon		Index of a valid weapon.
- * @noreturn
  */
 stock void Client_SetActiveWeapon(int client, int weapon)
 {
@@ -1129,7 +1123,7 @@ stock int Client_GetLastActiveWeapon(int client)
  *
  * @param client		Client Index.
  * @param buffer		Buffer to store the weapon classname.
- * @param size			Max size of char  buffer.
+ * @param size			Max size of char buffer.
  * @return				True on success, false on failure.
  */
 stock bool Client_GetLastActiveWeaponName(int client, char[] buffer, int size)
@@ -1151,7 +1145,6 @@ stock bool Client_GetLastActiveWeaponName(int client, char[] buffer, int size)
  *
  * @param client		Client Index.
  * @param weapon		Entity Index of a weapon.
- * @noreturn
  */
 stock void Client_SetLastActiveWeapon(int client, int weapon)
 {
@@ -1165,7 +1158,6 @@ stock void Client_SetLastActiveWeapon(int client, int weapon)
  * @param client		Client Index.
  * @param weapon		Entity Index of the weapon.
  * @param switchTo		If true, the client will switch to that weapon (make it active).
- * @noreturn
  */
 stock void Client_EquipWeapon(int client, int weapon, bool switchTo = false)
 {
@@ -1423,7 +1415,7 @@ stock int Client_GetDefaultWeapon(int client)
  *
  * @param client 		Client Index.
  * @param buffer		Buffer to store the default weapon's classname.
- * @param size			Max size of char  buffer.
+ * @param size			Max size of char buffer.
  * @return				True on success, false otherwise.
  */
 stock bool Client_GetDefaultWeaponName(int client, char[] buffer, int size)
@@ -1573,7 +1565,6 @@ stock bool Client_GetWeaponPlayerAmmo(int client, const char[] className, int &p
  * @param weapon		Weapon Entity Index.
  * @param primaryAmmo	Primary ammo stock value from the client, if -1 the value is untouched.
  * @param secondaryAmmo	Secondary ammo stock value from the client, if -1 the value is untouched.
- * @noreturn
  */
 stock void Client_GetWeaponPlayerAmmoEx(int client, int weapon, int &primaryAmmo = -1, int &secondaryAmmo = -1)
 {
@@ -1619,7 +1610,6 @@ stock bool Client_SetWeaponPlayerAmmo(int client, const char[] className, int pr
  * @param weapon		Weapon Entity Index.
  * @param primaryAmmo	Primary ammo stock value from the client, if -1 the value is untouched.
  * @param secondaryAmmo	Secondary ammo stock value from the client, if -1 the value is untouched.
- * @noreturn
  */
 stock void Client_SetWeaponPlayerAmmoEx(int client, int weapon, int primaryAmmo = -1, int secondaryAmmo = -1)
 {
@@ -1645,7 +1635,7 @@ stock void Client_SetWeaponPlayerAmmoEx(int client, int weapon, int primaryAmmo 
  * @param secondaryAmmo	Secondary ammo stock value from the client, if -1 the value is untouched.
  * @param primaryClip	Primary ammo value in the weapon clip, if -1 the value is untouched.
  * @param secondaryClip	Secondary ammo value in the weapon clip, if -1 the value is untouched.
- * @return				True or False.
+ * @return				True on success, False otherwise.
  */
 stock bool Client_SetWeaponAmmo(int client, const char[] className, int primaryAmmo = -1, int secondaryAmmo = -1, int primaryClip = -1, int secondaryClip = -1)
 {
@@ -1707,7 +1697,7 @@ stock bool Client_PrintHintText(int client, const char[] format, any ...)
 {
 	Handle userMessage = StartMessageOne("HintText", client);
 
-	if (userMessage == INVALID_HANDLE) {
+	if (userMessage == null) {
 		return false;
 	}
 
@@ -1716,15 +1706,18 @@ stock bool Client_PrintHintText(int client, const char[] format, any ...)
 	SetGlobalTransTarget(client);
 	VFormat(buffer, sizeof(buffer), format, 3);
 
-
 	if (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available
 		&& GetUserMessageType() == UM_Protobuf) {
 
-		PbSetString(userMessage, "text", buffer);
+		Protobuf pb = UserMessageToProtobuf(userMessage);
+
+		pb.SetString("text", buffer);
 	}
 	else {
-		BfWriteByte(userMessage, 1);
-		BfWriteString(userMessage, buffer);
+		BfWrite bfw = UserMessageToBfWrite(userMessage)
+
+		bfw.WriteByte(1);
+		bfw.WriteString(buffer);
 	}
 
 	EndMessage();
@@ -1739,7 +1732,6 @@ stock bool Client_PrintHintText(int client, const char[] format, any ...)
  *
  * @param format		Formatting rules.
  * @param ...			Variable number of format parameters.
- * @noreturn
  */
 stock void Client_PrintHintTextToAll(const char[] format, any ...)
 {
@@ -1771,7 +1763,7 @@ stock bool Client_PrintKeyHintText(int client, const char[] format, any ...)
 {
 	Handle userMessage = StartMessageOne("KeyHintText", client);
 
-	if (userMessage == INVALID_HANDLE) {
+	if (userMessage == null) {
 		return false;
 	}
 
@@ -1783,11 +1775,15 @@ stock bool Client_PrintKeyHintText(int client, const char[] format, any ...)
 	if (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available
 		&& GetUserMessageType() == UM_Protobuf) {
 
-		PbAddString(userMessage, "hints", buffer);
+		Protobuf pb = UserMessageToProtobuf(userMessage);
+
+		pb.SetString("hints", buffer);
 	}
 	else {
-		BfWriteByte(userMessage, 1);
-		BfWriteString(userMessage, buffer);
+		BfWrite bfw = UserMessageToBfWrite(userMessage)
+
+		bfw.WriteByte(1);
+		bfw.WriteString(buffer);
 	}
 
 	EndMessage();
@@ -1802,7 +1798,6 @@ stock bool Client_PrintKeyHintText(int client, const char[] format, any ...)
  *
  * @param format		Formatting rules.
  * @param ...			Variable number of format parameters.
- * @noreturn
  */
 stock void Client_PrintKeyHintTextToAll(const char[] format, any ...)
 {
@@ -1828,7 +1823,6 @@ stock void Client_PrintKeyHintTextToAll(const char[] format, any ...)
  * @param message		String Message.
  * @param subject		Client Index/Subject (normally used for teamcolors)
  * @param isChat		Tells the game to handle the chat as normal (false) or chat message (true, plays a sound), only works if SayText2 is supported.
- * @noreturn
  */
 stock void Client_PrintToChatRaw(int client, const char[] message, int subject = 0, bool isChat = false)
 {
@@ -1851,47 +1845,57 @@ stock void Client_PrintToChatRaw(int client, const char[] message, int subject =
 		sayText2_checked = true;
 	}
 
-	Handle userMessage = INVALID_HANDLE;
+	Handle userMessage = null;
 
 	if (sayText2_supported) {
 		userMessage = StartMessageOne("SayText2", client, USERMSG_RELIABLE);
 
+
 		if (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available
 			&& GetUserMessageType() == UM_Protobuf) {
 
-			PbSetInt(userMessage,    "ent_idx",  subject);
-			PbSetBool(userMessage,   "chat",     isChat);
-			PbSetString(userMessage, "msg_name", message);
+			Protobuf pb = UserMessageToProtobuf(userMessage);
+
+			pb.SetInt("ent_idx",     subject);
+			pb.SetBool("chat",       isChat);
+			pb.SetString("msg_name", message);
 
 			// psychonic: Furthermore, some usermessages with repeated field,
 			// such as the commonly-used SayText2, expected an undocumented
 			// specific number of values added, else the client will crash when receiving.
-			PbAddString(userMessage, "params", "");
-			PbAddString(userMessage, "params", "");
-			PbAddString(userMessage, "params", "");
-			PbAddString(userMessage, "params", "");
+			pb.AddString("params",   "");
+			pb.AddString("params",   "");
+			pb.AddString("params",   "");
+			pb.AddString("params",   "");
 		}
 		else {
-			BfWriteByte(userMessage		, subject);
-			BfWriteByte(userMessage		, isChat);
-			BfWriteString(userMessage	, message);
+			BfWrite bfw = UserMessageToBfWrite(userMessage)
+
+			bfw.WriteByte(subject);
+			bfw.WriteByte(isChat);
+			bfw.WriteString(message);
 		}
 	}
 	else {
 		userMessage = StartMessageOne("SayText", client, USERMSG_RELIABLE);
 
+
 		if (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available
 			&& GetUserMessageType() == UM_Protobuf) {
 
-			PbSetInt(userMessage, "ent_idx", subject);
-			PbSetString(userMessage, "text", message);
-			PbSetBool(userMessage, "chat", isChat);
+			Protobuf pb = UserMessageToProtobuf(userMessage);
+
+			pb.SetInt("ent_idx", subject);
+			pb.SetString("text", message);
+			pb.SetBool("chat",   isChat);
 		}
 		else {
-			BfWriteByte(userMessage		, subject);
-			BfWriteString(userMessage	, message);
+			BfWrite bfw = UserMessageToBfWrite(userMessage)
+
+			bfw.WriteByte(subject);
+			bfw.WriteString(message);
 			// For DoD:S nickname coloring
-			BfWriteByte(userMessage		, -1);
+			bfw.WriteByte(-1);
 		}
 	}
 
@@ -1907,7 +1911,6 @@ stock void Client_PrintToChatRaw(int client, const char[] message, int subject =
  * @param isChat		Tells the game to handle the chat as normal (false) or chat message (true, plays a sound), only works if SayText2 is supported.
  * @param format		Formatting rules String.
  * @param ...			Variable number of format parameters.
- * @noreturn
  */
 stock void Client_PrintToChat(int client, bool isChat, const char[] format, any ...)
 {
@@ -1929,7 +1932,6 @@ static int printToChat_excludeclient = -1;
  * Exclude a client from the next call to a Client_PrintToChat function.
  *
  * @param client		Client Index.
- * @noreturn
  */
 stock void Client_PrintToChatExclude(int client)
 {
@@ -1944,7 +1946,6 @@ stock void Client_PrintToChatExclude(int client)
  * @param isChat		Tells the game to handle the chat as normal (false) or chat message (true, plays a sound), only works if SayText2 is supported.
  * @param format		Formatting rules String.
  * @param ...			Variable number of format parameters.
- * @noreturn
  */
 stock void Client_PrintToChatAll(bool isChat, const char[] format, any ...)
 {
@@ -1988,7 +1989,6 @@ stock void Client_PrintToChatAll(bool isChat, const char[] format, any ...)
  * @param isChat		Tells the game to handle the chat as normal (false) or chat message (true, plays a sound), only works if SayText2 is supported.
  * @param format		Formatting rules.
  * @param ...			Variable number of format parameters.
- * @noreturn
  */
 stock void Client_PrintToChatEx(int[] clients, int numClients, bool isChat, const char[] format, any ...)
 {
@@ -2040,7 +2040,6 @@ enum ClientHudPrint {
  * @param clients		Client Array.
  * @param format		Formatting rules.
  * @param ...			Variable number of format parameters.
- * @noreturn
  */
 stock void Client_PrintToConsole(int client, const char[] format, any ...)
 {
@@ -2062,7 +2061,6 @@ stock void Client_PrintToConsole(int client, const char[] format, any ...)
  * @param destination	Destination place (use onf of the ClientHudPrint_)
  * @param format		Formatting rules.
  * @param ...			Variable number of format parameters.
- * @noreturn
  */
 stock void Client_Print(int client, ClientHudPrint destination, const char[] format, any ...)
 {
@@ -2078,7 +2076,7 @@ stock void Client_Print(int client, ClientHudPrint destination, const char[] for
 		return;
 	}
 
-	int EngineVersion:engineVersion = GetEngineVersion();
+	EngineVersion engineVersion = GetEngineVersion();
 	if (client == 0 ||
 		destination != ClientHudPrint_Console ||
 		(destination == ClientHudPrint_Console
@@ -2092,22 +2090,26 @@ stock void Client_Print(int client, ClientHudPrint destination, const char[] for
 		}
 	}
 
-	Handle userMessage = INVALID_HANDLE;
+	Handle userMessage = null;
 	userMessage = StartMessageOne("TextMsg", client, USERMSG_RELIABLE);
 
 	if (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available
 		&& GetUserMessageType() == UM_Protobuf) {
 
-		PbSetInt(userMessage,    "msg_dst", _:destination);
-		PbAddString(userMessage, "params",  buffer2);
-		PbAddString(userMessage, "params",  "");
-		PbAddString(userMessage, "params",  "");
-		PbAddString(userMessage, "params",  "");
-		PbAddString(userMessage, "params",  "");
+		Protobuf pb = UserMessageToProtobuf(userMessage);
+
+		pb.SetInt("msg_dst", view_as<int>(destination));
+		pb.SetString("text", buffer2);
+		pb.SetString("text", "");
+		pb.SetString("text", "");
+		pb.SetString("text", "");
+		pb.SetString("text", "");
 	}
 	else {
-		BfWriteByte(userMessage		, _:destination);
-		BfWriteString(userMessage	, buffer2);
+		BfWrite bfw = UserMessageToBfWrite(userMessage)
+
+		bfw.WriteByte(view_as<int>(destination));
+		bfw.WriteString(buffer2);
 	}
 
 	EndMessage();
@@ -2122,7 +2124,6 @@ stock void Client_Print(int client, ClientHudPrint destination, const char[] for
  * @param client		Client Index.
  * @param format		Formatting rules String.
  * @param ...			Variable number of format parameters.
- * @noreturn
  */
 stock void Client_Reply(int client, const char[] format, any ...)
 {
@@ -2168,23 +2169,27 @@ stock bool Client_Shake(int client, int command = SHAKE_START, float amplitude =
 
 	Handle userMessage = StartMessageOne("Shake", client);
 
-	if (userMessage == INVALID_HANDLE) {
+	if (userMessage == null) {
 		return false;
 	}
 
 	if (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available
 		&& GetUserMessageType() == UM_Protobuf) {
 
-		PbSetInt(userMessage,   "command",         command);
-		PbSetFloat(userMessage, "local_amplitude", amplitude);
-		PbSetFloat(userMessage, "frequency",       frequency);
-		PbSetFloat(userMessage, "duration",        duration);
+		Protobuf pb = UserMessageToProtobuf(userMessage);
+
+		pb.SetInt("command",           command);
+		pb.SetFloat("local_amplitude", amplitude);
+		pb.SetFloat("frequency",       frequency);
+		pb.SetFloat("duration",        duration);
 	}
 	else {
-		BfWriteByte(userMessage,	command);	// Shake Command
-		BfWriteFloat(userMessage,	amplitude);	// shake magnitude/amplitude
-		BfWriteFloat(userMessage,	frequency);	// shake noise frequency
-		BfWriteFloat(userMessage,	duration);	// shake lasts this long
+		BfWrite bfw = UserMessageToBfWrite(userMessage)
+
+		bfw.WriteByte(command);    // Shake Command
+		bfw.WriteFloat(amplitude); // shake magnitude/amplitude
+		bfw.WriteFloat(frequency); // shake noise frequency
+		bfw.WriteFloat(duration);  // shake lasts this long
 	}
 
 	EndMessage();
@@ -2223,7 +2228,7 @@ stock bool Client_HasAdminFlags(int client, int flags = ADMFLAG_GENERIC)
 		return false;
 	}
 
-	return bool (GetAdminFlags(adminId, Access_Effective) & flags);
+	return (GetAdminFlags(adminId, Access_Effective) & flags) == flags;
 }
 
 /**
@@ -2291,7 +2296,7 @@ stock bool Client_IsLookingAtWall(int client, float distance = 40.0) {
 	if (TR_DidHit(trace)) {
 
 		if (TR_GetEntityIndex(trace) > 0) {
-			CloseHandle(trace);
+			delete trace;
 			return false;
 		}
 
@@ -2304,7 +2309,7 @@ stock bool Client_IsLookingAtWall(int client, float distance = 40.0) {
 		}
 	}
 
-	CloseHandle(trace);
+	delete trace;
 
 	return isClientLookingAtWall;
 }
@@ -2339,9 +2344,8 @@ stock int Client_GetClass(int client)
  * @param client		Client Index.
  * @param playerClass	The class number to set the player to. Depends on game.
  * @param persistant	If true changes the players desired class so the change stays after death (probably TF2 only).
- * @return				Class Index.
  */
-stock int Client_SetClass(int client, int playerClass, bool persistant = false)
+stock void Client_SetClass(int client, int playerClass, bool persistant = false)
 {
 	if (GetEngineVersion() == Engine_DarkMessiah) {
 		SetEntProp(client, Prop_Send, "m_iPlayerClass", playerClass);
@@ -2371,7 +2375,6 @@ stock int Client_GetButtons(int client)
  *
  * @param client		Client Index.
  * @param buttons		Buttons as bitflag.
- * @noreturn
  */
 stock void Client_SetButtons(int client, int buttons)
 {
@@ -2384,7 +2387,6 @@ stock void Client_SetButtons(int client, int buttons)
  *
  * @param client		Client Index.
  * @param buttons		Buttons as bitflag.
- * @noreturn
  */
 stock void Client_AddButtons(int client, int buttons)
 {
@@ -2399,7 +2401,6 @@ stock void Client_AddButtons(int client, int buttons)
  *
  * @param client		Client Index.
  * @param buttons		Buttons as bitflag.
- * @noreturn
  */
 stock void Client_RemoveButtons(int client, int buttons)
 {
@@ -2413,7 +2414,6 @@ stock void Client_RemoveButtons(int client, int buttons)
  * Note: This will likely only work OnPreThink (sdkhooks) or OnPlayerRunCmd.
  *
  * @param client		Client Index.
- * @noreturn
  */
 stock void Client_ClearButtons(int client)
 {
@@ -2429,7 +2429,7 @@ stock void Client_ClearButtons(int client)
  */
 stock bool Client_HasButtons(int client, int buttons)
 {
-	return bool (Client_GetButtons(client) & buttons);
+	return (Client_GetButtons(client) & buttons) == buttons;
 }
 
 /**
@@ -2457,7 +2457,6 @@ stock int Client_GetChangedButtons(int client)
  *
  * @param Client		Client Index
  * @param maxspeed	the maximum speed the client can move
- * @noreturn
  */
 stock void Client_SetMaxSpeed(int client, float value)
 {
@@ -2472,7 +2471,6 @@ stock void Client_SetMaxSpeed(int client, float value)
  *
  * @param Client		Client Index.
  * @param path			Overlay path (based on the game/materials/ folder) or empty String to not show any overlay.
- * @noreturn
  */
 stock void Client_SetScreenOverlay(int client, const char[] path)
 {
@@ -2487,7 +2485,6 @@ stock void Client_SetScreenOverlay(int client, const char[] path)
  *
  * @param Client		Client Index.
  * @param path			Overlay path (based on the game/materials/ folder) or empty String to not show any overlay.
- * @noreturn
  */
 stock void Client_SetScreenOverlayForAll(const char[] path)
 {
@@ -2500,7 +2497,6 @@ stock void Client_SetScreenOverlayForAll(const char[] path)
  * Mutes a client's voice
  *
  * @param Client		Client Index.
- * @noreturn
  */
 stock void Client_Mute(int client)
 {
@@ -2512,24 +2508,23 @@ stock void Client_Mute(int client)
  * Code copied from  basecomm.sp
  *
  * @param Client		Client Index.
- * @noreturn
  */
 stock void Client_UnMute(int client)
 {
-	static Handle cvDeadTalk = INVALID_HANDLE;
+	static ConVar cvDeadTalk = null;
 
-	if (cvDeadTalk == INVALID_HANDLE) {
+	if (cvDeadTalk == null) {
 		cvDeadTalk = FindConVar("sm_deadtalk");
 	}
 
-	if (cvDeadTalk == INVALID_HANDLE) {
+	if (cvDeadTalk == null) {
 		SetClientListeningFlags(client, VOICE_NORMAL);
 	}
 	else {
-		if (GetConVarInt(cvDeadTalk) == 1 && !IsPlayerAlive(client)) {
+		if (cvDeadTalk.IntValue == 1 && !IsPlayerAlive(client)) {
 			SetClientListeningFlags(client, VOICE_LISTENALL);
 		}
-		else if (GetConVarInt(cvDeadTalk) == 2 && !IsPlayerAlive(client)) {
+		else if (cvDeadTalk.IntValue == 2 && !IsPlayerAlive(client)) {
 			SetClientListeningFlags(client, VOICE_TEAM);
 		}
 		else {
@@ -2546,7 +2541,7 @@ stock void Client_UnMute(int client)
  */
 stock bool Client_IsMuted(int client)
 {
-	return bool (GetClientListeningFlags(client) & VOICE_MUTED);
+	return (GetClientListeningFlags(client) & VOICE_MUTED) == VOICE_MUTED;
 }
 
 /**
@@ -2680,7 +2675,7 @@ stock int Client_Get(int[] clients, int flags = CLIENTFILTER_ALL)
  */
 stock int Client_GetRandom(int flags = CLIENTFILTER_ALL)
 {
-	int clients[MaxClients];
+	int[] clients = new int[MaxClients];
 	int num = Client_Get(clients, flags);
 
 	if (num == 0) {
@@ -2744,7 +2739,6 @@ stock int Client_GetMoney(int client)
  *
  * @param client		Client Index.
  * @param value			Money value to set.
- * @noreturn
  */
 stock void Client_SetMoney(int client, int value)
 {
@@ -2788,9 +2782,8 @@ static float getPlayersInRadius_distances[MAXPLAYERS+1];
 stock int Client_GetPlayersInRadius(int client, int[] clients, float radius, bool orderByDistance = true)
 {
 	float origin_client[3];
-	new
-		float distance,
-		count=0;
+	float distance;
+	int count = 0;
 
 	Entity_GetAbsOrigin(client, origin_client);
 
@@ -2854,7 +2847,7 @@ stock int Client_GetNextObserver(int client, int start = 1, int flags = CLIENTFI
  */
 stock int Client_GetPlayerManager()
 {
-	static player_manager = INVALID_ENT_REFERENCE;
+	static int player_manager = INVALID_ENT_REFERENCE;
 
 	if (player_manager != INVALID_ENT_REFERENCE) {
 
@@ -2917,7 +2910,6 @@ static int printToTop_excludeclient = -1;
  * Exclude a client from the next call to a Client_PrintToTop function.
  *
  * @param client		Client Index.
- * @noreturn
  */
 stock void Client_PrintToTopExclude(int client)
 {
@@ -2943,19 +2935,20 @@ stock bool Client_PrintToTopRaw(int client, int r = 255, int g = 255, int b = 25
 	//message line max 50
 	//overline: 	39*_
 	//underline: 	44*T
-	Handle keyValue = CreateKeyValues("Stuff", "title", text);
+	KeyValues keyValue = new KeyValues("Stuff", "title", text);
 
-	if (keyValue == INVALID_HANDLE) {
+	if (keyValue == null) {
 		return false;
 	}
 
-	KvSetColor(keyValue, "color", r, g, b, a);
-	KvSetNum(keyValue, "level", 1);
-	KvSetNum(keyValue, "time", RoundToFloor(duration));
+	keyValue.SetColor("color", r, g, b, a);
+	keyValue.SetNum("level", 1);
+	keyValue.SetNum("time", RoundToFloor(duration));
 
 	CreateDialog(client, keyValue, DialogType_Msg);
 
-	if (!CloseHandle(keyValue)) {
+	delete keyValue;
+	if (keyValue != null) {
 		return false;
 	}
 	return true;
@@ -2997,7 +2990,6 @@ stock bool Client_PrintToTop(int client, int r = 255, int g = 255, int b = 255, 
  * @param duration		Duration in seconds the text stays (min 10 - max 200 seconds).
  * @param format		Formatting rules.
  * @param ...			Variable number of format parameters.
- * @noreturn
  */
 stock void Client_PrintToTopAll(int r = 255, int g = 255, int b = 255, int a = 255, float duration = 10.0, const char[] format, any ...)
 {
@@ -3042,7 +3034,6 @@ stock void Client_PrintToTopAll(int r = 255, int g = 255, int b = 255, int a = 2
  * @param duration		Duration in seconds the text stays (min 10 - max 200 seconds).
  * @param format		Formatting rules.
  * @param ...			Variable number of format parameters.
- * @noreturn
  */
 stock void Client_PrintToTopEx(int[] clients, int numClients, int r = 255, int g = 255, int b = 255, int a = 255, float duration = 10.0, const char[] format, any ...)
 {
@@ -3080,22 +3071,25 @@ stock void Client_PrintToTopEx(int[] clients, int numClients, int r = 255, int g
  *
  * @tested csgo
  * @param client	Client index
- * @noreturn
  */
 stock void Client_ShowScoreboard(int client, int flags = USERMSG_RELIABLE | USERMSG_BLOCKHOOKS)
 {
 	Handle handle = StartMessageOne("VGUIMenu", client, flags);
 
-	if (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available &&
-			GetUserMessageType() == UM_Protobuf) {
+	if (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available
+		&& GetUserMessageType() == UM_Protobuf) {
 
-		PbSetString(handle, "name", "scores");
-		PbSetBool(handle, "show", true);
+		Protobuf pb = UserMessageToProtobuf(handle);
+
+		pb.SetString("name", "scores");
+		pb.SetBool("show",   true);
 	}
 	else {
-		BfWriteString(handle, "scores");
-		BfWriteByte(handle, 1); // Show
-		BfWriteByte(handle, 0); // subkeys count
+		BfWrite bfw = UserMessageToBfWrite(handle)
+
+		bfw.WriteString("scores");
+		bfw.WriteByte(1); // Show
+		bfw.WriteByte(0); // subkeys count
 	}
 
 	EndMessage();

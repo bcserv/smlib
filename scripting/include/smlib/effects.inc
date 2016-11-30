@@ -66,7 +66,7 @@ stock bool Effect_DissolvePlayerRagDoll(int client, DissolveType dissolveType = 
 	return Effect_DissolveEntity(m_hRagdoll, dissolveType);
 }
 
-typedef EffectCallback = function int (int entity, any data);
+typedef EffectCallback = function void (int entity, any data);
 
 /**
  * Fades an entity in our out.
@@ -82,7 +82,6 @@ typedef EffectCallback = function int (int entity, any data);
  * @param fast			Optional: Fade the entity fast (~0.7 secs) or slow (~3 secs)
  * @param callback		Optional: You can specify a callback Function that will get called when the fade is finished.
  * @param data			Optional: You can pass any data to the callback.
- * @noreturn
  */
 stock void Effect_Fade(int entity, int fadeOut = true, int kill = false, int fast =  true, EffectCallback callback = INVALID_FUNCTION, any data = 0)
 {
@@ -112,18 +111,14 @@ stock void Effect_Fade(int entity, int fadeOut = true, int kill = false, int fas
 	ChangeEdictState(entity, GetEntSendPropOffs(entity, "m_nRenderFX", true));
 
 	if (kill || callback != INVALID_FUNCTION) {
-		Handle dataPack = INVALID_HANDLE;
+		DataPack dataPack = new DataPack();
 		CreateDataTimer(timerTime, _smlib_Timer_Effect_Fade, dataPack, TIMER_FLAG_NO_MAPCHANGE | TIMER_DATA_HNDL_CLOSE);
 
-		WritePackCell(dataPack, EntIndexToEntRef(entity));
-		WritePackCell(dataPack, kill);
-#if SOURCEMOD_V_MAJOR >= 1 && SOURCEMOD_V_MINOR >= 7
-		WritePackFunction(dataPack, callback);
-#else
-		WritePackCell(dataPack, _:callback);
-#endif
-		WritePackCell(dataPack, data);
-		ResetPack(dataPack);
+		dataPack.WriteCell(EntIndexToEntRef(entity));
+		dataPack.WriteCell(kill);
+		dataPack.WriteFunction(callback);
+		dataPack.WriteCell(data);
+		dataPack.Reset()
 	}
 }
 
@@ -135,12 +130,11 @@ stock void Effect_Fade(int entity, int fadeOut = true, int kill = false, int fas
  * @param fast			Optional: Fade the entity fast (~0.7 secs) or slow (~3 secs)
  * @param callback		Optional: You can specify a callback Function that will get called when the fade is finished.
  * @param data			Optional: You can pass any data to the callback.
- * @noreturn
  */
 stock void Effect_FadeIn(int entity, bool fast = true, EffectCallback callback = INVALID_FUNCTION, any data = 0)
 {
 	Effect_Fade(entity, false, false, fast, callback, data);
-}
+}https://sm.alliedmods.net/new-api/
 
 /**
  * Fades the entity out.
@@ -152,26 +146,21 @@ stock void Effect_FadeIn(int entity, bool fast = true, EffectCallback callback =
  * @param fast			Optional: Fade the entity fast (~0.7 secs) or slow (~3 secs)
  * @param callback		Optional: You can specify a callback Function that will get called when the fade is finished.
  * @param data			Optional: You can pass any data to the callback.
- * @noreturn
  */
 stock void Effect_FadeOut(int entity, int kill = false, int fast = true, EffectCallback callback = INVALID_FUNCTION, any data=0)
 {
 	Effect_Fade(entity, true, kill, fast, callback, data);
 }
 
-public Action _smlib_Timer_Effect_Fade(Handle Timer, Handle dataPack)
+public Action _smlib_Timer_Effect_Fade(Handle Timer, DataPack dataPack)
 {
-	int entity = ReadPackCell(dataPack);
-	int kill = ReadPackCell(dataPack);
-#if SOURCEMOD_V_MAJOR >= 1 && SOURCEMOD_V_MINOR >= 7
-	Function callback = ReadPackFunction(dataPack);
-#else
-	Function callback = view_as<Function>(ReadPackCell(dataPack));
-#endif
-	any data = view_as<any>(ReadPackCell(dataPack));
+	int entity = dataPack.ReadCell();
+	int kill = dataPack.ReadCell();
+
+	Function callback = dataPack.ReadFunction();
 
 	if (callback != INVALID_FUNCTION) {
-		Call_StartFunction(INVALID_HANDLE, callback);
+		Call_StartFunction(null, callback);
 		Call_PushCell(entity);
 		Call_PushCell(data);
 		Call_Finish();
@@ -203,7 +192,6 @@ public Action _smlib_Timer_Effect_Fade(Handle Timer, Handle dataPack)
  * @param amplitude		Beam amplitude.
  * @param color			Color array (r, g, b, a).
  * @param speed			Speed of the beam.
- * @noreturn
  */
 stock void Effect_DrawBeamBoxToClient(
 	int client,
@@ -244,7 +232,6 @@ stock void Effect_DrawBeamBoxToClient(
  * @param amplitude		Beam amplitude.
  * @param color			Color array (r, g, b, a).
  * @param speed			Speed of the beam.
- * @noreturn
  */
 stock void Effect_DrawBeamBoxToAll(
 	const float bottomCorner[3],
@@ -262,7 +249,7 @@ stock void Effect_DrawBeamBoxToAll(
 	int speed = 0
 )
 {
-	int clients[MaxClients];
+	int[] clients = new int[MaxClients];
 	int numClients = Client_Get(clients, CLIENTFILTER_INGAME);
 
 	Effect_DrawBeamBox(clients, numClients, bottomCorner, upperCorner, modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, color, speed);
@@ -288,7 +275,6 @@ stock void Effect_DrawBeamBoxToAll(
  * @param amplitude		Beam amplitude.
  * @param color			Color array (r, g, b, a).
  * @param speed			Speed of the beam.
- * @noreturn
  */
 stock void Effect_DrawBeamBox(
 	int[] clients,
@@ -370,7 +356,6 @@ stock void Effect_DrawBeamBox(
  * @param amplitude		Beam amplitude.
  * @param color			Color array (r, g, b, a).
  * @param speed			Speed of the beam.
- * @noreturn
  */
 stock void Effect_DrawBeamBoxRotatableToClient(
 	int client,
@@ -417,7 +402,6 @@ stock void Effect_DrawBeamBoxRotatableToClient(
  * @param amplitude		Beam amplitude.
  * @param color			Color array (r, g, b, a).
  * @param speed			Speed of the beam.
- * @noreturn
  */
 stock void Effect_DrawBeamBoxRotatableToAll(
 	const float origin[3],
@@ -437,7 +421,7 @@ stock void Effect_DrawBeamBoxRotatableToAll(
 	int speed = 0
 )
 {
-	int clients[MaxClients];
+	int[] clients = new int[MaxClients];
 	int numClients = Client_Get(clients, CLIENTFILTER_INGAME);
 
 	Effect_DrawBeamBoxRotatable(clients, numClients, origin, mins, maxs, angles, modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, color, speed);
@@ -465,7 +449,6 @@ stock void Effect_DrawBeamBoxRotatableToAll(
  * @param amplitude		Beam amplitude.
  * @param color			Color array (r, g, b, a).
  * @param speed			Speed of the beam.
- * @noreturn
  */
 stock void Effect_DrawBeamBoxRotatable(
 	int[] clients,
@@ -548,7 +531,6 @@ stock void Effect_DrawBeamBoxRotatable(
  * @param amplitude		Beam amplitude.
  * @param color			Color array (r, g, b, a).
  * @param speed			Speed of the beam.
- * @noreturn
  */
 stock void Effect_DrawAxisOfRotationToClient(
 	int client,
@@ -588,7 +570,6 @@ stock void Effect_DrawAxisOfRotationToClient(
  * @param amplitude		Beam amplitude.
  * @param color			Color array (r, g, b, a).
  * @param speed			Speed of the beam.
- * @noreturn
  */
 stock void Effect_DrawAxisOfRotationToAll(
 	const float origin[3],
@@ -606,7 +587,7 @@ stock void Effect_DrawAxisOfRotationToAll(
 	int speed = 0
 )
 {
-	int clients[MaxClients];
+	int[] clients = new int[MaxClients];
 	int numClients = Client_Get(clients, CLIENTFILTER_INGAME);
 
 	Effect_DrawAxisOfRotation(clients, numClients, origin, angles, length, modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, speed);
@@ -631,7 +612,6 @@ stock void Effect_DrawAxisOfRotationToAll(
  * @param amplitude		Beam amplitude.
  * @param color			Color array (r, g, b, a).
  * @param speed			Speed of the beam.
- * @noreturn
  */
 stock void Effect_DrawAxisOfRotation(
 	int[] clients,

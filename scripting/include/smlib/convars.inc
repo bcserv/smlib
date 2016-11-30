@@ -14,7 +14,7 @@
  */
 stock bool Convar_HasFlags(ConVar convar, int flags)
 {
-	return bool (convar.Flags & flags);
+	return (convar.Flags & flags) == flags;
 }
 
 /**
@@ -22,7 +22,6 @@ stock bool Convar_HasFlags(ConVar convar, int flags)
  *
  * @param	convar		ConVar Handle.
  * @param	flags		Flags to add.
- * @noreturn
  */
 stock void Convar_AddFlags(ConVar convar, int flags)
 {
@@ -36,7 +35,6 @@ stock void Convar_AddFlags(ConVar convar, int flags)
  *
  * @param	convar		ConVar Handle.
  * @param	flags		Flags to remove
- * @noreturn
  */
 stock void Convar_RemoveFlags(ConVar convar, int flags)
 {
