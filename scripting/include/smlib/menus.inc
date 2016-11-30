@@ -13,7 +13,6 @@
  * @param   menu        Handle to the menu
  * @param   value       Integer value for the option
  * @param   display     Display text for the menu
- * @noreturn
  */
 stock void Menu_AddIntItem(Menu menu, any value, char[] display)
 {

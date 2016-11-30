@@ -115,7 +115,6 @@ stock bool Vehicle_IsValid(int vehicle)
  * @param vehicle			Entity index.
  * @param buffer			String Buffer.
  * @param size				String Buffer size.
- * @noreturn
  */
 stock void Vehicle_GetScript(int vehicle, char[] buffer, int size)
 {
@@ -129,7 +128,6 @@ stock void Vehicle_GetScript(int vehicle, char[] buffer, int size)
  *
  * @param vehicle			Entity index.
  * @param buffer			Vehicle Script path.
- * @noreturn
  */
 stock void Vehicle_SetScript(int vehicle, char[] script)
 {

@@ -21,7 +21,7 @@
  */
 stock void SQL_TQueryF(Handle database, SQLTCallback callback, any data, DBPriority priority=DBPrio_Normal, const char[] format, any ...) {
 
-	if (database == INVALID_HANDLE) {
+	if (database == null) {
 		ThrowError("[SMLIB] Error: Invalid database handle.");
 		return;
 	}
@@ -64,7 +64,7 @@ stock int SQL_FetchIntByName(Handle query, char[] fieldName, DBResult &result = 
  */
 stock bool SQL_FetchBoolByName(Handle query, char[] fieldName, DBResult &result = DBVal_Error) {
 
-	return bool SQL_FetchIntByName(query, fieldName, result);
+	return SQL_FetchIntByName(query, fieldName, result) > 0;
 }
 
 /**

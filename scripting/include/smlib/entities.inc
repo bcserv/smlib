@@ -21,7 +21,7 @@
  * @param entity		Entity Index.
  * @return				True if the entity is valid, false otherwise.
  */
-stock int Entity_IsValid(int entity)
+stock bool Entity_IsValid(int entity)
 {
 	return IsValidEntity(entity);
 }
@@ -210,7 +210,7 @@ stock int Entity_GetClassName(int entity, char[] buffer, int size)
  * @param name				The name you want to give.
  * @return					True on success, false otherwise.
  */
-stock bool ntity_SetClassName(int entity, const char[] className)
+stock bool Entity_SetClassName(int entity, const char[] className)
 {
 	return DispatchKeyValue(entity, "classname", className);
 }
@@ -328,7 +328,6 @@ stock float Entity_GetRadius(int entity)
  *
  * @param entity			Entity index.
  * @param radius			Radius value
- * @noreturn
  */
 stock void Entity_SetRadius(int entity, float radius)
 {
@@ -340,7 +339,6 @@ stock void Entity_SetRadius(int entity, float radius)
  *
  * @param entity			Entity index.
  * @param vec				Vector.
- * @noreturn
  */
 stock void Entity_GetMinSize(int entity, float vec[3])
 {
@@ -352,7 +350,6 @@ stock void Entity_GetMinSize(int entity, float vec[3])
  *
  * @param entity			Entity index.
  * @param vec				Vector.
- * @noreturn
  */
 stock void Entity_SetMinSize(int entity, const float vecMins[3])
 {
@@ -365,7 +362,6 @@ stock void Entity_SetMinSize(int entity, const float vecMins[3])
  *
  * @param entity			Entity index
  * @param vec				return vector.
- * @noreturn
  */
 stock void Entity_GetMaxSize(int entity, float vec[3])
 {
@@ -378,7 +374,6 @@ stock void Entity_GetMaxSize(int entity, float vec[3])
  *
  * @param entity			Entity index.
  * @param vec				Vector.
- * @noreturn
  */
 stock void Entity_SetMaxSize(int entity, const float vecMaxs[3])
 {
@@ -392,7 +387,6 @@ stock void Entity_SetMaxSize(int entity, const float vecMaxs[3])
  * @param entity			Entity index.
  * @param vecMins			Min size Vector
  * @param vecMaxs			Max size Vector
- * @noreturn
  */
 stock void Entity_SetMinMaxSize(int entity, float vecMins[3], float vecMaxs[3])
 {
@@ -405,7 +399,7 @@ stock void Entity_SetMinMaxSize(int entity, float vecMins[3], float vecMaxs[3])
 		}
 	}
 
-	float m_vecMins[3], float m_vecMaxs[3];
+	float m_vecMins[3], m_vecMaxs[3];
 	Entity_GetMinSize(entity, m_vecMins);
 	Entity_GetMaxSize(entity, m_vecMaxs);
 
@@ -502,7 +496,6 @@ stock int Entity_GetSpawnFlags(int entity)
  *
  * @param entity			Entity index.
  * @param flags				Flags value
- * @noreturn
  */
 stock void Entity_SetSpawnFlags(int entity, int flags)
 {
@@ -514,7 +507,6 @@ stock void Entity_SetSpawnFlags(int entity, int flags)
  *
  * @param entity			Entity index.
  * @param flags				Flags value
- * @noreturn
  */
 stock void Entity_AddSpawnFlags(int entity, int flags)
 {
@@ -528,7 +520,6 @@ stock void Entity_AddSpawnFlags(int entity, int flags)
  *
  * @param entity			Entity index.
  * @param flags				Flags value
- * @noreturn
  */
 stock void Entity_RemoveSpawnFlags(int entity, int flags)
 {
@@ -541,7 +532,6 @@ stock void Entity_RemoveSpawnFlags(int entity, int flags)
  * Clears all Spawnflags of an entity.
  *
  * @param entity			Entity index.
- * @noreturn
  */
 stock void Entity_ClearSpawnFlags(int entity)
 {
@@ -557,7 +547,7 @@ stock void Entity_ClearSpawnFlags(int entity)
  */
 stock bool Entity_HasSpawnFlags(int entity, int flags)
 {
-	return bool (Entity_GetSpawnFlags(entity) & flags);
+	return (Entity_GetSpawnFlags(entity) & flags) == flags;
 }
 
 /*
@@ -624,7 +614,7 @@ enum Entity_Flags
  */
 stock Entity_Flags Entity_GetEFlags(int entity)
 {
-	return Entity_Flags GetEntProp(entity, Prop_Data, "m_iEFlags");
+	return view_as<Entity_Flags>(GetEntProp(entity, Prop_Data, "m_iEFlags"));
 }
 
 /**
@@ -632,7 +622,6 @@ stock Entity_Flags Entity_GetEFlags(int entity)
  *
  * @param entity			Entity index.
  * @param flags				Flags value
- * @noreturn
  */
 stock void Entity_SetEFlags(int entity, Entity_Flags flags)
 {
@@ -644,7 +633,6 @@ stock void Entity_SetEFlags(int entity, Entity_Flags flags)
  *
  * @param entity			Entity index.
  * @param flags				Flags value
- * @noreturn
  */
 stock void Entity_AddEFlags(int entity, Entity_Flags flags)
 {
@@ -658,7 +646,6 @@ stock void Entity_AddEFlags(int entity, Entity_Flags flags)
  *
  * @param entity			Entity index.
  * @param flags				Flags value
- * @noreturn
  */
 stock void Entity_RemoveEFlags(int entity, Entity_Flags flags)
 {
@@ -678,7 +665,7 @@ stock bool Entity_HasEFlags(int entity, Entity_Flags flags)
 {
 	Entity_Flags currentEFlags = Entity_GetEFlags(entity);
 
-	return bool (currentEFlags & flags);
+	return (currentEFlags & flags) == flags;
 }
 
 /**
@@ -686,7 +673,6 @@ stock bool Entity_HasEFlags(int entity, Entity_Flags flags)
  * You normally call this when a collision setting has changed.
  *
  * @param entity			Entity index.
- * @noreturn
  */
 stock void Entity_MarkSurrBoundsDirty(int entity)
 {
@@ -717,7 +703,6 @@ stock int Entity_GetFlags(int entity)
  *
  * @param entity			Entity index.
  * @param flags				New Flags value
- * @noreturn
  */
 stock void Entity_SetFlags(int entity, int flags)
 {
@@ -729,7 +714,6 @@ stock void Entity_SetFlags(int entity, int flags)
  *
  * @param entity			Entity index.
  * @param flags				Flags to add
- * @noreturn
  */
 stock void Entity_AddFlags(int entity, int flags)
 {
@@ -743,7 +727,6 @@ stock void Entity_AddFlags(int entity, int flags)
  *
  * @param entity			Entity index.
  * @param flags				Flags to remove
- * @noreturn
  */
 stock void Entity_RemoveFlags(int entity, int flags)
 {
@@ -759,7 +742,6 @@ stock void Entity_RemoveFlags(int entity, int flags)
  *
  * @param entity			Entity index.
  * @param flags				Flag to Toggle
- * @noreturn
  */
 stock void Entity_ToggleFlag(int entity, int flag)
 {
@@ -772,7 +754,6 @@ stock void Entity_ToggleFlag(int entity, int flag)
  * Removes all flags from the entity
  *
  * @param entity			Entity index.
- * @noreturn
  */
 stock void Entity_ClearFlags(int entity)
 {
@@ -813,7 +794,7 @@ enum SolidFlags_t
  */
 stock SolidFlags_t Entity_GetSolidFlags(int entity)
 {
-	return SolidFlags_t GetEntProp(entity, Prop_Data, "m_usSolidFlags", 2);
+	return view_as<SolidFlags_t>(GetEntProp(entity, Prop_Data, "m_usSolidFlags", 2));
 }
 
 /**
@@ -821,12 +802,11 @@ stock SolidFlags_t Entity_GetSolidFlags(int entity)
  *
  * @param entity			Entity index.
  * @param flags				Solid Flags.
- * @noreturn
  */
 stock void Entity_SetSolidFlags(int entity, SolidFlags_t flags)
 {
 	SolidFlags_t oldFlags = Entity_GetSolidFlags(entity);
-	flags = flags & SolidFlags_t 0xFFFF;
+	flags = flags & 0xFFFF;
 
 	if (oldFlags == flags) {
 		return;
@@ -847,7 +827,6 @@ stock void Entity_SetSolidFlags(int entity, SolidFlags_t flags)
  *
  * @param entity			Entity index.
  * @param flags				Solid Flags.
- * @noreturn
  */
 stock void Entity_AddSolidFlags(int entity, SolidFlags_t flags)
 {
@@ -861,7 +840,6 @@ stock void Entity_AddSolidFlags(int entity, SolidFlags_t flags)
  *
  * @param entity			Entity index.
  * @param flags				Solid Flags.
- * @noreturn
  */
 stock void Entity_RemoveSolidFlags(int entity, SolidFlags_t flags)
 {
@@ -874,7 +852,6 @@ stock void Entity_RemoveSolidFlags(int entity, SolidFlags_t flags)
  * Removes all solid flags from the entity.
  *
  * @param entity			Entity index.
- * @noreturn
  */
 stock void Entity_ClearSolidFlags(int entity)
 {
@@ -890,7 +867,7 @@ stock void Entity_ClearSolidFlags(int entity)
  */
 stock bool Entity_SolidFlagsSet(int entity, SolidFlags_t flagMask)
 {
-	return bool (Entity_GetSolidFlags(entity) & flagMask);
+	return (Entity_GetSolidFlags(entity) & flagMask) == flagMask;
 }
 
 enum SolidType_t
@@ -913,7 +890,7 @@ enum SolidType_t
  */
 stock SolidType_t Entity_GetSolidType(int entity)
 {
-	return SolidType_t GetEntProp(entity, Prop_Data, "m_nSolidType", 1);
+	return view_as<SolidType_t>(GetEntProp(entity, Prop_Data, "m_nSolidType", 1));
 }
 
 /**
@@ -921,7 +898,6 @@ stock SolidType_t Entity_GetSolidType(int entity)
  *
  * @param entity			Entity index.
  * @param					Solid Type value.
- * @noreturn
  */
 stock void Entity_SetSolidType(int entity, SolidType_t value)
 {
@@ -962,7 +938,6 @@ stock int Entity_GetModel(int entity, char[] buffer, int size)
  *
  * @param entity		Entity index
  * @param model			Model name
- * @noreturn
  */
 stock void Entity_SetModel(int entity, const char[] model)
 {
@@ -985,7 +960,6 @@ stock int Entity_GetModelIndex(int entity)
  *
  * @param entity			Entity index.
  * @param index				Model Index.
- * @noreturn
  */
 stock void Entity_SetModelIndex(int entity, int index)
 {
@@ -1042,7 +1016,7 @@ enum Collision_Group_t
  */
 stock Collision_Group_t Entity_GetCollisionGroup(int entity)
 {
-	return Collision_Group_t GetEntProp(entity, Prop_Data, "m_CollisionGroup");
+	return view_as<Collision_Group_t>(GetEntProp(entity, Prop_Data, "m_CollisionGroup"));
 }
 
 /**
@@ -1050,7 +1024,6 @@ stock Collision_Group_t Entity_GetCollisionGroup(int entity)
  *
  * @param entity		entity index
  * @param value			the new collision group.
- * @noreturn
  */
 stock void Entity_SetCollisionGroup(int entity, Collision_Group_t value)
 {
@@ -1068,7 +1041,6 @@ stock void Entity_SetCollisionGroup(int entity, Collision_Group_t value)
  *
  * @param entity			Entity index.
  * @param vec				3 dimensional vector array.
- * @noreturn
  */
 stock void Entity_GetAbsOrigin(int entity, float vec[3])
 {
@@ -1080,7 +1052,6 @@ stock void Entity_GetAbsOrigin(int entity, float vec[3])
  *
  * @param entity			Entity index.
  * @param vec				3 dimensional vector array.
- * @noreturn
  */
 stock void Entity_SetAbsOrigin(int entity, const float vec[3])
 {
@@ -1100,7 +1071,6 @@ stock void Entity_SetAbsOrigin(int entity, const float vec[3])
  *
  * @param entity			Entity index.
  * @param vec				3 dimensional vector array.
- * @noreturn
  */
 stock void Entity_GetAbsAngles(int entity, float vec[3])
 {
@@ -1112,7 +1082,6 @@ stock void Entity_GetAbsAngles(int entity, float vec[3])
  *
  * @param entity			Entity index.
  * @param vec				3 dimensional vector array.
- * @noreturn
  */
 stock void Entity_SetAbsAngles(int entity, const float vec[3])
 {
@@ -1133,7 +1102,6 @@ stock void Entity_SetAbsAngles(int entity, const float vec[3])
  *
  * @param entity		Entity index.
  * @param vel			An 3 dim array
- * @noreturn
  */
 stock void Entity_GetLocalVelocity(int entity, float vec[3])
 {
@@ -1148,7 +1116,6 @@ stock void Entity_GetLocalVelocity(int entity, float vec[3])
  *
  * @param entity		Entity index.
  * @param vel			An 3 dim array
- * @noreturn
  */
 stock void Entity_SetLocalVelocity(int entity, const float vec[3])
 {
@@ -1162,7 +1129,6 @@ stock void Entity_SetLocalVelocity(int entity, const float vec[3])
  *
  * @param entity		Entity index.
  * @param vel			An 3 dim array
- * @noreturn
  */
 stock void Entity_GetBaseVelocity(int entity, float vec[3])
 {
@@ -1176,7 +1142,6 @@ stock void Entity_GetBaseVelocity(int entity, float vec[3])
  *
  * @param entity		Entity index.
  * @param vel			An 3 dim array
- * @noreturn
  */
 stock void Entity_SetBaseVelocity(int entity, const float vec[3])
 {
@@ -1190,7 +1155,6 @@ stock void Entity_SetBaseVelocity(int entity, const float vec[3])
  *
  * @param entity		Entity index.
  * @param vel			An 3 dim array
- * @noreturn
  */
 stock void Entity_GetAbsVelocity(int entity, float vec[3])
 {
@@ -1204,7 +1168,6 @@ stock void Entity_GetAbsVelocity(int entity, float vec[3])
  *
  * @param entity		Entity index.
  * @param vel			An 3 dim array
- * @noreturn
  */
 stock void Entity_SetAbsVelocity(int entity, const float vec[3])
 {
@@ -1221,14 +1184,13 @@ stock void Entity_SetAbsVelocity(int entity, const float vec[3])
  */
 stock bool Entity_IsLocked(int entity)
 {
-	return bool GetEntProp(entity, Prop_Data, "m_bLocked", 1);
+	return GetEntProp(entity, Prop_Data, "m_bLocked", 1) == 1;
 }
 
 /**
  * Locks an entity.
  *
  * @param entity		Entity index.
- * @noreturn
  */
 stock void Entity_Lock(int entity)
 {
@@ -1238,7 +1200,6 @@ stock void Entity_Lock(int entity)
  * Unlocks an entity.
  *
  * @param entity		Entity index.
- * @noreturn
  */
 stock void Entity_UnLock(int entity)
 {
@@ -1261,7 +1222,6 @@ stock int Entity_GetHealth(int entity)
  *
  * @param entity			entity index.
  * @param value			health to set (anything above 511 will overload)
- * @noreturn
  */
 stock void Entity_SetHealth(int entity, int value, bool ignoreMax = false, bool kill = true)
 {
@@ -1337,7 +1297,6 @@ stock int Entity_GetMaxHealth(int entity)
  *
  * @param entity		Entity index
  * @param value			Max health to set (anything above 511 will overload)
- * @noreturn
  */
 stock void Entity_SetMaxHealth(int entity, int value)
 {
@@ -1420,9 +1379,8 @@ stock bool Entity_DisableMotion(int entity)
  * Freezes an entity by setting the FL_FROZEN flag.
  *
  * @param entity		Entity index.
- * @return				True on success, false otherwise
  */
-stock bool Entity_Freeze(int entity)
+stock void Entity_Freeze(int entity)
 {
 	Entity_AddFlags(entity, FL_FROZEN);
 }
@@ -1431,9 +1389,8 @@ stock bool Entity_Freeze(int entity)
  * Unfreezes an entity by removing the FL_FROZEN flag.
  *
  * @param entity		Entity index.
- * @return 				True on success, false otherwise
  */
-stock bool Entity_UnFreeze(int entity)
+stock void Entity_UnFreeze(int entity)
 {
 	Entity_RemoveFlags(entity, FL_FROZEN);
 }
@@ -1447,7 +1404,6 @@ stock bool Entity_UnFreeze(int entity)
  * @param entity			Entity index.
  * @param target			Target entity index.
  * @param				Optional: target name
- * @noreturn
  */
 stock void Entity_PointAtTarget(int entity, int target, const char[] name = "")
 {
@@ -1482,7 +1438,6 @@ stock void Entity_PointAtTarget(int entity, int target, const char[] name = "")
  * @param entity			Entity index.
  * @param target			Target entity index.
  * @param					Optional: target name
- * @noreturn
  */
 stock void Entity_PointHurtAtTarget(int entity, int target, const char[] name = "")
 {
@@ -1605,7 +1560,6 @@ stock int Entity_GetOwner(int entity)
  * For example the owner of a weapon entity.
  *
  * @param entity			Entity index.
- * @noreturn
  */
 stock void Entity_SetOwner(int entity, int newOwner)
 {
@@ -1692,7 +1646,7 @@ stock int Entity_GetGroundEntity(int entity)
  */
 stock bool Entity_Hurt(int entity, int damage, int attacker = 0, int damageType = DMG_GENERIC, const char[] fakeClassName = "")
 {
-	static point_hurt = INVALID_ENT_REFERENCE;
+	static int point_hurt = INVALID_ENT_REFERENCE;
 
 	if (point_hurt == INVALID_ENT_REFERENCE || !IsValidEntity(point_hurt)) {
 		point_hurt = EntIndexToEntRef(Entity_Create("point_hurt"));
@@ -1738,7 +1692,6 @@ stock int Entity_GetParent(int entity)
  * Clears the parent of an entity.
  *
  * @param entity		Entity Index.
- * @noreturn
  */
 stock void Entity_ClearParent(int entity)
 {
@@ -1751,7 +1704,6 @@ stock void Entity_ClearParent(int entity)
  *
  * @param entity		Entity Index.
  * @param parentEntity	Entity Index of the new parent.
- * @noreturn
  */
 stock void Entity_SetParent(int entity, int parent)
 {
@@ -1777,40 +1729,31 @@ typedef Entity_ChangeOverTimeCallback = function bool (int &entity, float &inter
  *
  * @param entity			Entity Index.
  * @param interval			Interval from the current game time to execute the given function.
- * @noreturn
  */
 stock void Entity_ChangeOverTime(int entity, float interval = 0.1, Entity_ChangeOverTimeCallback valueCallback)
 {
-	Handle dataPack = CreateDataPack();
-	WritePackCell(dataPack, EntIndexToEntRef(entity));
-	WritePackFloat(dataPack, interval);
-	WritePackCell(dataPack, 0);
-#if SOURCEMOD_V_MAJOR >= 1 && SOURCEMOD_V_MINOR >= 7
-	WritePackFunction(dataPack, valueCallback);
-#else
-	WritePackCell(dataPack, _:valueCallback);
-#endif
-	ResetPack(dataPack);
-	__smlib_Timer_ChangeOverTime(INVALID_HANDLE,dataPack);
+	DataPack dataPack = new DataPack();
+	dataPack.WriteCell(EntIndexToEntRef(entity));
+	dataPack.WriteFloat(interval);
+	dataPack.WriteCell(0);
+	dataPack.WriteFunction(valueCallback);
+	dataPack.Reset();
+	__smlib_Timer_ChangeOverTime(null, dataPack);
 }
 
-public Action __smlib_Timer_ChangeOverTime(Handle Timer, Handle dataPack)
+public Action __smlib_Timer_ChangeOverTime(Handle Timer, DataPack dataPack)
 {
-	int entity = EntRefToEntIndex(ReadPackCell(dataPack));
+	int entity = EntRefToEntIndex(dataPack.ReadCell());
 	if(!Entity_IsValid(entity)){
 		return Plugin_Stop;
 	}
 
-	float interval = ReadPackFloat(dataPack);
-	int currentCall = ReadPackCell(dataPack);
-#if SOURCEMOD_V_MAJOR >= 1 && SOURCEMOD_V_MINOR >= 7
-	Function callback = ReadPackFunction(dataPack);
-#else
-	Function callback = Function ReadPackCell(dataPack);
-#endif
+	float interval = dataPack.ReadFloat();
+	int currentCall = dataPack.ReadCell();
+	Function callback = dataPack.ReadFunction();
 
 	any result;
-	Call_StartFunction(INVALID_HANDLE, callback);
+	Call_StartFunction(null, callback);
 	Call_PushCellRef(entity);
 	Call_PushFloatRef(interval);
 	Call_PushCellRef(currentCall);
@@ -1820,17 +1763,13 @@ public Action __smlib_Timer_ChangeOverTime(Handle Timer, Handle dataPack)
 		return Plugin_Stop;
 	}
 
-	ResetPack(dataPack,true);
-	WritePackCell(dataPack, EntIndexToEntRef(entity));
-	WritePackFloat(dataPack, interval);
-	WritePackCell(dataPack, currentCall+1);
-#if SOURCEMOD_V_MAJOR >= 1 && SOURCEMOD_V_MINOR >= 7
-	WritePackFunction(dataPack, callback);
-#else
-	WritePackCell(dataPack, _:callback);
-#endif
-	ResetPack(dataPack);
-	CreateTimer(interval,__smlib_Timer_ChangeOverTime,dataPack);
+	dataPack.Reset(true);
+	dataPack.WriteCell(EntIndexToEntRef(entity));
+	dataPack.WriteFloat(interval);
+	dataPack.WriteCell(currentCall+1);
+	dataPack.WriteFunction(callback);
+	dataPack.Reset();
+	CreateTimer(interval, __smlib_Timer_ChangeOverTime, dataPack);
 	return Plugin_Stop;
 }
 
@@ -1867,7 +1806,6 @@ stock int Entity_GetNextChild(int parent, int start = 0)
  *
  * @param entity			Entity index.
  * @param vec				Vector.
- * @noreturn
  */
 stock void Entity_GetMoveDirection(int entity, float vec[3])
 {
@@ -1879,7 +1817,6 @@ stock void Entity_GetMoveDirection(int entity, float vec[3])
  *
  * @param entity			Entity index.
  * @param vec				Vector.
- * @noreturn
  */
 stock void Entity_SetMoveDirection(int entity, const float vec[3])
 {
@@ -1894,7 +1831,7 @@ stock void Entity_SetMoveDirection(int entity, const float vec[3])
  */
 stock bool Entity_GetForceClose(int entity)
 {
-	return bool GetEntProp(entity, Prop_Data, "m_bForceClosed");
+	return GetEntProp(entity, Prop_Data, "m_bForceClosed") == 1;
 }
 
 /**
@@ -1902,7 +1839,6 @@ stock bool Entity_GetForceClose(int entity)
  *
  * @param entity			Entity index.
  * @param forceClose		If true the door will force close, otherwise it won't.
- * @noreturn
  */
 stock void Entity_SetForceClose(int entity, bool forceClose)
 {
@@ -1925,7 +1861,6 @@ stock float Entity_GetSpeed(int entity)
  *
  * @param entity			Entity index.
  * @param speed				The new speed of the entity.
- * @noreturn
  */
 stock void Entity_SetSpeed(int entity, float speed)
 {
@@ -1950,7 +1885,6 @@ stock float Entity_GetBlockDamage(int entity)
  *
  * @param entity			Entity index.
  * @param damage			Damage.
- * @noreturn
  */
 stock void Entity_SetBlockDamage(int entity, float damage)
 {
@@ -1965,7 +1899,7 @@ stock void Entity_SetBlockDamage(int entity, float damage)
  */
 stock bool Entity_IsDisabled(int entity)
 {
-	return bool GetEntProp(entity, Prop_Data, "m_bDisabled", 1);
+	return GetEntProp(entity, Prop_Data, "m_bDisabled", 1) == 1;
 }
 
 /**
@@ -2003,7 +1937,6 @@ stock bool Entity_Enable(int entity)
  *
  * @param entity			Entity index.
  * @param value				Mode, use DAMAGE_* defines.
- * @noreturn
  */
 stock void Entity_SetTakeDamage(int entity, int value)
 {
@@ -2028,7 +1961,6 @@ stock int Entity_GetTakeDamage(int entity)
  *
  * @param entity			Entity index.
  * @param minDamage			Minimum required damage.
- * @noreturn
  */
 stock void Entity_SetMinHealthDamage(int entity, int minDamage)
 {
@@ -2052,7 +1984,6 @@ stock int Entity_GetMinHealthDamage(int entity)
  *
  * @param entity	Entity index
  * @param color 	4 dimensional array where [r,g,b,a] values are stored
- * @noreturn
  * @error			Invalid entity index, or lack of mod compliance.
  */
 stock void Entity_GetRenderColor(int entity, int color[4])
@@ -2092,7 +2023,6 @@ stock void Entity_GetRenderColor(int entity, int color[4])
  * @param g 		Amount of green (0-255)
  * @param b 		Amount of blue (0-255)
  * @param a 		Amount of alpha (0-255)
- * @noreturn
  * @error			Invalid entity index, or lack of mod compliance.
  */
 stock void Entity_SetRenderColor(int entity, int r = -1, int g = -1, int b = -1, int a = -1)

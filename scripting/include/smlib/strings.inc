@@ -58,7 +58,6 @@ stock bool String_IsNumeric(const char[] str)
  * @param output			Output String (Can be the as the input).
  * @param size				Size of the output String.
  * @param chars				Characters to remove.
- * @noreturn
  */
 stock void String_Trim(const char[] str, char[] output, int size, const char[] chrs = " \t\r\n")
 {
@@ -84,7 +83,6 @@ stock void String_Trim(const char[] str, char[] output, int size, const char[] c
  * @param removeList		A list of strings which should be removed from buffer.
  * @param size				Number of Strings in the List.
  * @param caseSensitive		If true, comparison is case sensitive. If false (default), comparison is case insensitive.
- * @noreturn
  */
 stock void String_RemoveList(char[] buffer, char[][] removeList, int size, bool caseSensitive = false)
 {
@@ -101,7 +99,6 @@ stock void String_RemoveList(char[] buffer, char[][] removeList, int size, bool 
  * @param input				Input String.
  * @param output			Output String.
  * @param size				Max Size of the Output string
- * @noreturn
  */
 stock void String_ToLower(const char[] input, char[] output, int size)
 {
@@ -126,7 +123,6 @@ stock void String_ToLower(const char[] input, char[] output, int size)
  * @param input				Input String.
  * @param output			Output String.
  * @param size				Max Size of the Output string
- * @noreturn
  */
 stock void String_ToUpper(const char[] input, char[] output, int size)
 {
@@ -153,7 +149,6 @@ stock void String_ToUpper(const char[] input, char[] output, int size)
  * @param chrs				String for specifying the characters used for random character generation.
  * 							By default it will use all letters of the alphabet (upper and lower) and all numbers.
  * 							If you pass an empty String, it will use all readable ASCII characters (33 - 126)
- * @noreturn
  */
 stock void String_GetRandom(char[] buffer, int size, int length = 32, const char[] chrs = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234556789")
 {

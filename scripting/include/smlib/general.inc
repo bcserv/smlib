@@ -160,7 +160,6 @@ stock int FindStringIndex2(int tableidx, const char[] str)
  * @param ip			IP Long
  * @param buffer		String Buffer (size = 16)
  * @param size			String Buffer size
- * @noreturn
  */
 stock void LongToIP(int ip, char[] buffer, int size)
 {
@@ -212,7 +211,7 @@ static int localIPRanges[] =
  */
 stock bool IsIPLocal(int ip)
 {
-	int range, int bits, int move, bool matches;
+	int range, bits, move, matches;
 
 	for (int i=0; i < sizeof(localIPRanges); i++) {
 
@@ -240,7 +239,6 @@ stock bool IsIPLocal(int ip)
  * Closes the given hindle and sets it to null.
  *
  * @param handle   handle
- * @noreturn
  */
 stock int ClearHandle(Handle &handle)
 {

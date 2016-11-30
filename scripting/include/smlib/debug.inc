@@ -10,7 +10,6 @@
  *
  * @param array		Static Float-Array.
  * @param size		Size of the Array.
- * @noreturn
  */
 stock void Debug_FloatArray(const float[] array, int size = 3)
 {

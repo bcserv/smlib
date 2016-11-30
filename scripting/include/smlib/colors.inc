@@ -93,7 +93,7 @@ static int chatColorInfo[][ChatColorInfo] =
 };
 
 static bool checkTeamPlay			= false;
-static Handle mp_teamplay			= INVALID_HANDLE;
+static ConVar mp_teamplay			= null;
 static bool isSayText2_supported	= true;
 static int chatSubject				= CHATCOLOR_NOSUBJECT;
 
@@ -102,7 +102,6 @@ static int chatSubject				= CHATCOLOR_NOSUBJECT;
  * Call this before Color_ParseChatText() or Client_PrintToChat().
  *
  * @param client			Client Index/Subject
- * @noreturn
  */
 stock void Color_ChatSetSubject(int client)
 {
@@ -123,7 +122,6 @@ stock int Color_ChatGetSubject()
  * Clears the subject used for the chat color parser.
  * Call this after Color_ParseChatText().
  *
- * @noreturn
  */
 stock void Color_ChatClearSubject()
 {
@@ -144,7 +142,7 @@ stock void Color_ChatClearSubject()
 stock int Color_ParseChatText(const char[] str, char[] buffer, int size)
 {
 	bool inBracket = false;
-	int x = 0, int x_buf = 0, int x_tag = 0;
+	int x = 0, x_buf = 0, x_tag = 0;
 	int subject = CHATCOLOR_NOSUBJECT;
 
 	char sTag[10]         = "";     // This should be able to hold "\x08RRGGBBAA"\0
@@ -163,7 +161,7 @@ stock int Color_ParseChatText(const char[] str, char[] buffer, int size)
 			break;
 		}
 
-		int character = str[x++];
+		char character = str[x++];
 
 		if (inBracket) {
 			// We allow up to 9 characters in the tag (#RRGGBBAA)
@@ -241,7 +239,6 @@ stock int Color_ParseChatText(const char[] str, char[] buffer, int size)
  * @param tag				Color Tag String.
  * @param subject			Subject variable to pass
  * @param result            The result as character sequence (string). This will be \0 if the tag is unkown.
- * @noreturn
  */
 stock void Color_TagToCode(const char[] tag, int &subject = -1, char result[10])
 {
@@ -307,7 +304,6 @@ stock void Color_TagToCode(const char[] tag, int &subject = -1, char result[10])
  * @param input				Input String.
  * @param output			Output String.
  * @param size				Max Size of the Output string
- * @noreturn
  */
 stock void Color_StripFromChatText(const char[] input, char[] output, int size)
 {
@@ -335,7 +331,6 @@ stock void Color_StripFromChatText(const char[] input, char[] output, int size)
  * All those hardcoded default values can be overriden in
  * smlib's color gamedata file.
  *
- * @noreturn
  */
 static stock void Color_ChatInitialize()
 {
@@ -400,12 +395,11 @@ static stock void Color_ChatInitialize()
 	BuildPath(Path_SM, path_gamedata, sizeof(path_gamedata), "gamedata/%s.txt", SMLIB_COLORS_GAMEDATAFILE);
 
 	if (FileExists(path_gamedata)) {
-		Handle gamedata = INVALID_HANDLE;
+		Handle gamedata = null;
 
-		if ((gamedata = LoadGameConfigFile(SMLIB_COLORS_GAMEDATAFILE)) != INVALID_HANDLE) {
+		if ((gamedata = LoadGameConfigFile(SMLIB_COLORS_GAMEDATAFILE)) != null) {
 
-			char keyName[32];
-			char buffer[6];
+			char keyName[32], buffer[6];
 
 			for (int i=0; i < sizeof(chatColorNames); i++) {
 
@@ -434,7 +428,7 @@ static stock void Color_ChatInitialize()
 				checkTeamPlay = StrEqual(buffer, "true");
 			}
 
-			CloseHandle(gamedata);
+			delete gamedata;
 		}
 	}
 
@@ -448,7 +442,7 @@ static stock void Color_ChatInitialize()
  *
  * @param index
  * @param subject A client index or CHATCOLOR_NOSUBJECT
- * @noreturn
+ * @return The new subject client index used for team colors.
  */
 static stock int Color_GetChatColorInfo(int &index, int &subject = CHATCOLOR_NOSUBJECT)
 {
@@ -492,7 +486,7 @@ static stock int Color_GetChatColorInfo(int &index, int &subject = CHATCOLOR_NOS
 		}
 		default: {
 
-			if (!checkTeamPlay || GetConVarBool(mp_teamplay)) {
+			if (!checkTeamPlay || mp_teamplay.BoolValue) {
 
 				if (subject > 0 && subject <= MaxClients) {
 

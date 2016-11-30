@@ -16,9 +16,8 @@
  * @param path			File path
  * @param buffer		String buffer array
  * @param size			Size of string buffer
- * @noreturn
  */
-stock bool File_GetBaseName(const char[] path, char[] buffer, int size)
+stock void File_GetBaseName(const char[] path, char[] buffer, int size)
 {
 	if (path[0] == '\0') {
 		buffer[0] = '\0';
@@ -46,9 +45,8 @@ stock bool File_GetBaseName(const char[] path, char[] buffer, int size)
  * @param path			File path
  * @param buffer		String buffer array
  * @param size			Size of string buffer
- * @noreturn
  */
-stock bool File_GetDirName(const char[] path, char[] buffer, int size)
+stock void File_GetDirName(const char[] path, char[] buffer, int size)
 {
 	if (path[0] == '\0') {
 		buffer[0] = '\0';
@@ -78,9 +76,8 @@ stock bool File_GetDirName(const char[] path, char[] buffer, int size)
  * @param path			File path
  * @param buffer		String buffer array
  * @param size			Size of string buffer
- * @noreturn
  */
-stock bool File_GetFileName(const char[] path, char[] buffer, int size)
+stock void File_GetFileName(const char[] path, char[] buffer, int size)
 {
 	if (path[0] == '\0') {
 		buffer[0] = '\0';
@@ -105,7 +102,6 @@ stock bool File_GetFileName(const char[] path, char[] buffer, int size)
  * @param path			Path String
  * @param buffer		String buffer array
  * @param size			Max length of string buffer
- * @noreturn
  */
 stock void File_GetExtension(const char[] path, char[] buffer, int size)
 {
@@ -132,7 +128,6 @@ stock void File_GetExtension(const char[] path, char[] buffer, int size)
  * @param recursive		Whether to do recursion or not.
  * @param ignoreExts	Optional: 2 dimensional String array.You can define it like this: char ignore[][] = { ".ext1", ".ext2" };
  * @param size			This should be set to the number of file extensions in the ignoreExts array (sizeof(ignore) for the example above)
- * @noreturn
  */
 
 // Damn you SourcePawn :( I didn't want to
@@ -165,9 +160,9 @@ stock void File_AddToDownloadsTable(const char[] path, bool recursive = true, co
 	else if (recursive && DirExists(path)) {
 
 		char dirEntry[PLATFORM_MAX_PATH];
-		Handle __dir = OpenDirectory(path);
+		DirectoryListing __dir = OpenDirectory(path);
 
-		while (ReadDirEntry(__dir, dirEntry, sizeof(dirEntry))) {
+		while (__dir.GetNext(dirEntry, sizeof(dirEntry))) {
 
 			if (StrEqual(dirEntry, ".") || StrEqual(dirEntry, "..")) {
 				continue;
@@ -177,7 +172,7 @@ stock void File_AddToDownloadsTable(const char[] path, bool recursive = true, co
 			File_AddToDownloadsTable(dirEntry, recursive, ignoreExts, size);
 		}
 
-		CloseHandle(__dir);
+		delete __dir;
 	}
 	else if (FindCharInString(path, '*', true)) {
 
@@ -194,8 +189,8 @@ stock void File_AddToDownloadsTable(const char[] path, bool recursive = true, co
 			File_GetFileName(path, fileName, sizeof(fileName));
 			StrCat(fileName, sizeof(fileName), ".");
 
-			Handle __dir = OpenDirectory(dirName);
-			while (ReadDirEntry(__dir, dirEntry, sizeof(dirEntry))) {
+			DirectoryListing __dir = OpenDirectory(dirName);
+			while (__dir.GetNext(dirEntry, sizeof(dirEntry))) {
 
 				if (StrEqual(dirEntry, ".") || StrEqual(dirEntry, "..")) {
 					continue;
@@ -207,7 +202,7 @@ stock void File_AddToDownloadsTable(const char[] path, bool recursive = true, co
 				}
 			}
 
-			CloseHandle(__dir);
+			delete __dir;
 		}
 	}
 
@@ -221,19 +216,18 @@ stock void File_AddToDownloadsTable(const char[] path, bool recursive = true, co
  * Comments are allowed ! Supported comment types are ; // #
  *
  * @param path			Path to the .txt file.
- * @noreturn
  */
 stock void File_ReadDownloadList(const char[] path)
 {
-	Handle file = OpenFile(path, "r");
+	File file = OpenFile(path, "r");
 
-	if (file  == INVALID_HANDLE) {
+	if (file  == null) {
 		return;
 	}
 
 	char buffer[PLATFORM_MAX_PATH];
-	while (!IsEndOfFile(file)) {
-		ReadFileLine(file, buffer, sizeof(buffer));
+	while (!file.EndOfFile()) {
+		file.ReadLine(buffer, sizeof(buffer));
 
 		int pos;
 		pos = StrContains(buffer, "//");
@@ -260,7 +254,7 @@ stock void File_ReadDownloadList(const char[] path)
 		File_AddToDownloadsTable(buffer);
 	}
 
-	CloseHandle(file);
+	delete file;
 }
 
 /*
@@ -308,15 +302,15 @@ stock bool File_LoadTranslations(const char[] file, bool setFailState = true)
  */
 stock int File_ToString(const char[] path, char[] buffer, int size)
 {
-	Handle file = OpenFile(path, "rb");
+	File file = OpenFile(path, "rb");
 
-	if (file == INVALID_HANDLE) {
+	if (file == null) {
 		buffer[0] = '\0';
 		return -1;
 	}
 
-	int num_bytes_written = ReadFileString(file, buffer, size);
-	CloseHandle(file);
+	int num_bytes_written = file.ReadString(buffer, size);
+	delete file;
 
 	return num_bytes_written;
 }
@@ -330,14 +324,14 @@ stock int File_ToString(const char[] path, char[] buffer, int size)
  */
 stock bool File_StringToFile(const char[] path, char[] str)
 {
-	Handle file = OpenFile(path, "wb");
+	File file = OpenFile(path, "wb");
 
-	if (file == INVALID_HANDLE) {
+	if (file == null) {
 		return false;
 	}
 
-	bool success = WriteFileString(file, str, false);
-	CloseHandle(file);
+	bool success = file.WriteString(str, false);
+	delete file;
 
 	return success;
 }
@@ -352,29 +346,29 @@ stock bool File_StringToFile(const char[] path, char[] str)
  */
 stock bool File_Copy(const char[] source, const char[] destination)
 {
-	Handle file_source = OpenFile(source, "rb");
+	File file_source = OpenFile(source, "rb");
 
-	if (file_source == INVALID_HANDLE) {
+	if (file_source == null) {
 		return false;
 	}
 
-	Handle file_destination = OpenFile(destination, "wb");
+	File file_destination = OpenFile(destination, "wb");
 
-	if (file_destination == INVALID_HANDLE) {
-		CloseHandle(file_source);
+	if (file_destination == null) {
+		delete file_source;
 		return false;
 	}
 
 	int buffer[32];
 	int cache;
 
-	while (!IsEndOfFile(file_source)) {
-		cache = ReadFile(file_source, buffer, 32, 1);
-		WriteFile(file_destination, buffer, cache, 1);
+	while (!file_source.EndOfFile()) {
+		cache = file_source.Read(buffer, 32, 1);
+		file_destination.Write(buffer, cache, 1);
 	}
 
-	CloseHandle(file_source);
-	CloseHandle(file_destination);
+	delete file_source;
+	delete file_destination;
 
 	return true;
 }
@@ -415,9 +409,9 @@ static stock bool Sub_File_CopyRecursive(const char[] path, const char[] destina
 			return false;
 		}
 
-		Handle directory = OpenDirectory(path);
+		DirectoryListing directory = OpenDirectory(path);
 
-		if (directory == INVALID_HANDLE) {
+		if (directory == null) {
 			return false;
 		}
 
@@ -425,7 +419,7 @@ static stock bool Sub_File_CopyRecursive(const char[] path, const char[] destina
 		char destination_buffer[PLATFORM_MAX_PATH];
 		FileType type;
 
-		while (ReadDirEntry(directory, source_buffer, sizeof(source_buffer), type)) {
+		while (directory.GetNext(source_buffer, sizeof(source_buffer), type)) {
 
 			if (StrEqual(source_buffer, "..") || StrEqual(source_buffer, ".")) {
 				continue;
@@ -440,13 +434,13 @@ static stock bool Sub_File_CopyRecursive(const char[] path, const char[] destina
 			else if (type == FileType_Directory) {
 
 				if (!File_CopyRecursive(source_buffer, destination_buffer, stop_on_error, dirMode) && stop_on_error) {
-					CloseHandle(directory);
+					delete directory;
 					return false;
 				}
 			}
 		}
 
-		CloseHandle(directory);
+		delete directory;
 	}
 	else if (fileType == FileType_Unknown) {
 		return false;

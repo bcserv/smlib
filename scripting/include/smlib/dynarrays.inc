@@ -18,7 +18,7 @@
  * @return				Value read.
  * @error				Invalid Handle, invalid index, or invalid block.
  */
-stock bool DynArray_GetBool(Handle array, int index, int block = 0, bool asChar = false)
+stock bool DynArray_GetBool(ArrayList array, int index, int block = 0, bool asChar = false)
 {
-	return bool GetArrayCell(array, index, block, asChar);
+	return array.Get(index, block, asChar) > 0;
 }

@@ -15,7 +15,7 @@
  */
 stock bool Game_End()
 {
-	new game_end = FindEntityByClassname(-1, "game_end");
+	int game_end = FindEntityByClassname(-1, "game_end");
 
 	if (game_end == -1) {
 		game_end = CreateEntityByName("game_end");

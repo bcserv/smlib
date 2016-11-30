@@ -238,7 +238,7 @@ stock int Crypt_Base64UrlToMime(const char[] sString, char[] sResult, int len)
 
 	nLength = strlen(sString);
 
-	char sTemp[nLength+1]; // Buffer string
+	char[] sTemp = new char[nLength+1]; // Buffer string
 
 	// Loop through string
 	for (int i = 0; i < nLength; i++) {
@@ -273,7 +273,6 @@ stock int Crypt_Base64UrlToMime(const char[] sString, char[] sResult, int len)
  * @param str			Input String
  * @param output		Output String Buffer
  * @param maxlen		Size of the Output String Buffer
- * @noreturn
  */
 stock void Crypt_MD5(const char[] str, char[] output, int maxlen)
 {
@@ -521,7 +520,6 @@ static stock void MD5Transform(int[] buf, int[] input){
  * @param output		The encoded result.
  * @param maxlen		The maximum length of the output buffer.
  *
- * @noreturn
  */
 stock void Crypt_RC4Encode(const char[] input, const char[] pwd, char[] output, int maxlen)
 {
@@ -571,11 +569,11 @@ stock void Crypt_RC4Encode(const char[] input, const char[] pwd, char[] output, 
  * @param pwd			The password/key used to encode and decode the data.
  * @param output		The encoded result.
  * @param maxlen		The maximum length of the output buffer.
- * @return				Number of writen bits or -1
+ * @return				Number of bits written or -1
  */
 stock int Crypt_RC4EncodeBinary(const char[] input, int str_len, const char[] pwd, char[] output, int maxlen)
 {
-	int pwd_len,i,j,a,k;
+	int pwd_len, i, j, a, k;
 	int key[256];
 	int box[256];
 	int tmp;

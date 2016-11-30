@@ -129,9 +129,8 @@ stock int Array_FindHighestValue(any[] array, int size, int start = 0)
  * @param size			Number of cells to write (eg. the array's size)
  * @param value			Fill value.
  * @param start			Optional: Offset where to start (0 - (size-1)).
- * @noreturn
  */
-stock int Array_Fill(any[] array, int size, any value, int start = 0)
+stock void Array_Fill(any[] array, int size, any value, int start = 0)
 {
 	if (start < 0) {
 		start = 0;
@@ -148,9 +147,8 @@ stock int Array_Fill(any[] array, int size, any value, int start = 0)
  * @param array			Static Array to copy from.
  * @param newArray		New Array to copy to.
  * @param size			Size of the array (or number of cells to copy)
- * @noreturn
  */
-stock int Array_Copy(const any[] array, any[] newArray, int size)
+stock void Array_Copy(const any[] array, any[] newArray, int size)
 {
 	for (int i=0; i < size; i++) {
 		newArray[i] = array[i];

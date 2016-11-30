@@ -72,7 +72,6 @@ stock int Team_GetClientCount(int team, int flags = 0)
  * @param team1					Pass an integer variable by reference
  * @param team2					Pass an integer variable by reference
  * @param flags					Client Filter Flags (Use the CLIENTFILTER_ constants).
- * @noreturn
  */
 stock void Team_GetClientCounts(int &team1 = 0, int &team2 = 0, int flags = 0)
 {

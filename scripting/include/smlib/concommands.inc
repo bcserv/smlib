@@ -15,7 +15,7 @@
  */
 stock bool ConCommand_HasFlags(const char[] command, const int flags)
 {
-    return bool (GetCommandFlags(command) & flags);
+    return (GetCommandFlags(command) & flags) == flags;
 }
 
 /**
@@ -23,7 +23,6 @@ stock bool ConCommand_HasFlags(const char[] command, const int flags)
  *
  * @param    command        ConCommand name.
  * @param    flags        Flags to add.
- * @noreturn
  */
 stock void ConCommand_AddFlags(const char[] command, const int flags)
 {
@@ -37,7 +36,6 @@ stock void ConCommand_AddFlags(const char[] command, const int flags)
  *
  * @param    command        ConCommand name.
  * @param    flags        Flags to remove
- * @noreturn
  */
 stock void ConCommand_RemoveFlags(const char[] command, const int flags)
 {

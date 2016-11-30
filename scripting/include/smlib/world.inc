@@ -9,7 +9,6 @@
  * Gets the world's max size
  *
  * @param vec		Vector buffer
- * @noreturn
  */
 stock void World_GetMaxs(float vec[3])
 {

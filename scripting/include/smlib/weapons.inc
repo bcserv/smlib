@@ -35,7 +35,6 @@ stock int Weapon_GetOwner(int weapon)
  *
  * @param weapon		Weapon Entity.
  * @param entity		Entity Index.
- * @noreturn
  */
 stock void Weapon_SetOwner(int weapon, int entity)
 {
@@ -126,7 +125,7 @@ stock int Weapon_GetSubType(int weapon)
  */
 stock bool Weapon_IsReloading(int weapon)
 {
-	return bool GetEntProp(weapon, Prop_Data, "m_bInReload");
+	return GetEntProp(weapon, Prop_Data, "m_bInReload") == 1;
 }
 
 /*
@@ -158,7 +157,7 @@ stock int Weapon_GetState(int weapon)
  */
 stock bool Weapon_FiresUnderWater(int weapon)
 {
-	return bool GetEntProp(weapon, Prop_Data, "m_bFiresUnderwater");
+	return GetEntProp(weapon, Prop_Data, "m_bFiresUnderwater") == 1;
 }
 
 /*
@@ -166,11 +165,10 @@ stock bool Weapon_FiresUnderWater(int weapon)
  *
  * @param weapon		Weapon Entity.
  * @param can			True or False.
- * @noreturn
  */
 stock void Weapon_SetFiresUnderWater(int weapon, bool can = true)
 {
-	SetEntProp(weapon, Prop_Data, "m_bFiresUnderwater", _:can);
+	SetEntProp(weapon, Prop_Data, "m_bFiresUnderwater", view_as<int>(can));
 }
 
 /*
@@ -181,7 +179,7 @@ stock void Weapon_SetFiresUnderWater(int weapon, bool can = true)
  */
 stock bool Weapon_FiresUnderWaterAlt(int weapon)
 {
-	return bool GetEntProp(weapon, Prop_Data, "m_bAltFiresUnderwater");
+	return GetEntProp(weapon, Prop_Data, "m_bAltFiresUnderwater") == 1;
 }
 
 /*
@@ -189,11 +187,10 @@ stock bool Weapon_FiresUnderWaterAlt(int weapon)
  *
  * @param weapon		Weapon Entity.
  * @param can			True or False.
- * @noreturn
  */
 stock void Weapon_SetFiresUnderWaterAlt(int weapon, bool can = true)
 {
-	SetEntProp(weapon, Prop_Data, "m_bAltFiresUnderwater", _:can);
+	SetEntProp(weapon, Prop_Data, "m_bAltFiresUnderwater", view_as<int>(can));
 }
 
 /*
@@ -212,7 +209,6 @@ stock int Weapon_GetPrimaryAmmoType(int weapon)
  *
  * @param weapon		Weapon Entity.
  * @param type			Primary ammo type value.
- * @noreturn
  */
 stock void Weapon_SetPrimaryAmmoType(int weapon, int type)
 {
@@ -235,7 +231,6 @@ stock int Weapon_GetSecondaryAmmoType(int weapon)
  *
  * @param weapon		Weapon Entity.
  * @param type			Secondary ammo type value.
- * @noreturn
  */
 stock void Weapon_SetSecondaryAmmoType(int weapon, int type)
 {
@@ -258,7 +253,6 @@ stock int Weapon_GetPrimaryClip(int weapon)
  *
  * @param weapon		Weapon Entity.
  * @param value			Clip Count value.
- * @noreturn
  */
 stock void Weapon_SetPrimaryClip(int weapon, int value)
 {
@@ -281,7 +275,6 @@ stock int Weapon_GetSecondaryClip(int weapon)
  *
  * @param weapon		Weapon Entity.
  * @param value			Clip Count value.
- * @noreturn
  */
 stock void Weapon_SetSecondaryClip(int weapon, int value)
 {
@@ -294,7 +287,6 @@ stock void Weapon_SetSecondaryClip(int weapon, int value)
  * @param weapon		Weapon Entity.
  * @param primary		Primary Clip Count value.
  * @param secondary		Primary Clip Count value.
- * @noreturn
  */
 stock void Weapon_SetClips(int weapon, int primary, int secondary)
 {
@@ -324,7 +316,6 @@ stock int Weapon_GetPrimaryAmmoCount(int weapon)
  *
  * @param weapon		Weapon Entity.
  * @param value			Primary Ammo Count.
- * @noreturn
  */
 stock void Weapon_SetPrimaryAmmoCount(int weapon, int value)
 {
@@ -353,7 +344,6 @@ stock int Weapon_GetSecondaryAmmoCount(int weapon)
  *
  * @param weapon		Weapon Entity.
  * @param value			Secondary Ammo Count.
- * @noreturn
  */
 stock void Weapon_SetSecondaryAmmoCount(int weapon, int value)
 {
@@ -369,7 +359,6 @@ stock void Weapon_SetSecondaryAmmoCount(int weapon, int value)
  * @param weapon		Weapon Entity.
  * @value primary		Primary Ammo Count.
  * @value secondary		Secondary Ammo Count.
- * @noreturn
  */
 stock void Weapon_SetAmmoCounts(int weapon, int primary, int secondary)
 {
@@ -394,7 +383,6 @@ stock int Weapon_GetViewModelIndex(int weapon)
  *
  * @param weapon		Weapon Entity.
  * @param index			Model Index.
- * @noreturn
  */
 stock void Weapon_SetViewModelIndex(int weapon, int index)
 {

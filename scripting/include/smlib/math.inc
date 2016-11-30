@@ -206,9 +206,8 @@ stock float Math_GetPercentageFloat(float value, float all) {
  * @param end			The end vector where the imagined line ends.
  * @param scale			The position on the line 0.0 is the start 1.0 is the end.
  * @param output		Output vector
- * @noreturn
  */
-stock int Math_MoveVector(const float start[3], const float end[3], float scale, float output[3])
+stock void Math_MoveVector(const float start[3], const float end[3], float scale, float output[3])
 {
 	SubtractVectors(end,start,output);
 	ScaleVector(output,scale);
@@ -222,9 +221,8 @@ stock int Math_MoveVector(const float start[3], const float end[3], float scale,
  * @param y				Float value.
  * @param z				Float value.
  * @param result		Output vector.
- * @noreturn
  */
-stock int Math_MakeVector(const float x, const float y, const float z, float result[3])
+stock void Math_MakeVector(const float x, const float y, const float z, float result[3])
 {
 	result[0] = x;
 	result[1] = y;
@@ -242,9 +240,8 @@ stock int Math_MakeVector(const float x, const float y, const float z, float res
  * @param vec 			Vector to rotate.
  * @param angles 		How to rotate the vector.
  * @param result		Output vector.
- * @noreturn
  */
-stock int Math_RotateVector(const float vec[3], const float angles[3], float result[3])
+stock void Math_RotateVector(const float vec[3], const float angles[3], float result[3])
 {
 	// First the angle/radiant calculations
 	float rad[3];
@@ -265,8 +262,8 @@ stock int Math_RotateVector(const float vec[3], const float angles[3], float res
 	float sinGamma = Sine(rad[2]);
 
 	// 3D rotation matrix for more information: http://en.wikipedia.org/wiki/Rotation_matrix#In_three_dimensions
-	float x = vec[0], float y = vec[1], float z = vec[2];
-	float newX, float newY, float newZ;
+	float x = vec[0], y = vec[1], z = vec[2];
+	float newX, newY, newZ;
 	newY = cosAlpha*y - sinAlpha*z;
 	newZ = cosAlpha*z + sinAlpha*y;
 	y = newY;
