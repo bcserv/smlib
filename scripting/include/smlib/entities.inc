@@ -806,7 +806,7 @@ stock SolidFlags_t Entity_GetSolidFlags(int entity)
 stock void Entity_SetSolidFlags(int entity, SolidFlags_t flags)
 {
 	SolidFlags_t oldFlags = Entity_GetSolidFlags(entity);
-	flags = flags & 0xFFFF;
+	flags = flags & view_as<SolidFlags_t>(0xFFFF);
 
 	if (oldFlags == flags) {
 		return;
@@ -855,7 +855,7 @@ stock void Entity_RemoveSolidFlags(int entity, SolidFlags_t flags)
  */
 stock void Entity_ClearSolidFlags(int entity)
 {
-	Entity_SetSolidFlags(entity, SolidFlags_t 0);
+	Entity_SetSolidFlags(entity, view_as<SolidFlags_t>(0));
 }
 
 /**
@@ -1220,10 +1220,12 @@ stock int Entity_GetHealth(int entity)
 /**
  * Sets the health of an entity.
  *
- * @param entity			entity index.
- * @param value			health to set (anything above 511 will overload)
+ * @param entity        entity index.
+ * @param value         health to set (anything above 511 will overload)
+ *
+ * @return              The new health of the target
  */
-stock void Entity_SetHealth(int entity, int value, bool ignoreMax = false, bool kill = true)
+stock int Entity_SetHealth(int entity, int value, bool ignoreMax = false, bool kill = true)
 {
 	int health = value;
 
@@ -1297,8 +1299,10 @@ stock int Entity_GetMaxHealth(int entity)
  *
  * @param entity		Entity index
  * @param value			Max health to set (anything above 511 will overload)
+ *
+ * @return 				The new max health of the entity
  */
-stock void Entity_SetMaxHealth(int entity, int value)
+stock int Entity_SetMaxHealth(int entity, int value)
 {
 	SetEntProp(entity, Prop_Data, "m_iMaxHealth", value);
 	return value;
