@@ -1998,7 +1998,7 @@ stock void Entity_GetRenderColor(int entity, int color[4])
 	if (!gotconfig) {
 		Handle gc = LoadGameConfigFile("core.games");
 		bool exists = GameConfGetKeyValue(gc, "m_clrRender", prop, sizeof(prop));
-		CloseHandle(gc);
+		delete gc;
 
 		if (!exists) {
 			strcopy(prop, sizeof(prop), "m_clrRender");
@@ -2037,7 +2037,7 @@ stock void Entity_SetRenderColor(int entity, int r = -1, int g = -1, int b = -1,
 	if (!gotconfig) {
 		Handle gc = LoadGameConfigFile("core.games");
 		bool exists = GameConfGetKeyValue(gc, "m_clrRender", prop, sizeof(prop));
-		CloseHandle(gc);
+		delete gc;
 
 		if (!exists) {
 			strcopy(prop, sizeof(prop), "m_clrRender");
