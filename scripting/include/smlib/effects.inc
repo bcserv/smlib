@@ -40,7 +40,7 @@ stock bool Effect_DissolveEntity(int entity, DissolveType dissolveType = DISSOLV
 	}
 
 	Entity_PointAtTarget(env_entity_dissolver, entity);
-	SetEntProp(env_entity_dissolver, Prop_Send, "m_nDissolveType", _:dissolveType);
+	SetEntProp(env_entity_dissolver, Prop_Send, "m_nDissolveType", view_as<int>(dissolveType));
 	SetEntProp(env_entity_dissolver, Prop_Send, "m_nMagnitude", magnitude);
 	AcceptEntityInput(env_entity_dissolver,	"Dissolve");
 	Entity_Kill(env_entity_dissolver);
@@ -118,7 +118,7 @@ stock void Effect_Fade(int entity, int fadeOut = true, int kill = false, int fas
 		dataPack.WriteCell(kill);
 		dataPack.WriteFunction(callback);
 		dataPack.WriteCell(data);
-		dataPack.Reset()
+		dataPack.Reset();
 	}
 }
 
