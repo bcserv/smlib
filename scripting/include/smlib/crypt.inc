@@ -54,11 +54,11 @@ static const int base64_decodeTable[] = {
  * For some reason the standard demands a string in 24-bit (3 character) intervals.
  * This fill character is used to identify unused bytes at the end of the string.
  */
-static const char base64_cFillChar			= '=';
+static const char base64_cFillChar    = '=';
 
 // The conversion characters between the standard and URL-compliance Base64 protocols
-static const char base64_mime_chars[]	= "+/=";
-static const char base64_url_chars[]	= "-_.";
+static const char base64_mime_chars[] = "+/=";
+static const char base64_url_chars[]  = "-_.";
 
 /*
  * Encodes a string or binary data into Base64
@@ -198,7 +198,7 @@ stock int Crypt_Base64MimeToUrl(const char[] sString, char[] sResult, int len)
 
 	nLength = strlen(sString);
 
-	char sTemp[nLength+1]; // Buffer string
+	char[] sTemp = new char[nLength+1]; // Buffer string
 
 	// Loop through string
 	for (int i = 0; i < nLength; i++) {
@@ -313,7 +313,7 @@ stock void Crypt_MD5(const char[] str, char[] output, int maxlen)
 
 		if (mdi == 0x40) {
 
-			for (int i = 0, ii = 0; i < 16; ++i, ii += 4)
+			for (i = 0, ii = 0; i < 16; ++i, ii += 4)
 			{
 				update[i] = (input[ii + 3] << 24) | (input[ii + 2] << 16) | (input[ii + 1] << 8) | input[ii];
 			}
@@ -364,7 +364,7 @@ stock void Crypt_MD5(const char[] str, char[] output, int maxlen)
 
 		if (mdi == 0x40) {
 
-			for (int i = 0, ii = 0; i < 16; ++i, ii += 4) {
+			for (i = 0, ii = 0; i < 16; ++i, ii += 4) {
 				update[i] = (input[ii + 3] << 24) | (input[ii + 2] << 16) | (input[ii + 1] << 8) | input[ii];
 			}
 
@@ -382,7 +382,7 @@ stock void Crypt_MD5(const char[] str, char[] output, int maxlen)
 	MD5Transform(buf, inx);
 
 	int digest[16];
-	for (int i = 0, ii = 0; i < 4; ++i, ii += 4) {
+	for (i = 0, ii = 0; i < 4; ++i, ii += 4) {
 		digest[ii] = (buf[i]) & 0xFF;
 		digest[ii + 1] = (buf[i] >>> 8) & 0xFF;
 		digest[ii + 2] = (buf[i] >>> 16) & 0xFF;
@@ -533,7 +533,7 @@ stock void Crypt_RC4Encode(const char[] input, const char[] pwd, char[] output, 
 
 	if (pwd_len > 0 && str_len > 0) {
 
-		for (int i=0; i < 256; i++) {
+		for (i=0; i < 256; i++) {
 			key[i] = pwd[i%pwd_len];
 			box[i]=i;
 		}
@@ -582,7 +582,7 @@ stock int Crypt_RC4EncodeBinary(const char[] input, int str_len, const char[] pw
 
 	if (pwd_len > 0 && str_len > 0) {
 
-		for(int i=0;i<256;i++) {
+		for(i=0;i<256;i++) {
 			key[i] = pwd[i%pwd_len];
 			box[i]=i;
 		}
