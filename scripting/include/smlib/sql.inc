@@ -45,7 +45,7 @@ stock void SQL_TQueryF(Handle database, SQLTCallback callback, any data, DBPrior
  */
 stock int SQL_FetchIntByName(Handle query, char[] fieldName, DBResult &result = DBVal_Error) {
 
-	new fieldNum;
+	int fieldNum;
 	SQL_FieldNameToNum(query, fieldName, fieldNum);
 
 	return SQL_FetchInt(query, fieldNum, result);
