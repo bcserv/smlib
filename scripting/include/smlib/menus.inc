@@ -18,7 +18,7 @@ stock void Menu_AddIntItem(Menu menu, any value, char[] display)
 {
 	char buffer[INT_MAX_DIGITS + 1];
 	IntToString(value, buffer, sizeof(buffer));
-	menu.AddItem(buffer, display)
+	menu.AddItem(buffer, display);
 }
 
 /**
