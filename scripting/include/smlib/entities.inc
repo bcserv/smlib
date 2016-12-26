@@ -971,7 +971,6 @@ stock void Entity_SetModelIndex(int entity, int index)
 *
 * @param entity		Entity index
 * @param maxspeed	the maximum speed the entity can move
-* @noreturn
 */
 stock void Entity_SetMaxSpeed(int entity, float value)
 {

@@ -17,7 +17,6 @@
  * @param format		Query string, printf syntax supported
  * @param priority		Priority queue to use
  * @param ...			Variable number of format parameters.
- * @noreturn
  */
 stock void SQL_TQueryF(Handle database, SQLTCallback callback, any data, DBPriority priority=DBPrio_Normal, const char[] format, any ...) {
 

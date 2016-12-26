@@ -82,7 +82,6 @@
 *
 * @param client		Client index.
 * @param flags		Flag to set, use one of the HIDEHUD_ hiding constants
-* @noreturn
 */
 stock void Client_SetHideHud(int client, int flags)
 {
