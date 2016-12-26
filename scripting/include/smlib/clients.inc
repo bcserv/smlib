@@ -1833,8 +1833,8 @@ stock void Client_PrintToChatRaw(int client, const char[] message, int subject =
 		return;
 	}
 
-	static sayText2_supported	= true;
-	static sayText2_checked		= false;
+	static bool sayText2_supported = true;
+	static bool sayText2_checked   = false;
 
 	if (!sayText2_checked) {
 
@@ -2889,7 +2889,7 @@ stock bool Client_SetPing(int client, int value)
 {
 	int player_manager = Client_GetPlayerManager();
 
-	static offset = -1;
+	static int offset = -1;
 
 	if (offset== -1) {
 		offset = GetEntSendPropOffs(player_manager, "m_iPing", true);
