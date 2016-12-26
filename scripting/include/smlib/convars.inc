@@ -56,7 +56,7 @@ stock bool Convar_IsValidName(const char[] name)
 		return false;
 	}
 
-	new n=0;
+	int n = 0;
 	while (name[n] != '\0') {
 
 		if (!IsValidConVarChar(name[n])) {
