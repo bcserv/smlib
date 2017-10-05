@@ -1351,7 +1351,7 @@ stock Client_RemoveAllWeapons(client, const String:exclude[]="", bool:clearAmmo=
  * @param className		Weapon Classname.
  * @return				True if client has the weapon, otherwise false.
  */
-stock Client_HasWeapon(client, const String:className[])
+stock bool:Client_HasWeapon(client, const String:className[])
 {
 	new weapon = Client_GetWeapon(client, className);
 
