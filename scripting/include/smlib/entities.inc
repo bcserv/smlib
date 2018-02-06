@@ -13,7 +13,7 @@
  * @param 1		Entity Index of the parent.
  * @param 2		Name of the children entity index variable (will be only valid in the loop).
  */
-#define LOOP_CHILDREN(%1,%2) for (new %2=Entity_GetNextChild(%1); %2 != INVALID_ENT_REFERENCE; %2=Entity_GetNextChild(%1, ++%2))
+#define LOOP_CHILDREN(%1,%2) for (int %2=Entity_GetNextChild(%1); %2 != INVALID_ENT_REFERENCE; %2=Entity_GetNextChild(%1, ++%2))
 
 /*
  * Checks if an entity is valid and exists.
@@ -21,7 +21,7 @@
  * @param entity		Entity Index.
  * @return				True if the entity is valid, false otherwise.
  */
-stock Entity_IsValid(entity)
+stock bool Entity_IsValid(int entity)
 {
 	return IsValidEntity(entity);
 }
@@ -38,12 +38,12 @@ stock Entity_IsValid(entity)
  * @param className		Optional: Classname of the entity
  * @return				Entity index or INVALID_ENT_REFERENCE if not matching entity was found.
  */
-stock Entity_FindByName(const String:name[], const String:className[]="")
+stock int Entity_FindByName(const char[] name, const char[] className="")
 {
 	if (className[0] == '\0') {
 		// Hack: Double the limit to gets none-networked entities too.
-		new realMaxEntities = GetMaxEntities() * 2;
-		for (new entity=0; entity < realMaxEntities; entity++) {
+		int realMaxEntities = GetMaxEntities() * 2;
+		for (int entity=0; entity < realMaxEntities; entity++) {
 
 			if (!IsValidEntity(entity)) {
 				continue;
@@ -55,7 +55,7 @@ stock Entity_FindByName(const String:name[], const String:className[]="")
 		}
 	}
 	else {
-		new entity = INVALID_ENT_REFERENCE;
+		int entity = INVALID_ENT_REFERENCE;
 		while ((entity = FindEntityByClassname(entity, className)) != INVALID_ENT_REFERENCE) {
 
 			if (Entity_NameMatches(entity, name)) {
@@ -81,12 +81,12 @@ stock Entity_FindByName(const String:name[], const String:className[]="")
  * @param className		Optional: Classname of the entity
  * @return				Edict Index or INVALID_ENT_REFERENCE if no entity was found.
  */
-stock Entity_FindByHammerId(hammerId, const String:className[]="")
+stock int Entity_FindByHammerId(int hammerId, const char[] className="")
 {
 	if (className[0] == '\0') {
 		// Hack: Double the limit to gets none-networked entities too.
-		new realMaxEntities = GetMaxEntities() * 2;
-		for (new entity=0; entity < realMaxEntities; entity++) {
+		int realMaxEntities = GetMaxEntities() * 2;
+		for (int entity=0; entity < realMaxEntities; entity++) {
 
 			if (!IsValidEntity(entity)) {
 				continue;
@@ -98,7 +98,7 @@ stock Entity_FindByHammerId(hammerId, const String:className[]="")
 		}
 	}
 	else {
-		new entity = INVALID_ENT_REFERENCE;
+		int entity = INVALID_ENT_REFERENCE;
 		while ((entity = FindEntityByClassname(entity, className)) != INVALID_ENT_REFERENCE) {
 
 			if (Entity_GetHammerId(entity) == hammerId) {
@@ -120,7 +120,7 @@ stock Entity_FindByHammerId(hammerId, const String:className[]="")
  * @return				Entity index >= 0 if found, -1 otherwise.
  */
 
-stock Entity_FindByClassName(startEntity, const String:className[])
+stock int Entity_FindByClassName(int startEntity, const char[] className)
 {
 	return FindEntityByClassname(startEntity, className);
 }
@@ -133,9 +133,9 @@ stock Entity_FindByClassName(startEntity, const String:className[])
  * @partialMatch		If to do a partial classname check.
  * @return				True if the classname matches, false otherwise.
  */
-stock bool:Entity_ClassNameMatches(entity, const String:className[], partialMatch=false)
+stock bool Entity_ClassNameMatches(int entity, const char[] className, bool partialMatch=false)
 {
-	decl String:entity_className[64];
+	char entity_className[64];
 	Entity_GetClassName(entity, entity_className, sizeof(entity_className));
 
 	if (partialMatch) {
@@ -152,9 +152,9 @@ stock bool:Entity_ClassNameMatches(entity, const String:className[], partialMatc
  * @param class			Name String.
  * @return				True if the name matches, false otherwise.
  */
-stock bool:Entity_NameMatches(entity, const String:name[])
+stock bool Entity_NameMatches(int entity, const char[] name)
 {
-	decl String:entity_name[128];
+	char entity_name[128];
 	Entity_GetName(entity, entity_name, sizeof(entity_name));
 
 	return StrEqual(name, entity_name);
@@ -168,7 +168,7 @@ stock bool:Entity_NameMatches(entity, const String:name[])
  * @param size				Max size of buffer.
  * @return					Number of non-null bytes written.
  */
-stock Entity_GetName(entity, String:buffer[], size)
+stock int Entity_GetName(int entity, char[] buffer, int size)
 {
 	return GetEntPropString(entity, Prop_Data, "m_iName", buffer, size);
 }
@@ -180,9 +180,9 @@ stock Entity_GetName(entity, String:buffer[], size)
  * @param name				The name you want to give.
  * @return					True on success, false otherwise.
  */
-stock Entity_SetName(entity, const String:name[], any:...)
+stock bool Entity_SetName(int entity, const char[] name, any ...)
 {
-	decl String:format[128];
+	char format[128];
 	VFormat(format, sizeof(format), name, 3);
 
 	return DispatchKeyValue(entity, "targetname", format);
@@ -198,7 +198,7 @@ stock Entity_SetName(entity, const String:name[], any:...)
  * @param size				Max size of buffer.
  * @return					Number of non-null bytes written.
  */
-stock Entity_GetClassName(entity, String:buffer[], size)
+stock int Entity_GetClassName(int entity, char[] buffer, int size)
 {
 	return GetEntPropString(entity, Prop_Data, "m_iClassname", buffer, size);
 }
@@ -210,7 +210,7 @@ stock Entity_GetClassName(entity, String:buffer[], size)
  * @param name				The name you want to give.
  * @return					True on success, false otherwise.
  */
-stock Entity_SetClassName(entity, const String:className[])
+stock bool Entity_SetClassName(int entity, const char[] className)
 {
 	return DispatchKeyValue(entity, "classname", className);
 }
@@ -223,7 +223,7 @@ stock Entity_SetClassName(entity, const String:className[])
  * @param size				Max size of buffer.
  * @return					Number of non-null bytes written.
  */
-stock Entity_GetTargetName(entity, String:buffer[], size)
+stock int Entity_GetTargetName(int entity, char[] buffer, int size)
 {
 	return GetEntPropString(entity, Prop_Data, "m_target", buffer, size);
 }
@@ -235,9 +235,9 @@ stock Entity_GetTargetName(entity, String:buffer[], size)
  * @param name				The target name you want to set
  * @return					True on success, false otherwise.
  */
-stock Entity_SetTargetName(entity, const String:name[], any:...)
+stock bool Entity_SetTargetName(int entity, const char[] name, any ...)
 {
-	decl String:format[128];
+	char format[128];
 	VFormat(format, sizeof(format), name, 3);
 
 	return DispatchKeyValue(entity, "target", format);
@@ -251,7 +251,7 @@ stock Entity_SetTargetName(entity, const String:name[], any:...)
  * @param size				Max size of buffer.
  * @return					Number of non-null bytes written.
  */
-stock Entity_GetGlobalName(entity, String:buffer[], size)
+stock int Entity_GetGlobalName(int entity, char[] buffer, int size)
 {
 	return GetEntPropString(entity, Prop_Data, "m_iGlobalname", buffer, size);
 }
@@ -263,9 +263,9 @@ stock Entity_GetGlobalName(entity, String:buffer[], size)
  * @param name				The global name you want to set.
  * @return					True on success, false otherwise.
  */
-stock Entity_SetGlobalName(entity, const String:name[], any:...)
+stock bool Entity_SetGlobalName(int entity, const char[] name, any ...)
 {
-	decl String:format[128];
+	char format[128];
 	VFormat(format, sizeof(format), name, 3);
 
 	return DispatchKeyValue(entity, "globalname", format);
@@ -279,7 +279,7 @@ stock Entity_SetGlobalName(entity, const String:name[], any:...)
  * @param size				Max size of buffer.
  * @return					Number of non-null bytes written.
  */
-stock Entity_GetParentName(entity, String:buffer[], size)
+stock int Entity_GetParentName(int entity, char[] buffer, int size)
 {
 	return GetEntPropString(entity, Prop_Data, "m_iParent", buffer, size);
 }
@@ -291,9 +291,9 @@ stock Entity_GetParentName(entity, String:buffer[], size)
  * @param name				The parent name you want to set.
  * @return					True on success, false otherwise.
  */
-stock Entity_SetParentName(entity, const String:name[], any:...)
+stock bool Entity_SetParentName(int entity, const char[] name, any ...)
 {
-	decl String:format[128];
+	char format[128];
 	VFormat(format, sizeof(format), name, 3);
 
 	return DispatchKeyValue(entity, "parentname", format);
@@ -307,7 +307,7 @@ stock Entity_SetParentName(entity, const String:name[], any:...)
  * @param entity			Entity index.
  * @return					Hammer ID.
  */
-stock Entity_GetHammerId(entity)
+stock int Entity_GetHammerId(int entity)
 {
 	return GetEntProp(entity, Prop_Data, "m_iHammerID");
 }
@@ -318,7 +318,7 @@ stock Entity_GetHammerId(entity)
  * @param entity			Entity index.
  * @return					Radius
  */
-stock Float:Entity_GetRadius(entity)
+stock float Entity_GetRadius(int entity)
 {
 	return GetEntPropFloat(entity, Prop_Data, "m_flRadius");
 }
@@ -328,9 +328,8 @@ stock Float:Entity_GetRadius(entity)
  *
  * @param entity			Entity index.
  * @param radius			Radius value
- * @noreturn
  */
-stock Entity_SetRadius(entity, Float:radius)
+stock void Entity_SetRadius(int entity, float radius)
 {
 	SetEntPropFloat(entity, Prop_Data, "m_flRadius", radius);
 }
@@ -339,10 +338,9 @@ stock Entity_SetRadius(entity, Float:radius)
  * Gets the Mins of an entity.
  *
  * @param entity			Entity index.
- * @param vec				Vector.
- * @noreturn
+ * @param vec				Buffer to hold the vector.
  */
-stock Entity_GetMinSize(entity, Float:vec[3])
+stock void Entity_GetMinSize(int entity, float vec[3])
 {
 	GetEntPropVector(entity, Prop_Send, "m_vecMins", vec);
 }
@@ -352,9 +350,8 @@ stock Entity_GetMinSize(entity, Float:vec[3])
  *
  * @param entity			Entity index.
  * @param vec				Vector.
- * @noreturn
  */
-stock Entity_SetMinSize(entity, const Float:vecMins[3])
+stock void Entity_SetMinSize(int entity, const float vecMins[3])
 {
 	SetEntPropVector(entity, Prop_Send, "m_vecMins", vecMins);
 }
@@ -364,10 +361,9 @@ stock Entity_SetMinSize(entity, const Float:vecMins[3])
  * This functions isn't safe to use, use Entity_SetMinMaxSize() instead.
  *
  * @param entity			Entity index
- * @param vec				return vector.
- * @noreturn
+ * @param vec				Buffer to hold the vector
  */
-stock Entity_GetMaxSize(entity, Float:vec[3])
+stock void Entity_GetMaxSize(int entity, float vec[3])
 {
 	GetEntPropVector(entity, Prop_Send, "m_vecMaxs", vec);
 }
@@ -377,10 +373,9 @@ stock Entity_GetMaxSize(entity, Float:vec[3])
  * This functions isn't safe to use, use Entity_SetMinMaxSize() instead.
  *
  * @param entity			Entity index.
- * @param vec				Vector.
- * @noreturn
+ * @param vec				Buffer to hold the vector.
  */
-stock Entity_SetMaxSize(entity, const Float:vecMaxs[3])
+stock void Entity_SetMaxSize(int entity, const float vecMaxs[3])
 {
 	SetEntPropVector(entity, Prop_Send, "m_vecMaxs", vecMaxs);
 }
@@ -392,20 +387,19 @@ stock Entity_SetMaxSize(entity, const Float:vecMaxs[3])
  * @param entity			Entity index.
  * @param vecMins			Min size Vector
  * @param vecMaxs			Max size Vector
- * @noreturn
  */
-stock Entity_SetMinMaxSize(entity, Float:vecMins[3], Float:vecMaxs[3])
+stock void Entity_SetMinMaxSize(int entity, float vecMins[3], float vecMaxs[3])
 {
 	// Taken from hl2sdk-ob-valve\game\server\util.cpp SetMinMaxSize()
 	// Todo: Replace this by a SDK call
-	for (new i=0; i<3; i++) {
+	for (int i=0; i<3; i++) {
 
 		if (vecMins[i] > vecMaxs[i]) {
 			ThrowError("Error: mins[%d] > maxs[%d] of entity %d", i, i, EntRefToEntIndex(entity));
 		}
 	}
 
-	decl Float:m_vecMins[3], Float:m_vecMaxs[3];
+	float m_vecMins[3], m_vecMaxs[3];
 	Entity_GetMinSize(entity, m_vecMins);
 	Entity_GetMaxSize(entity, m_vecMaxs);
 
@@ -416,7 +410,7 @@ stock Entity_SetMinMaxSize(entity, Float:vecMins[3], Float:vecMaxs[3])
 	Entity_SetMinSize(entity, vecMins);
 	Entity_SetMaxSize(entity, vecMaxs);
 
-	decl Float:vecSize[3];
+	float vecSize[3];
 	SubtractVectors(vecMaxs, vecMins, vecSize);
 	Entity_SetRadius(entity, GetVectorLength(vecSize) * 0.5);
 
@@ -492,7 +486,7 @@ stock Entity_SetMinMaxSize(entity, Float:vecMins[3], Float:vecMaxs[3])
  * @param entity			Entity index.
  * @return					Spawnflags value
  */
-stock Entity_GetSpawnFlags(entity)
+stock int Entity_GetSpawnFlags(int entity)
 {
 	return GetEntProp(entity, Prop_Data, "m_spawnflags");
 }
@@ -502,9 +496,8 @@ stock Entity_GetSpawnFlags(entity)
  *
  * @param entity			Entity index.
  * @param flags				Flags value
- * @noreturn
  */
-stock Entity_SetSpawnFlags(entity, flags)
+stock void Entity_SetSpawnFlags(int entity, int flags)
 {
 	SetEntProp(entity, Prop_Data, "m_spawnflags", flags);
 }
@@ -514,11 +507,10 @@ stock Entity_SetSpawnFlags(entity, flags)
  *
  * @param entity			Entity index.
  * @param flags				Flags value
- * @noreturn
  */
-stock Entity_AddSpawnFlags(entity, flags)
+stock void Entity_AddSpawnFlags(int entity, int flags)
 {
-	new spawnFlags = Entity_GetSpawnFlags(entity);
+	int spawnFlags = Entity_GetSpawnFlags(entity);
 	spawnFlags |= flags;
 	Entity_SetSpawnFlags(entity, spawnFlags);
 }
@@ -528,11 +520,10 @@ stock Entity_AddSpawnFlags(entity, flags)
  *
  * @param entity			Entity index.
  * @param flags				Flags value
- * @noreturn
  */
-stock Entity_RemoveSpawnFlags(entity, flags)
+stock void Entity_RemoveSpawnFlags(int entity, int flags)
 {
-	new spawnFlags = Entity_GetSpawnFlags(entity);
+	int spawnFlags = Entity_GetSpawnFlags(entity);
 	spawnFlags &= ~flags;
 	Entity_SetSpawnFlags(entity, spawnFlags);
 }
@@ -541,9 +532,8 @@ stock Entity_RemoveSpawnFlags(entity, flags)
  * Clears all Spawnflags of an entity.
  *
  * @param entity			Entity index.
- * @noreturn
- */
-stock Entity_ClearSpawnFlags(entity)
+ * @noretur */
+stock void Entity_ClearSpawnFlags(int entity)
 {
 	Entity_SetSpawnFlags(entity, 0);
 }
@@ -555,9 +545,9 @@ stock Entity_ClearSpawnFlags(entity)
  * @param flags				Flags value.
  * @return					True if the entity has the spawnflags set, false otherwise.
  */
-stock bool:Entity_HasSpawnFlags(entity, flags)
+stock bool Entity_HasSpawnFlags(int entity, int flags)
 {
-	return bool:(Entity_GetSpawnFlags(entity) & flags);
+	return Entity_GetSpawnFlags(entity) & flags == flags;
 }
 
 /*
@@ -622,9 +612,9 @@ enum Entity_Flags
  * @param entity			Entity index.
  * @return					Entity flags value
  */
-stock Entity_Flags:Entity_GetEFlags(entity)
+stock Entity_Flags Entity_GetEFlags(int entity)
 {
-	return Entity_Flags:GetEntProp(entity, Prop_Data, "m_iEFlags");
+	return view_as<Entity_Flags>(GetEntProp(entity, Prop_Data, "m_iEFlags"));
 }
 
 /**
@@ -632,9 +622,8 @@ stock Entity_Flags:Entity_GetEFlags(entity)
  *
  * @param entity			Entity index.
  * @param flags				Flags value
- * @noreturn
  */
-stock Entity_SetEFlags(entity, Entity_Flags:flags)
+stock void Entity_SetEFlags(int entity, Entity_Flags flags)
 {
 	SetEntProp(entity, Prop_Data, "m_iEFlags", flags);
 }
@@ -644,11 +633,10 @@ stock Entity_SetEFlags(entity, Entity_Flags:flags)
  *
  * @param entity			Entity index.
  * @param flags				Flags value
- * @noreturn
  */
-stock Entity_AddEFlags(entity, Entity_Flags:flags)
+stock void Entity_AddEFlags(int entity, Entity_Flags flags)
 {
-	new Entity_Flags:setFlags = Entity_GetEFlags(entity);
+	Entity_Flags setFlags = Entity_GetEFlags(entity);
 	setFlags |= flags;
 	Entity_SetEFlags(entity, setFlags);
 }
@@ -658,11 +646,10 @@ stock Entity_AddEFlags(entity, Entity_Flags:flags)
  *
  * @param entity			Entity index.
  * @param flags				Flags value
- * @noreturn
  */
-stock Entity_RemoveEFlags(entity, Entity_Flags:flags)
+stock void Entity_RemoveEFlags(int entity, Entity_Flags flags)
 {
-	new Entity_Flags:setFlags = Entity_GetEFlags(entity);
+	Entity_Flags setFlags = Entity_GetEFlags(entity);
 	setFlags &= ~flags;
 	Entity_SetEFlags(entity, setFlags);
 }
@@ -674,11 +661,11 @@ stock Entity_RemoveEFlags(entity, Entity_Flags:flags)
  * @param flags				Flags value
  * @return					True if the flags are set, false otherwise.
  */
-stock bool:Entity_HasEFlags(entity, Entity_Flags:flags)
+stock bool Entity_HasEFlags(int entity, Entity_Flags flags)
 {
-	new Entity_Flags:currentEFlags = Entity_GetEFlags(entity);
+	Entity_Flags currentEFlags = Entity_GetEFlags(entity);
 
-	return bool:(currentEFlags & flags);
+	return currentEFlags & flags == flags;
 }
 
 /**
@@ -686,9 +673,8 @@ stock bool:Entity_HasEFlags(entity, Entity_Flags:flags)
  * You normally call this when a collision setting has changed.
  *
  * @param entity			Entity index.
- * @noreturn
  */
-stock Entity_MarkSurrBoundsDirty(entity)
+stock void Entity_MarkSurrBoundsDirty(int entity)
 {
 	Entity_AddEFlags(entity, EFL_DIRTY_SURR_COLLISION_BOUNDS);
 }
@@ -707,7 +693,7 @@ stock Entity_MarkSurrBoundsDirty(entity)
  * @param entity			Entity Index.
  * @return					Entity Flags.
  */
-stock Entity_GetFlags(entity)
+stock int Entity_GetFlags(int entity)
 {
 	return GetEntProp(entity, Prop_Data, "m_fFlags");
 }
@@ -717,9 +703,8 @@ stock Entity_GetFlags(entity)
  *
  * @param entity			Entity index.
  * @param flags				New Flags value
- * @noreturn
  */
-stock Entity_SetFlags(entity, flags)
+stock void Entity_SetFlags(int entity, int flags)
 {
 	SetEntProp(entity, Prop_Data, "m_fFlags", flags);
 }
@@ -731,9 +716,9 @@ stock Entity_SetFlags(entity, flags)
  * @param flags				Flags to add
  * @noreturn
  */
-stock Entity_AddFlags(entity, flags)
+stock void Entity_AddFlags(int entity, int flags)
 {
-	new setFlags = Entity_GetFlags(entity);
+	int setFlags = Entity_GetFlags(entity);
 	setFlags |= flags;
 	Entity_SetFlags(entity, flags);
 }
@@ -743,11 +728,10 @@ stock Entity_AddFlags(entity, flags)
  *
  * @param entity			Entity index.
  * @param flags				Flags to remove
- * @noreturn
  */
-stock Entity_RemoveFlags(entity, flags)
+stock void Entity_RemoveFlags(int entity, int flags)
 {
-	new setFlags = Entity_GetFlags(entity);
+	int setFlags = Entity_GetFlags(entity);
 	setFlags &= ~flags;
 	Entity_SetFlags(entity, setFlags);
 }
@@ -759,11 +743,10 @@ stock Entity_RemoveFlags(entity, flags)
  *
  * @param entity			Entity index.
  * @param flags				Flag to Toggle
- * @noreturn
  */
-stock Entity_ToggleFlag(entity, flag)
+stock void Entity_ToggleFlag(int entity, int flag)
 {
-	new setFlag = Entity_GetFlags(entity);
+	int setFlag = Entity_GetFlags(entity);
 	setFlag ^= flag;
 	Entity_SetFlags(entity, setFlag);
 }
@@ -772,9 +755,8 @@ stock Entity_ToggleFlag(entity, flag)
  * Removes all flags from the entity
  *
  * @param entity			Entity index.
- * @noreturn
  */
-stock Entity_ClearFlags(entity)
+stock void Entity_ClearFlags(int entity)
 {
 	Entity_SetFlags(entity, 0);
 }
@@ -811,9 +793,9 @@ enum SolidFlags_t
  * @param entity			Entity index.
  * @return					Solid Flags.
  */
-stock SolidFlags_t:Entity_GetSolidFlags(entity)
+stock SolidFlags_t Entity_GetSolidFlags(int entity)
 {
-	return SolidFlags_t:GetEntProp(entity, Prop_Data, "m_usSolidFlags", 2);
+	return view_as<SolidFlags_t>(GetEntProp(entity, Prop_Data, "m_usSolidFlags", 2));
 }
 
 /**
@@ -821,12 +803,11 @@ stock SolidFlags_t:Entity_GetSolidFlags(entity)
  *
  * @param entity			Entity index.
  * @param flags				Solid Flags.
- * @noreturn
  */
-stock Entity_SetSolidFlags(entity, SolidFlags_t:flags)
+stock void Entity_SetSolidFlags(int entity, SolidFlags_t flags)
 {
-	new SolidFlags_t:oldFlags = Entity_GetSolidFlags(entity);
-	flags = flags & SolidFlags_t:0xFFFF;
+	SolidFlags_t oldFlags = Entity_GetSolidFlags(entity);
+	flags = flags & view_as<SolidFlags_t>(0xFFFF);
 
 	if (oldFlags == flags) {
 		return;
@@ -847,11 +828,10 @@ stock Entity_SetSolidFlags(entity, SolidFlags_t:flags)
  *
  * @param entity			Entity index.
  * @param flags				Solid Flags.
- * @noreturn
  */
-stock Entity_AddSolidFlags(entity, SolidFlags_t:flags)
+stock void Entity_AddSolidFlags(int entity, SolidFlags_t flags)
 {
-	new SolidFlags_t:newFlags = Entity_GetSolidFlags(entity);
+	SolidFlags_t newFlags = Entity_GetSolidFlags(entity);
 	newFlags |= flags;
 	Entity_SetSolidFlags(entity, newFlags);
 }
@@ -861,11 +841,10 @@ stock Entity_AddSolidFlags(entity, SolidFlags_t:flags)
  *
  * @param entity			Entity index.
  * @param flags				Solid Flags.
- * @noreturn
  */
-stock Entity_RemoveSolidFlags(entity, SolidFlags_t:flags)
+stock void Entity_RemoveSolidFlags(int entity, SolidFlags_t flags)
 {
-	new SolidFlags_t:newFlags = Entity_GetSolidFlags(entity);
+	SolidFlags_t newFlags = Entity_GetSolidFlags(entity);
 	newFlags &= ~flags;
 	Entity_SetSolidFlags(entity, newFlags);
 }
@@ -874,11 +853,10 @@ stock Entity_RemoveSolidFlags(entity, SolidFlags_t:flags)
  * Removes all solid flags from the entity.
  *
  * @param entity			Entity index.
- * @noreturn
  */
-stock Entity_ClearSolidFlags(entity)
+stock void Entity_ClearSolidFlags(int entity)
 {
-	Entity_SetSolidFlags(entity, SolidFlags_t:0);
+	Entity_SetSolidFlags(entity, view_as<SolidFlags_t>(0));
 }
 
 /**
@@ -888,9 +866,9 @@ stock Entity_ClearSolidFlags(entity)
  * @param flags				Solid Flags.
  * @return					True if the specified flags are set, false otherwise.
  */
-stock bool:Entity_SolidFlagsSet(entity, SolidFlags_t:flagMask)
+stock bool Entity_SolidFlagsSet(int entity, SolidFlags_t flagMask)
 {
-	return bool:(Entity_GetSolidFlags(entity) & flagMask);
+	return Entity_GetSolidFlags(entity) & flagMask == flagMask;
 }
 
 enum SolidType_t
@@ -911,9 +889,9 @@ enum SolidType_t
  * @param entity			Entity index.
  * @return					Solid Type
  */
-stock SolidType_t:Entity_GetSolidType(entity)
+stock SolidType_t Entity_GetSolidType(int entity)
 {
-	return SolidType_t:GetEntProp(entity, Prop_Data, "m_nSolidType", 1);
+	return view_as<SolidType_t>(GetEntProp(entity, Prop_Data, "m_nSolidType", 1));
 }
 
 /**
@@ -921,9 +899,8 @@ stock SolidType_t:Entity_GetSolidType(entity)
  *
  * @param entity			Entity index.
  * @param					Solid Type value.
- * @noreturn
  */
-stock Entity_SetSolidType(entity, SolidType_t:value)
+stock void Entity_SetSolidType(int entity, SolidType_t value)
 {
 	SetEntProp(entity, Prop_Send, "m_nSolidType", value, 1);
 	Entity_MarkSurrBoundsDirty(entity);
@@ -935,7 +912,7 @@ stock Entity_SetSolidType(entity, SolidType_t:value)
  * @param entity			Entity index.
  * @return					True if the entity is solid, false otherwise.
  */
-stock bool:Entity_IsSolid(entity)
+stock bool Entity_IsSolid(int entity)
 {
 	return (Entity_GetSolidType(entity) != SOLID_NONE &&
 			!Entity_SolidFlagsSet(entity, FSOLID_NOT_SOLID));
@@ -950,7 +927,7 @@ stock bool:Entity_IsSolid(entity)
  * @param size			max size of buffer string
  * @return				Number of non-null bytes written.
  */
-stock Entity_GetModel(entity, String:buffer[], size)
+stock int Entity_GetModel(int entity, char[] buffer, int size)
 {
 	return GetEntPropString(entity, Prop_Data, "m_ModelName", buffer, size);
 }
@@ -962,9 +939,8 @@ stock Entity_GetModel(entity, String:buffer[], size)
  *
  * @param entity		Entity index
  * @param model			Model name
- * @noreturn
  */
-stock Entity_SetModel(entity, const String:model[])
+stock void Entity_SetModel(int entity, const char[] model)
 {
 	SetEntityModel(entity, model);
 }
@@ -975,7 +951,7 @@ stock Entity_SetModel(entity, const String:model[])
  * @param entity			Entity index.
  * @return					The Entity's model index
  */
-stock Entity_GetModelIndex(entity)
+stock int Entity_GetModelIndex(int entity)
 {
 	return GetEntProp(entity, Prop_Data, "m_nModelIndex", 2);
 }
@@ -985,9 +961,8 @@ stock Entity_GetModelIndex(entity)
  *
  * @param entity			Entity index.
  * @param index				Model Index.
- * @noreturn
  */
-stock Entity_SetModelIndex(entity, index)
+stock void Entity_SetModelIndex(int entity, int index)
 {
 	SetEntProp(entity, Prop_Data, "m_nModelIndex", index, 2);
 }
@@ -999,7 +974,7 @@ stock Entity_SetModelIndex(entity, index)
 * @param maxspeed	the maximum speed the entity can move
 * @noreturn
 */
-stock Entity_SetMaxSpeed(entity, Float:value)
+stock void Entity_SetMaxSpeed(int entity, float value)
 {
 	SetEntPropFloat(entity, Prop_Data, "m_flMaxspeed", value);
 }
@@ -1040,9 +1015,9 @@ enum Collision_Group_t
  * @param entity		entity index
  * @return				Entity collision group.
  */
-stock Collision_Group_t:Entity_GetCollisionGroup(entity)
+stock Collision_Group_t Entity_GetCollisionGroup(int entity)
 {
-	return Collision_Group_t:GetEntProp(entity, Prop_Data, "m_CollisionGroup");
+	return view_as<Collision_Group_t>(GetEntProp(entity, Prop_Data, "m_CollisionGroup"));
 }
 
 /**
@@ -1050,9 +1025,8 @@ stock Collision_Group_t:Entity_GetCollisionGroup(entity)
  *
  * @param entity		entity index
  * @param value			the new collision group.
- * @noreturn
  */
-stock Entity_SetCollisionGroup(entity, Collision_Group_t:value)
+stock void Entity_SetCollisionGroup(int entity, Collision_Group_t value)
 {
 	SetEntProp(entity, Prop_Data, "m_CollisionGroup", value);
 }
@@ -1068,9 +1042,8 @@ stock Entity_SetCollisionGroup(entity, Collision_Group_t:value)
  *
  * @param entity			Entity index.
  * @param vec				3 dimensional vector array.
- * @noreturn
  */
-stock Entity_GetAbsOrigin(entity, Float:vec[3])
+stock void Entity_GetAbsOrigin(int entity, float vec[3])
 {
 	GetEntPropVector(entity, Prop_Send, "m_vecOrigin", vec);
 }
@@ -1080,9 +1053,8 @@ stock Entity_GetAbsOrigin(entity, Float:vec[3])
  *
  * @param entity			Entity index.
  * @param vec				3 dimensional vector array.
- * @noreturn
  */
-stock Entity_SetAbsOrigin(entity, const Float:vec[3])
+stock void Entity_SetAbsOrigin(int entity, const float vec[3])
 {
 	// We use TeleportEntity to set the origin more safely
 	// Todo: Replace this with a call to UTIL_SetOrigin() or CBaseEntity::SetLocalOrigin()
@@ -1102,7 +1074,7 @@ stock Entity_SetAbsOrigin(entity, const Float:vec[3])
  * @param vec				3 dimensional vector array.
  * @noreturn
  */
-stock Entity_GetAbsAngles(entity, Float:vec[3])
+stock void Entity_GetAbsAngles(int entity, float vec[3])
 {
 	GetEntPropVector(entity, Prop_Data, "m_angAbsRotation", vec);
 }
@@ -1112,9 +1084,8 @@ stock Entity_GetAbsAngles(entity, Float:vec[3])
  *
  * @param entity			Entity index.
  * @param vec				3 dimensional vector array.
- * @noreturn
  */
-stock Entity_SetAbsAngles(entity, const Float:vec[3])
+stock void Entity_SetAbsAngles(int entity, const float vec[3])
 {
 	// We use TeleportEntity to set the angles more safely
 	// Todo: Replace this with a call to CBaseEntity::SetLocalAngles()
@@ -1133,9 +1104,8 @@ stock Entity_SetAbsAngles(entity, const Float:vec[3])
  *
  * @param entity		Entity index.
  * @param vel			An 3 dim array
- * @noreturn
  */
-stock Entity_GetLocalVelocity(entity, Float:vec[3])
+stock void Entity_GetLocalVelocity(int entity, float vec[3])
 {
 	GetEntPropVector(entity, Prop_Data, "m_vecVelocity", vec);
 }
@@ -1148,9 +1118,8 @@ stock Entity_GetLocalVelocity(entity, Float:vec[3])
  *
  * @param entity		Entity index.
  * @param vel			An 3 dim array
- * @noreturn
  */
-stock Entity_SetLocalVelocity(entity, const Float:vec[3])
+stock void Entity_SetLocalVelocity(int entity, const float vec[3])
 {
 	SetEntPropVector(entity, Prop_Data, "m_vecVelocity", vec);
 }
@@ -1162,9 +1131,8 @@ stock Entity_SetLocalVelocity(entity, const Float:vec[3])
  *
  * @param entity		Entity index.
  * @param vel			An 3 dim array
- * @noreturn
  */
-stock Entity_GetBaseVelocity(entity, Float:vec[3])
+stock void Entity_GetBaseVelocity(int entity, float vec[3])
 {
 	GetEntPropVector(entity, Prop_Data, "m_vecBaseVelocity", vec);
 }
@@ -1176,9 +1144,8 @@ stock Entity_GetBaseVelocity(entity, Float:vec[3])
  *
  * @param entity		Entity index.
  * @param vel			An 3 dim array
- * @noreturn
  */
-stock Entity_SetBaseVelocity(entity, const Float:vec[3])
+stock void Entity_SetBaseVelocity(int entity, const float vec[3])
 {
 	SetEntPropVector(entity, Prop_Data, "m_vecBaseVelocity", vec);
 }
@@ -1190,9 +1157,8 @@ stock Entity_SetBaseVelocity(entity, const Float:vec[3])
  *
  * @param entity		Entity index.
  * @param vel			An 3 dim array
- * @noreturn
  */
-stock Entity_GetAbsVelocity(entity, Float:vec[3])
+stock void Entity_GetAbsVelocity(int entity, float vec[3])
 {
 	GetEntPropVector(entity, Prop_Data, "m_vecAbsVelocity", vec);
 }
@@ -1204,9 +1170,8 @@ stock Entity_GetAbsVelocity(entity, Float:vec[3])
  *
  * @param entity		Entity index.
  * @param vel			An 3 dim array
- * @noreturn
  */
-stock Entity_SetAbsVelocity(entity, const Float:vec[3])
+stock void Entity_SetAbsVelocity(int entity, const float vec[3])
 {
 	// We use TeleportEntity to set the velocity more safely
 	// Todo: Replace this with a call to CBaseEntity::SetAbsVelocity()
@@ -1219,18 +1184,17 @@ stock Entity_SetAbsVelocity(entity, const Float:vec[3])
  * @param entity		Entity index.
  * @return				True if locked otherwise false.
  */
-stock bool:Entity_IsLocked(entity)
+stock bool Entity_IsLocked(int entity)
 {
-	return bool:GetEntProp(entity, Prop_Data, "m_bLocked", 1);
+	return GetEntProp(entity, Prop_Data, "m_bLocked", 1) != 0;
 }
 
 /**
  * Locks an entity.
  *
  * @param entity		Entity index.
- * @noreturn
  */
-stock Entity_Lock(entity)
+stock void Entity_Lock(int entity)
 {
 	SetEntProp(entity, Prop_Data, "m_bLocked", 1, 1);
 }
@@ -1238,9 +1202,8 @@ stock Entity_Lock(entity)
  * Unlocks an entity.
  *
  * @param entity		Entity index.
- * @noreturn
  */
-stock Entity_UnLock(entity)
+stock void Entity_UnLock(int entity)
 {
 	SetEntProp(entity, Prop_Data, "m_bLocked", 0, 1);
 }
@@ -1251,7 +1214,7 @@ stock Entity_UnLock(entity)
  * @param entity			entity index.
  * @return				current health points
  */
-stock Entity_GetHealth(entity)
+stock int Entity_GetHealth(int entity)
 {
 	return GetEntProp(entity, Prop_Data, "m_iHealth");
 }
@@ -1259,16 +1222,18 @@ stock Entity_GetHealth(entity)
 /**
  * Sets the health of an entity.
  *
- * @param entity			entity index.
- * @param value			health to set (anything above 511 will overload)
- * @noreturn
+ * @param entity		Entity index.
+ * @param value			Health to set (anything above 511 will overload)
+ * @param ignoreMax		Ignore the entity's maxhealth setting.
+ * @param kill			Kill the entity if health gets to 0.
+ * @return				The health the entity actually got set to.
  */
-stock Entity_SetHealth(entity, value, ignoreMax=false, kill=true)
+stock int Entity_SetHealth(int entity, int value, bool ignoreMax=false, bool kill=true)
 {
-	new health = value;
+	int health = value;
 
 	if (!ignoreMax) {
-		new maxHealth = Entity_GetMaxHealth(entity);
+		int maxHealth = Entity_GetMaxHealth(entity);
 
 		if (health > maxHealth) {
 			health = maxHealth;
@@ -1291,13 +1256,15 @@ stock Entity_SetHealth(entity, value, ignoreMax=false, kill=true)
 /**
  * Add health to an entity
  *
- * @param entity		entity index
- * @param value			health to add
- * @return				returns the new health value set
+ * @param entity		Entity index
+ * @param value			Health to add
+ * @param ignoreMax		Ignore the entity's maxhealth setting.
+ * @param kill			Kill the entity if health gets to 0.
+ * @return				Returns the new health value set
  */
-stock Entity_AddHealth(entity, value, ignoreMax=false, kill=true)
+stock int Entity_AddHealth(int entity, int value, bool ignoreMax=false, bool kill=true)
 {
-	new health = Entity_GetHealth(entity);
+	int health = Entity_GetHealth(entity);
 
 	health += value;
 
@@ -1311,9 +1278,9 @@ stock Entity_AddHealth(entity, value, ignoreMax=false, kill=true)
  * @param value			health to add
  * @return				returns the new health value set
  */
-stock Entity_TakeHealth(entity, value, ignoreMax=false, kill=true)
+stock int Entity_TakeHealth(int entity, int value, bool ignoreMax=false, bool kill=true)
 {
-	new health = Entity_GetHealth(entity);
+	int health = Entity_GetHealth(entity);
 
 	health -= value;
 
@@ -1326,7 +1293,7 @@ stock Entity_TakeHealth(entity, value, ignoreMax=false, kill=true)
  * @param entity		Entity Index
  * @return				Max health points
  */
-stock Entity_GetMaxHealth(entity)
+stock int Entity_GetMaxHealth(int entity)
 {
 	return GetEntProp(entity, Prop_Data, "m_iMaxHealth");
 }
@@ -1337,12 +1304,10 @@ stock Entity_GetMaxHealth(entity)
  *
  * @param entity		Entity index
  * @param value			Max health to set (anything above 511 will overload)
- * @noreturn
  */
-stock Entity_SetMaxHealth(entity, value)
+stock void Entity_SetMaxHealth(int entity, int value)
 {
 	SetEntProp(entity, Prop_Data, "m_iMaxHealth", value);
-	return value;
 }
 
 /**
@@ -1353,9 +1318,9 @@ stock Entity_SetMaxHealth(entity, value)
  * @param target		Vector Origin.
  * @return				Distance Float value.
  */
-stock Float:Entity_GetDistanceOrigin(entity, const Float:vec[3])
+stock float Entity_GetDistanceOrigin(int entity, const float vec[3])
 {
-	new Float:entityVec[3];
+	float entityVec[3];
 	Entity_GetAbsOrigin(entity, entityVec);
 
 	return GetVectorDistance(entityVec, vec);
@@ -1369,9 +1334,9 @@ stock Float:Entity_GetDistanceOrigin(entity, const Float:vec[3])
  * @param target		Target Entity Index.
  * @return				Distance Float value.
  */
-stock Float:Entity_GetDistance(entity, target)
+stock float Entity_GetDistance(int entity, int target)
 {
-	new Float:targetVec[3];
+	float targetVec[3];
 	Entity_GetAbsOrigin(target, targetVec);
 
 	return Entity_GetDistanceOrigin(entity, targetVec);
@@ -1385,7 +1350,7 @@ stock Float:Entity_GetDistance(entity, target)
  * @param distance		Max Float distance.
  * @return				True if the given entities are closer than the given distance value, false otherwise.
  */
-stock bool:Entity_InRange(entity, target, Float:distance)
+stock bool Entity_InRange(int entity, int target, float distance)
 {
 	if (Entity_GetDistance(entity, target) > distance) {
 		return false;
@@ -1400,7 +1365,7 @@ stock bool:Entity_InRange(entity, target, Float:distance)
  * @param entity		Entity index.
  * @return				True on success, false otherwise
  */
-stock bool:Entity_EnableMotion(entity)
+stock bool Entity_EnableMotion(int entity)
 {
 	return AcceptEntityInput(entity, "enablemotion");
 }
@@ -1411,7 +1376,7 @@ stock bool:Entity_EnableMotion(entity)
  * @param entity		Entity index.
  * @return 				True on success, false otherwise
  */
-stock bool:Entity_DisableMotion(entity)
+stock bool Entity_DisableMotion(int entity)
 {
 	return AcceptEntityInput(entity, "disablemotion");
 }
@@ -1420,9 +1385,8 @@ stock bool:Entity_DisableMotion(entity)
  * Freezes an entity by setting the FL_FROZEN flag.
  *
  * @param entity		Entity index.
- * @return				True on success, false otherwise
  */
-stock Entity_Freeze(entity)
+stock void Entity_Freeze(int entity)
 {
 	Entity_AddFlags(entity, FL_FROZEN);
 }
@@ -1431,9 +1395,8 @@ stock Entity_Freeze(entity)
  * Unfreezes an entity by removing the FL_FROZEN flag.
  *
  * @param entity		Entity index.
- * @return 				True on success, false otherwise
  */
-stock Entity_UnFreeze(entity)
+stock void Entity_UnFreeze(int entity)
 {
 	Entity_RemoveFlags(entity, FL_FROZEN);
 }
@@ -1447,11 +1410,10 @@ stock Entity_UnFreeze(entity)
  * @param entity			Entity index.
  * @param target			Target entity index.
  * @param				Optional: target name
- * @noreturn
  */
-stock Entity_PointAtTarget(entity, target, const String:name[]="")
+stock void Entity_PointAtTarget(int entity, int target, const char[] name="")
 {
-	decl String:targetName[128];
+	char targetName[128];
 	Entity_GetTargetName(entity, targetName, sizeof(targetName));
 
 	if (name[0] == '\0') {
@@ -1482,11 +1444,10 @@ stock Entity_PointAtTarget(entity, target, const String:name[]="")
  * @param entity			Entity index.
  * @param target			Target entity index.
  * @param					Optional: target name
- * @noreturn
  */
-stock Entity_PointHurtAtTarget(entity, target, const String:name[]="")
+stock void Entity_PointHurtAtTarget(int entity, int target, const char[] name="")
 {
-	decl String:targetName[128];
+	char targetName[128];
 	Entity_GetTargetName(entity, targetName, sizeof(targetName));
 
 	if (name[0] == '\0') {
@@ -1517,7 +1478,7 @@ stock Entity_PointHurtAtTarget(entity, target, const String:name[]="")
  * @param entity			Entity index.
  * @return 				True if the entity is a player, false otherwise.
  */
-stock bool:Entity_IsPlayer(entity)
+stock bool Entity_IsPlayer(int entity)
 {
 	if (entity < 1 || entity > MaxClients) {
 		return false;
@@ -1533,7 +1494,7 @@ stock bool:Entity_IsPlayer(entity)
  * @param ForceEdictIndex	Edict Index to use.
  * @return 					Entity Index or INVALID_ENT_REFERENCE if the slot is already in use.
  */
-stock Entity_Create(const String:className[], ForceEdictIndex=-1)
+stock int Entity_Create(const char[] className, int ForceEdictIndex=-1)
 {
 	if (ForceEdictIndex != -1 && Entity_IsValid(ForceEdictIndex)) {
 		return INVALID_ENT_REFERENCE;
@@ -1551,7 +1512,7 @@ stock Entity_Create(const String:className[], ForceEdictIndex=-1)
  * @param killChildren	When true, kennys children are killed too.
  * @return 				True on success, false otherwise.
  */
-stock bool:Entity_Kill(kenny, killChildren=false)
+stock bool Entity_Kill(int kenny, bool killChildren=false)
 {
 	if (Entity_IsPlayer(kenny)) {
 		// Oh My God! They Killed Kenny!!
@@ -1575,11 +1536,11 @@ stock bool:Entity_Kill(kenny, killChildren=false)
  * @param className		Entity Network Class to search for.
  * @return 				Number of entities killed.
  */
-stock Entity_KillAllByClassName(const String:className[])
+stock int Entity_KillAllByClassName(const char[] className)
 {
-	new x = 0;
+	int x = 0;
 
-	new entity = INVALID_ENT_REFERENCE;
+	int entity = INVALID_ENT_REFERENCE;
 	while ((entity = FindEntityByClassname(entity, className)) != INVALID_ENT_REFERENCE) {
 		AcceptEntityInput(entity, "kill");
 		x++;
@@ -1595,7 +1556,7 @@ stock Entity_KillAllByClassName(const String:className[])
  * @param entity		Entity index.
  * @return 				Ground Entity or -1
  */
-stock Entity_GetOwner(entity)
+stock int Entity_GetOwner(int entity)
 {
 	return GetEntPropEnt(entity, Prop_Data, "m_hOwnerEntity");
 }
@@ -1605,9 +1566,8 @@ stock Entity_GetOwner(entity)
  * For example the owner of a weapon entity.
  *
  * @param entity			Entity index.
- * @noreturn
  */
-stock Entity_SetOwner(entity, newOwner)
+stock void Entity_SetOwner(int entity, int newOwner)
 {
 	SetEntPropEnt(entity, Prop_Send, "m_hOwnerEntity", newOwner);
 }
@@ -1618,7 +1578,7 @@ stock Entity_SetOwner(entity, newOwner)
  * @param entity		Entity index.
  * @return 				Ground Entity or -1
  */
-stock Entity_GetGroundEntity(entity)
+stock int Entity_GetGroundEntity(int entity)
 {
 	return GetEntPropEnt(entity, Prop_Data, "m_hGroundEntity");
 }
@@ -1690,9 +1650,9 @@ stock Entity_GetGroundEntity(entity)
  * 						want a specific weapon to be shown in the HUD kill message.
  * @return 				True on success, false otherwise.
  */
-stock bool:Entity_Hurt(entity, damage, attacker=0, damageType=DMG_GENERIC, const String:fakeClassName[]="")
+stock bool Entity_Hurt(int entity, int damage, int attacker=0, int damageType=DMG_GENERIC, const char[] fakeClassName="")
 {
-	static point_hurt = INVALID_ENT_REFERENCE;
+	static int point_hurt = INVALID_ENT_REFERENCE;
 
 	if (point_hurt == INVALID_ENT_REFERENCE || !IsValidEntity(point_hurt)) {
 		point_hurt = EntIndexToEntRef(Entity_Create("point_hurt"));
@@ -1729,7 +1689,7 @@ stock bool:Entity_Hurt(entity, damage, attacker=0, damageType=DMG_GENERIC, const
  * @param entity		Entity Index.
  * @return				Entity Index of the parent.
  */
-stock Entity_GetParent(entity)
+stock int Entity_GetParent(int entity)
 {
 	return GetEntPropEnt(entity, Prop_Data, "m_pParent");
 }
@@ -1738,11 +1698,10 @@ stock Entity_GetParent(entity)
  * Clears the parent of an entity.
  *
  * @param entity		Entity Index.
- * @noreturn
  */
-stock Entity_ClearParent(entity)
+stock void Entity_ClearParent(int entity)
 {
-	SetVariantString("");
+	//SetVariantString("");
 	AcceptEntityInput(entity, "ClearParent");
 }
 
@@ -1750,12 +1709,11 @@ stock Entity_ClearParent(entity)
  * Sets the parent entity of an entity.
  *
  * @param entity		Entity Index.
- * @param parentEntity	Entity Index of the new parent.
- * @noreturn
+ * @param parent		Entity Index of the new parent.
  */
-stock Entity_SetParent(entity, parent)
+stock void Entity_SetParent(int entity, int parent)
 {
-	SetVariantString("!activator");
+	//SetVariantString("!activator");
 	AcceptEntityInput(entity, "SetParent", parent);
 }
 
@@ -1770,7 +1728,7 @@ stock Entity_SetParent(entity, parent)
  * @param currentCall	The current call number (0 is the 1st call at 0.0 seconds, 1 the 2nd call at tick*1 seconds, ...).
  * @return				When true this callback will be called again at the next defined tick, otherwise it won't.
  */
-functag Entity_ChangeOverTimeCallback bool:public(&entity, &Float:interval, &currentCall);
+typedef Entity_ChangeOverTimeCallback = function bool (int &entity, float &interval, int &currentCall)
 
 /*
  * Creates a timer and provides a callback to change various things about an entity over time.
@@ -1779,37 +1737,29 @@ functag Entity_ChangeOverTimeCallback bool:public(&entity, &Float:interval, &cur
  * @param interval			Interval from the current game time to execute the given function.
  * @noreturn
  */
-stock Entity_ChangeOverTime(entity, Float:interval=0.1, Entity_ChangeOverTimeCallback:valueCallback)
+stock void Entity_ChangeOverTime(int entity, float interval=0.1, Entity_ChangeOverTimeCallback valueCallback)
 {
-	new Handle:dataPack = CreateDataPack();
+	DataPack dataPack = CreateDataPack();
 	WritePackCell(dataPack, EntIndexToEntRef(entity));
 	WritePackFloat(dataPack, interval);
 	WritePackCell(dataPack, 0);
-#if SOURCEMOD_V_MAJOR >= 1 && SOURCEMOD_V_MINOR >= 7
 	WritePackFunction(dataPack, valueCallback);
-#else
-	WritePackCell(dataPack, _:valueCallback);
-#endif
 	ResetPack(dataPack);
 	__smlib_Timer_ChangeOverTime(INVALID_HANDLE,dataPack);
 }
 
-public Action:__smlib_Timer_ChangeOverTime(Handle:Timer, Handle:dataPack)
+public Action __smlib_Timer_ChangeOverTime(Handle Timer, DataPack dataPack)
 {
-	new entity = EntRefToEntIndex(ReadPackCell(dataPack));
+	int entity = EntRefToEntIndex(ReadPackCell(dataPack));
 	if(!Entity_IsValid(entity)){
 		return Plugin_Stop;
 	}
 
-	new Float:interval = ReadPackFloat(dataPack);
-	new currentCall = ReadPackCell(dataPack);
-#if SOURCEMOD_V_MAJOR >= 1 && SOURCEMOD_V_MINOR >= 7
-	new Function:callback = ReadPackFunction(dataPack);
-#else
-	new Function:callback = Function:ReadPackCell(dataPack);
-#endif
+	float interval = ReadPackFloat(dataPack);
+	int currentCall = ReadPackCell(dataPack);
+	Function callback = ReadPackFunction(dataPack);
 
-	new any:result;
+	any result;
 	Call_StartFunction(INVALID_HANDLE, callback);
 	Call_PushCellRef(entity);
 	Call_PushFloatRef(interval);
@@ -1824,13 +1774,9 @@ public Action:__smlib_Timer_ChangeOverTime(Handle:Timer, Handle:dataPack)
 	WritePackCell(dataPack, EntIndexToEntRef(entity));
 	WritePackFloat(dataPack, interval);
 	WritePackCell(dataPack, currentCall+1);
-#if SOURCEMOD_V_MAJOR >= 1 && SOURCEMOD_V_MINOR >= 7
 	WritePackFunction(dataPack, callback);
-#else
-	WritePackCell(dataPack, _:callback);
-#endif
 	ResetPack(dataPack);
-	CreateTimer(interval,__smlib_Timer_ChangeOverTime,dataPack);
+	CreateTimer(interval, __smlib_Timer_ChangeOverTime, dataPack);
 	return Plugin_Stop;
 }
 
@@ -1838,13 +1784,14 @@ public Action:__smlib_Timer_ChangeOverTime(Handle:Timer, Handle:dataPack)
 /**
  * Gets the next child, entity is parent of.
  *
- * @param client		Entity Index (of Parent)
+ * @param parent		Entity Index (of Parent)
  * @param start			Start Index.
  * @return				Entity Index or -1 if no entity was found.
  */
-stock Entity_GetNextChild(parent, start=0)
+stock int Entity_GetNextChild(int parent, int start=0)
 {
-	for (new entity=start; entity <= 2048; entity++) {
+	int maxEntities = GetMaxEntities();
+	for (int entity=start; entity < maxEntities; entity++) {
 
 		if (!Entity_IsValid(entity)) {
 			continue;
@@ -1867,9 +1814,8 @@ stock Entity_GetNextChild(parent, start=0)
  *
  * @param entity			Entity index.
  * @param vec				Vector.
- * @noreturn
  */
-stock Entity_GetMoveDirection(entity, Float:vec[3])
+stock void Entity_GetMoveDirection(int entity, float vec[3])
 {
 	GetEntPropVector(entity, Prop_Data, "m_vecMoveDir", vec);
 }
@@ -1879,9 +1825,8 @@ stock Entity_GetMoveDirection(entity, Float:vec[3])
  *
  * @param entity			Entity index.
  * @param vec				Vector.
- * @noreturn
  */
-stock Entity_SetMoveDirection(entity, const Float:vec[3])
+stock void Entity_SetMoveDirection(int entity, const float vec[3])
 {
 	SetEntPropVector(entity, Prop_Data, "m_vecMoveDir", vec);
 }
@@ -1892,9 +1837,9 @@ stock Entity_SetMoveDirection(entity, const Float:vec[3])
  * @param entity			Entity index.
  * @return					True if the door will force close, otherwise false.
  */
-stock bool:Entity_GetForceClose(entity)
+stock bool Entity_GetForceClose(int entity)
 {
-	return bool:GetEntProp(entity, Prop_Data, "m_bForceClosed");
+	return GetEntProp(entity, Prop_Data, "m_bForceClosed") != 0;
 }
 
 /**
@@ -1902,9 +1847,8 @@ stock bool:Entity_GetForceClose(entity)
  *
  * @param entity			Entity index.
  * @param forceClose		If true the door will force close, otherwise it won't.
- * @noreturn
  */
-stock Entity_SetForceClose(entity, bool:forceClose)
+stock void Entity_SetForceClose(int entity, bool forceClose)
 {
 	SetEntProp(entity, Prop_Data, "m_bForceClosed", forceClose);
 }
@@ -1915,7 +1859,7 @@ stock Entity_SetForceClose(entity, bool:forceClose)
  * @param entity			Entity index.
  * @return					Speed of the entity.
  */
-stock Float:Entity_GetSpeed(entity)
+stock float Entity_GetSpeed(int entity)
 {
 	return GetEntPropFloat(entity, Prop_Data, "m_flSpeed");
 }
@@ -1925,9 +1869,8 @@ stock Float:Entity_GetSpeed(entity)
  *
  * @param entity			Entity index.
  * @param speed				The new speed of the entity.
- * @noreturn
  */
-stock Entity_SetSpeed(entity, Float:speed)
+stock void Entity_SetSpeed(int entity, float speed)
 {
 	SetEntPropFloat(entity, Prop_Data, "m_flSpeed", speed);
 }
@@ -1939,7 +1882,7 @@ stock Entity_SetSpeed(entity, Float:speed)
  * @param entity			Entity index.
  * @return					Damage.
  */
-stock Float:Entity_GetBlockDamage(entity)
+stock float Entity_GetBlockDamage(int entity)
 {
 	return GetEntPropFloat(entity, Prop_Data, "m_flBlockDamage");
 }
@@ -1950,9 +1893,8 @@ stock Float:Entity_GetBlockDamage(entity)
  *
  * @param entity			Entity index.
  * @param damage			Damage.
- * @noreturn
  */
-stock Entity_SetBlockDamage(entity, Float:damage)
+stock void Entity_SetBlockDamage(int entity, float damage)
 {
 	SetEntPropFloat(entity, Prop_Data, "m_flBlockDamage", damage);
 }
@@ -1963,9 +1905,9 @@ stock Entity_SetBlockDamage(entity, Float:damage)
  * @param entity			Entity index.
  * @return					True if entity is disabled, otherwise false.
  */
-stock bool:Entity_IsDisabled(entity)
+stock bool Entity_IsDisabled(int entity)
 {
-	return bool:GetEntProp(entity, Prop_Data, "m_bDisabled", 1);
+	return GetEntProp(entity, Prop_Data, "m_bDisabled", 1) != 0;
 }
 
 /**
@@ -1974,7 +1916,7 @@ stock bool:Entity_IsDisabled(entity)
  * @param entity			Entity index.
  * @return					True if successful otherwise false.
  */
-stock Entity_Disable(entity)
+stock bool Entity_Disable(int entity)
 {
 	return AcceptEntityInput(entity, "Disable");
 }
@@ -1985,7 +1927,7 @@ stock Entity_Disable(entity)
  * @param entity			Entity index.
  * @return					True if successful otherwise false.
  */
-stock Entity_Enable(entity)
+stock bool Entity_Enable(int entity)
 {
 	return AcceptEntityInput(entity, "Enable");
 }
@@ -2003,9 +1945,8 @@ stock Entity_Enable(entity)
  *
  * @param entity			Entity index.
  * @param value				Mode, use DAMAGE_* defines.
- * @noreturn
  */
-stock Entity_SetTakeDamage(entity, value)
+stock void Entity_SetTakeDamage(int entity, int value)
 {
 	SetEntProp(entity, Prop_Data, "m_takedamage", value, 1);
 }
@@ -2017,7 +1958,7 @@ stock Entity_SetTakeDamage(entity, value)
  * @param entity			Entity index.
  * @return					Take damage mode (DAMAGE_*).
  */
-stock Entity_GetTakeDamage(entity)
+stock int Entity_GetTakeDamage(int entity)
 {
 	return GetEntProp(entity, Prop_Data, "m_takedamage", 1);
 }
@@ -2028,9 +1969,8 @@ stock Entity_GetTakeDamage(entity)
  *
  * @param entity			Entity index.
  * @param minDamage			Minimum required damage.
- * @noreturn
  */
-stock Entity_SetMinHealthDamage(entity, minDamage)
+stock void Entity_SetMinHealthDamage(int entity, int minDamage)
 {
 	SetEntProp(entity, Prop_Data, "m_iMinHealthDmg", minDamage);
 }
@@ -2042,7 +1982,7 @@ stock Entity_SetMinHealthDamage(entity, minDamage)
  * @param entity			Entity index.
  * @return					Minimum required damage.
  */
-stock Entity_GetMinHealthDamage(entity)
+stock int Entity_GetMinHealthDamage(int entity)
 {
 	return GetEntProp(entity, Prop_Data, "m_iMinHealthDmg");
 }
@@ -2052,18 +1992,17 @@ stock Entity_GetMinHealthDamage(entity)
  *
  * @param entity	Entity index
  * @param color 	4 dimensional array where [r,g,b,a] values are stored
- * @noreturn
  * @error			Invalid entity index, or lack of mod compliance.
  */
-stock Entity_GetRenderColor(entity, color[4])
+stock void Entity_GetRenderColor(int entity, int color[4])
 {
-	static bool:gotconfig = false;
-	static String:prop[32];
+	static bool gotconfig = false;
+	static char prop[32];
 
 	if (!gotconfig) {
-		new Handle:gc = LoadGameConfigFile("core.games");
-		new bool:exists = GameConfGetKeyValue(gc, "m_clrRender", prop, sizeof(prop));
-		CloseHandle(gc);
+		Handle gc = LoadGameConfigFile("core.games");
+		bool exists = GameConfGetKeyValue(gc, "m_clrRender", prop, sizeof(prop));
+		delete gc;
 
 		if (!exists) {
 			strcopy(prop, sizeof(prop), "m_clrRender");
@@ -2072,13 +2011,13 @@ stock Entity_GetRenderColor(entity, color[4])
 		gotconfig = true;
 	}
 
-	new offset = GetEntSendPropOffs(entity, prop);
+	int offset = GetEntSendPropOffs(entity, prop);
 
 	if (offset <= 0) {
 		ThrowError("SetEntityRenderColor not supported by this mod");
 	}
 
-	for (new i=0; i < 4; i++) {
+	for (int i=0; i < 4; i++) {
 		color[i] = GetEntData(entity, offset + i + 1, 1);
 	}
 }
@@ -2092,18 +2031,17 @@ stock Entity_GetRenderColor(entity, color[4])
  * @param g 		Amount of green (0-255)
  * @param b 		Amount of blue (0-255)
  * @param a 		Amount of alpha (0-255)
- * @noreturn
  * @error			Invalid entity index, or lack of mod compliance.
  */
-stock Entity_SetRenderColor(entity, r=-1, g=-1, b=-1, a=-1)
+stock void Entity_SetRenderColor(int entity, int r=-1, int g=-1, int b=-1, int a=-1)
 {
-	static bool:gotconfig = false;
-	static String:prop[32];
+	static bool gotconfig = false;
+	static char prop[32];
 
 	if (!gotconfig) {
-		new Handle:gc = LoadGameConfigFile("core.games");
-		new bool:exists = GameConfGetKeyValue(gc, "m_clrRender", prop, sizeof(prop));
-		CloseHandle(gc);
+		Handle gc = LoadGameConfigFile("core.games");
+		bool exists = GameConfGetKeyValue(gc, "m_clrRender", prop, sizeof(prop));
+		delete gc;
 
 		if (!exists) {
 			strcopy(prop, sizeof(prop), "m_clrRender");
@@ -2112,7 +2050,7 @@ stock Entity_SetRenderColor(entity, r=-1, g=-1, b=-1, a=-1)
 		gotconfig = true;
 	}
 
-	new offset = GetEntSendPropOffs(entity, prop);
+	int offset = GetEntSendPropOffs(entity, prop);
 
 	if (offset <= 0) {
 		ThrowError("SetEntityRenderColor not supported by this mod");
@@ -2145,8 +2083,8 @@ stock Entity_SetRenderColor(entity, r=-1, g=-1, b=-1, a=-1)
  * @param outputid		Unknown.
  * @return				True if successful, otherwise false.
  */
-stock bool:Entity_AddOutput(entity, const String:input[], activator=-1, caller=-1, outputid=0)
+stock bool Entity_AddOutput(int entity, const char[] input, int activator=-1, int caller=-1, int outputid=0)
 {
-	SetVariantString(input);
+	//SetVariantString(input);
 	return AcceptEntityInput(entity, "addoutput", activator, caller, outputid);
 }

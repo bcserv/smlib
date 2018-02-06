@@ -12,9 +12,9 @@
  * @param	flags		Flags to check.
  * @return				True if flags are set, false otherwise.
  */
-stock bool:Convar_HasFlags(Handle:convar, flags)
+stock bool Convar_HasFlags(ConVar convar, int flags)
 {
-	return bool:(GetConVarFlags(convar) & flags);
+	return convar.Flags & flags > 0;
 }
 
 /**
@@ -22,13 +22,12 @@ stock bool:Convar_HasFlags(Handle:convar, flags)
  *
  * @param	convar		ConVar Handle.
  * @param	flags		Flags to add.
- * @noreturn
  */
-stock Convar_AddFlags(Handle:convar, flags)
+stock void Convar_AddFlags(ConVar convar, int flags)
 {
-	new newFlags = GetConVarFlags(convar);
+	int newFlags = convar.Flags;
 	newFlags |= flags;
-	SetConVarFlags(convar, newFlags);
+	convar.Flags = newFlags;
 }
 
 /**
@@ -38,11 +37,11 @@ stock Convar_AddFlags(Handle:convar, flags)
  * @param	flags		Flags to remove
  * @noreturn
  */
-stock Convar_RemoveFlags(Handle:convar, flags)
+stock void Convar_RemoveFlags(ConVar convar, int flags)
 {
-	new newFlags = GetConVarFlags(convar);
+	int newFlags = convar.Flags;
 	newFlags &= ~flags;
-	SetConVarFlags(convar, newFlags);
+	convar.Flags = newFlags;
 }
 
 /**
@@ -52,13 +51,13 @@ stock Convar_RemoveFlags(Handle:convar, flags)
  * @param	name		String Name.
  * @return				True if the name specified is a valid ConVar or console command name, false otherwise.
  */
-stock bool:Convar_IsValidName(const String:name[])
+stock bool Convar_IsValidName(const char[] name)
 {
 	if (name[0] == '\0') {
 		return false;
 	}
 
-	new n=0;
+	int n=0;
 	while (name[n] != '\0') {
 
 		if (!IsValidConVarChar(name[n])) {

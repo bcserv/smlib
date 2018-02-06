@@ -13,6 +13,7 @@
 
 // enforce semicolons after each code statement
 #pragma semicolon 1
+#pragma newdecls required
 
 #include <sourcemod>
 #include <smlib>
@@ -29,7 +30,7 @@
 
 *****************************************************************/
 
-public Plugin:myinfo = {
+public Plugin myinfo = {
 	name = "smlib Testing Suite",
 	author = "Berni, Chanz",
 	description = "Plugin by Berni",
@@ -61,13 +62,14 @@ public Plugin:myinfo = {
 
 *****************************************************************/
 
-public OnPluginStart() {
+public void OnPluginStart() {
 
-	new arr[1], String:arr_str[1][1], arr_4[4];
-	decl Float:vec[3];
-	decl String:buf[1], String:buf_10[10], String:twoDimStrArr[1][1];
-	new variable;
-	new Handle:handle;
+	int arr[1], arr_4[4];
+	char arr_str[1][1];
+	float vec[3];
+	char buf[1], buf_10[10], twoDimStrArr[1][1];
+	int variable;
+	Handle handle;
 
 	// File: arrays.inc
 	Array_FindValue(arr, sizeof(arr), 1);
@@ -85,9 +87,9 @@ public OnPluginStart() {
 	Client_FindBySteamId("");
 	Client_FindByName("");
 	Client_GetObserverMode(0);
-	Client_SetObserverMode(0, Obs_Mode:0);
+	Client_SetObserverMode(0, view_as<Obs_Mode>(0));
 	Client_GetObserverLastMode(0);
-	Client_SetObserverLastMode(0, Obs_Mode:0);
+	Client_SetObserverLastMode(0, view_as<Obs_Mode>(0));
 	Client_GetViewOffset(0, vec);
 	Client_SetViewOffset(0, vec);
 	Client_GetObserverTarget(0);
@@ -185,7 +187,7 @@ public OnPluginStart() {
 	Client_UnMute(0);
 	Client_IsMuted(0);
 	Client_PrintToConsole(0, "");
-	Client_Print(0, ClientHudPrint:0, "");
+	Client_Print(0, view_as<ClientHudPrint>(0), "");
 	Client_PrintToChatExclude(0);
 	Client_Reply(0, "");
 	Client_MatchesFilter(0, 0);
@@ -221,9 +223,9 @@ public OnPluginStart() {
 	ConCommand_RemoveFlags("", 0);
 
 	// File: convars.inc
-	Convar_HasFlags(INVALID_HANDLE, 0);
-	Convar_AddFlags(INVALID_HANDLE, 0);
-	Convar_RemoveFlags(INVALID_HANDLE, 0);
+	Convar_HasFlags(null, 0);
+	Convar_AddFlags(null, 0);
+	Convar_RemoveFlags(null, 0);
 	Convar_IsValidName("");
 
 	// File: crypt.inc
@@ -239,7 +241,7 @@ public OnPluginStart() {
 	Debug_FloatArray(vec);
 
 	// File: dynarrays.inc
-	DynArray_GetBool(INVALID_HANDLE, 0);
+	DynArray_GetBool(null, 0);
 
 	// File: edicts.inc
 	Edict_FindByName("");
@@ -296,10 +298,10 @@ public OnPluginStart() {
 	Entity_ClearSpawnFlags(0);
 	Entity_HasSpawnFlags(0, 0);
 	Entity_GetEFlags(0);
-	Entity_SetEFlags(0, Entity_Flags:0);
-	Entity_AddEFlags(0, Entity_Flags:0);
-	Entity_RemoveEFlags(0, Entity_Flags:0);
-	Entity_HasEFlags(0, Entity_Flags:0);
+	Entity_SetEFlags(0, view_as<Entity_Flags>(0));
+	Entity_AddEFlags(0, view_as<Entity_Flags>(0));
+	Entity_RemoveEFlags(0, view_as<Entity_Flags>(0));
+	Entity_HasEFlags(0, view_as<Entity_Flags>(0));
 	Entity_MarkSurrBoundsDirty(0);
 	Entity_GetFlags(0);
 	Entity_SetFlags(0, 0);
@@ -308,13 +310,13 @@ public OnPluginStart() {
 	Entity_ToggleFlag(0, 0);
 	Entity_ClearFlags(0);
 	Entity_GetSolidFlags(0);
-	Entity_SetSolidFlags(0, SolidFlags_t:0);
-	Entity_AddSolidFlags(0, SolidFlags_t:0);
-	Entity_RemoveSolidFlags(0, SolidFlags_t:0);
+	Entity_SetSolidFlags(0, view_as<SolidFlags_t>(0));
+	Entity_AddSolidFlags(0, view_as<SolidFlags_t>(0));
+	Entity_RemoveSolidFlags(0, view_as<SolidFlags_t>(0));
 	Entity_ClearSolidFlags(0);
-	Entity_SolidFlagsSet(0, SolidFlags_t:0);
+	Entity_SolidFlagsSet(0, view_as<SolidFlags_t>(0));
 	Entity_GetSolidType(0);
-	Entity_SetSolidType(0, SolidType_t:0);
+	Entity_SetSolidType(0, view_as<SolidType_t>(0));
 	Entity_IsSolid(0);
 	Entity_GetModel(0, buf, sizeof(buf));
 	Entity_SetModel(0, "");
@@ -322,7 +324,7 @@ public OnPluginStart() {
 	Entity_SetModelIndex(0, 0);
 	Entity_SetMaxSpeed(0, 0.0);
 	Entity_GetCollisionGroup(0);
-	Entity_SetCollisionGroup(0, Collision_Group_t:0);
+	Entity_SetCollisionGroup(0, view_as<Collision_Group_t>(0));
 	Entity_GetAbsOrigin(0, vec);
 	Entity_SetAbsOrigin(0, vec);
 	Entity_GetAbsAngles(0, vec);
@@ -434,8 +436,8 @@ public OnPluginStart() {
 	Math_Overflow(0, 0, 0);
 
 	// File: menus.inc
-	Menu_AddIntItem(INVALID_HANDLE, 0, "");
-	Menu_GetIntItem(INVALID_HANDLE, 0);
+	Menu_AddIntItem(null, 0, "");
+	Menu_GetIntItem(null, 0);
 
 	// File: server.inc
 	Server_GetIP();
@@ -444,11 +446,11 @@ public OnPluginStart() {
 	Server_GetHostName(buf, sizeof(buf));
 
 	// File: sql.inc
-	SQL_TQueryF(INVALID_HANDLE, INVALID_FUNCTION, 0, DBPrio_Normal, "");
-	SQL_FetchIntByName(INVALID_HANDLE, "");
-	SQL_FetchBoolByName(INVALID_HANDLE, "");
-	SQL_FetchFloatByName(INVALID_HANDLE, "");
-	SQL_FetchStringByName(INVALID_HANDLE, "", buf, sizeof(buf));
+	SQL_TQueryF(null, INVALID_FUNCTION, 0, DBPrio_Normal, "");
+	SQL_FetchIntByName(null, "");
+	SQL_FetchBoolByName(null, "");
+	SQL_FetchFloatByName(null, "");
+	SQL_FetchStringByName(null, "", buf, sizeof(buf));
 
 	// File: strings.inc
 	String_IsNumeric("");

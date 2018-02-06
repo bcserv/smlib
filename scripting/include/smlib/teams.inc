@@ -25,10 +25,10 @@
  * @noparam
  * @return			True if one team is empty, false otherwise.
  */
-stock bool:Team_HaveAllPlayers(bool:countFakeClients=true) {
+stock bool Team_HaveAllPlayers(bool countFakeClients=true) {
 
-	new teamCount = GetTeamCount();
-	for (new i=2; i < teamCount; i++) {
+	int teamCount = GetTeamCount();
+	for (int i=2; i < teamCount; i++) {
 
 		if (Team_GetClientCount(i, ((countFakeClients) ? CLIENTFILTER_ALL : CLIENTFILTER_NOBOTS)) == 0) {
 			return false;
@@ -45,12 +45,12 @@ stock bool:Team_HaveAllPlayers(bool:countFakeClients=true) {
  * @param flags					Client Filter Flags (Use the CLIENTFILTER_ constants).
  * @return						Client count in the server.
  */
-stock Team_GetClientCount(team, flags=0)
+stock int Team_GetClientCount(int team, int flags=0)
 {
 	flags |= CLIENTFILTER_INGAME;
 
-	new numClients = 0;
-	for (new client=1; client <= MaxClients; client++) {
+	int numClients = 0;
+	for (int client=1; client <= MaxClients; client++) {
 
 		if (!Client_MatchesFilter(client, flags)) {
 			continue;
@@ -72,13 +72,12 @@ stock Team_GetClientCount(team, flags=0)
  * @param team1					Pass an integer variable by reference
  * @param team2					Pass an integer variable by reference
  * @param flags					Client Filter Flags (Use the CLIENTFILTER_ constants).
- * @noreturn
  */
-stock Team_GetClientCounts(&team1=0, &team2=0, flags=0)
+stock void Team_GetClientCounts(int &team1=0, int &team2=0, int flags=0)
 {
 	flags |= CLIENTFILTER_INGAME;
 
-	for (new client=1; client <= MaxClients; client++) {
+	for (int client=1; client <= MaxClients; client++) {
 
 		if (!Client_MatchesFilter(client, flags)) {
 			continue;
@@ -102,9 +101,9 @@ stock Team_GetClientCounts(&team1=0, &team2=0, flags=0)
  * @param size			String Buffer Size
  * @return				True on success, false otherwise
  */
-stock bool:Team_GetName(index, String:str[], size)
+stock bool Team_GetName(int index, char[] str, int size)
 {
-	new edict = Team_GetEdict(index);
+	int edict = Team_GetEdict(index);
 
 	if (edict == -1) {
 		str[0] = '\0';
@@ -126,9 +125,9 @@ stock bool:Team_GetName(index, String:str[], size)
  * @param name			New Name String
  * @return				True on success, false otherwise
  */
-stock bool:Team_SetName(index, const String:name[])
+stock bool Team_SetName(int index, const char[] name)
 {
-	new edict = Team_GetEdict(index);
+	int edict = Team_GetEdict(index);
 
 	if (edict == -1) {
 		return false;
@@ -147,9 +146,9 @@ stock bool:Team_SetName(index, const String:name[])
  * @param index			Team Index.
  * @return				Team Score or -1 if the team is not valid.
  */
-stock Team_GetScore(index)
+stock int Team_GetScore(int index)
 {
-	new edict = Team_GetEdict(index);
+	int edict = Team_GetEdict(index);
 
 	if (edict == -1) {
 		return -1;
@@ -166,9 +165,9 @@ stock Team_GetScore(index)
  * @param score			Score value.
  * @return				True on success, false otherwise
  */
-stock bool:Team_SetScore(index, score)
+stock bool Team_SetScore(int index, int score)
 {
-	new edict = Team_GetEdict(index);
+	int edict = Team_GetEdict(index);
 
 	if (edict == -1) {
 		return false;
@@ -188,7 +187,7 @@ stock bool:Team_SetScore(index, score)
  * @param edict			Edict
  * @return				Team Index
  */
-stock Team_EdictGetNum(edict)
+stock int Team_EdictGetNum(int edict)
 {
 	return GetEntProp(edict, Prop_Send, "m_iTeamNum");
 }
@@ -200,7 +199,7 @@ stock Team_EdictGetNum(edict)
  * @param index			Index.
  * @return				True if the Index is a valid team, false otherwise.
  */
-stock bool:Team_IsValid(index)
+stock bool Team_IsValid(int index)
 {
 	return (Team_GetEdict(index) != -1);
 }
@@ -212,7 +211,7 @@ stock bool:Team_IsValid(index)
  * @param index			Edict
  * @return				Team Index
  */
-stock Team_EdictIsValid(edict)
+stock int Team_EdictIsValid(int edict)
 {
 	return GetEntProp(edict, Prop_Send, "m_iTeamNum");
 }
@@ -225,23 +224,23 @@ stock Team_EdictIsValid(edict)
  * @param index			Team Index.
  * @return				Team edict or -1 if not found
  */
-stock Team_GetEdict(index)
+stock int Team_GetEdict(int index)
 {
-	static teams[MAX_TEAMS] = { INVALID_ENT_REFERENCE, ... };
+	static int teams[MAX_TEAMS] = { INVALID_ENT_REFERENCE, ... };
 
 	if (index < 0 || index > MAX_TEAMS) {
 		return -1;
 	}
 
-	new edict = teams[index];
+	int edict = teams[index];
 	if (Entity_IsValid(edict)) {
 		return edict;
 	}
 
-	new bool:foundTeamManager = false;
+	bool foundTeamManager = false;
 
-	new maxEntities = GetMaxEntities();
-	for (new entity=MaxClients+1; entity < maxEntities; entity++) {
+	int maxEntities = GetMaxEntities();
+	for (int entity=MaxClients+1; entity < maxEntities; entity++) {
 
 		if (!IsValidEntity(entity)) {
 			continue;
@@ -258,7 +257,7 @@ stock Team_GetEdict(index)
 			continue;
 		}
 
-		new num = Team_EdictGetNum(entity);
+		int num = Team_EdictGetNum(entity);
 
 		if (num >= 0 && num <= MAX_TEAMS) {
 			teams[num] = EntIndexToEntRef(entity);
@@ -280,10 +279,10 @@ stock Team_GetEdict(index)
  * @param index			Team Index.
  * @return				Client Index or -1 if no client was found in the specified team.
  */
-stock Team_GetAnyClient(index)
+stock int Team_GetAnyClient(int index)
 {
-	static client_cache[MAX_TEAMS] = -1;
-	new client;
+	static int client_cache[MAX_TEAMS] = {-1, ...};
+	int client;
 
 	if (index > 0) {
 		client = client_cache[index];

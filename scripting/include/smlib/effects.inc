@@ -31,16 +31,16 @@ enum DissolveType
  * @param magnitude		How strongly to push away from the center.
  * @return				True on success, otherwise false.
  */
-stock bool:Effect_DissolveEntity(entity, DissolveType:dissolveType=DISSOLVE_NORMAL, magnitude=1)
+stock bool Effect_DissolveEntity(int entity, DissolveType dissolveType=DISSOLVE_NORMAL, int magnitude=1)
 {
-	new env_entity_dissolver = CreateEntityByName("env_entity_dissolver");
+	int env_entity_dissolver = CreateEntityByName("env_entity_dissolver");
 
 	if (env_entity_dissolver == -1) {
 		return false;
 	}
 
 	Entity_PointAtTarget(env_entity_dissolver, entity);
-	SetEntProp(env_entity_dissolver, Prop_Send, "m_nDissolveType", _:dissolveType);
+	SetEntProp(env_entity_dissolver, Prop_Send, "m_nDissolveType", dissolveType);
 	SetEntProp(env_entity_dissolver, Prop_Send, "m_nMagnitude", magnitude);
 	AcceptEntityInput(env_entity_dissolver,	"Dissolve");
 	Entity_Kill(env_entity_dissolver);
@@ -55,9 +55,9 @@ stock bool:Effect_DissolveEntity(entity, DissolveType:dissolveType=DISSOLVE_NORM
  * @param dissolveType	Dissolve Type, use the DissolveType enum.
  * @return				True on success, otherwise false.
  */
-stock bool:Effect_DissolvePlayerRagDoll(client, DissolveType:dissolveType=DISSOLVE_NORMAL)
+stock bool Effect_DissolvePlayerRagDoll(int client, DissolveType dissolveType=DISSOLVE_NORMAL)
 {
-	new m_hRagdoll = GetEntPropEnt(client, Prop_Send, "m_hRagdoll");
+	int m_hRagdoll = GetEntPropEnt(client, Prop_Send, "m_hRagdoll");
 
 	if (m_hRagdoll == -1) {
 		return false;
@@ -66,7 +66,7 @@ stock bool:Effect_DissolvePlayerRagDoll(client, DissolveType:dissolveType=DISSOL
 	return Effect_DissolveEntity(m_hRagdoll, dissolveType);
 }
 
-functag EffectCallback public(entity, any:data);
+typedef EffectCallback = function void(int entity, any data);
 
 /**
  * Fades an entity in our out.
@@ -82,11 +82,10 @@ functag EffectCallback public(entity, any:data);
  * @param fast			Optional: Fade the entity fast (~0.7 secs) or slow (~3 secs)
  * @param callback		Optional: You can specify a callback Function that will get called when the fade is finished.
  * @param data			Optional: You can pass any data to the callback.
- * @return				True on success, otherwise false.
  */
-stock Effect_Fade(entity, fadeOut=true, kill=false, fast=true, EffectCallback:callback=INVALID_FUNCTION, any:data=0)
+stock void Effect_Fade(int entity, bool fadeOut=true, bool kill=false, bool fast=true, EffectCallback callback=INVALID_FUNCTION, any data=0)
 {
-	new Float:timerTime = 0.0;
+	float timerTime = 0.0;
 
 	if (fast) {
 		timerTime = 0.6;
@@ -112,16 +111,12 @@ stock Effect_Fade(entity, fadeOut=true, kill=false, fast=true, EffectCallback:ca
 	ChangeEdictState(entity, GetEntSendPropOffs(entity, "m_nRenderFX", true));
 
 	if (kill || callback != INVALID_FUNCTION) {
-		new Handle:dataPack = INVALID_HANDLE;
+		DataPack dataPack = null;
 		CreateDataTimer(timerTime, _smlib_Timer_Effect_Fade, dataPack, TIMER_FLAG_NO_MAPCHANGE | TIMER_DATA_HNDL_CLOSE);
 
 		WritePackCell(dataPack, EntIndexToEntRef(entity));
 		WritePackCell(dataPack, kill);
-#if SOURCEMOD_V_MAJOR >= 1 && SOURCEMOD_V_MINOR >= 7
 		WritePackFunction(dataPack, callback);
-#else
-		WritePackCell(dataPack, _:callback);
-#endif
 		WritePackCell(dataPack, data);
 		ResetPack(dataPack);
 	}
@@ -135,9 +130,8 @@ stock Effect_Fade(entity, fadeOut=true, kill=false, fast=true, EffectCallback:ca
  * @param fast			Optional: Fade the entity fast (~0.7 secs) or slow (~3 secs)
  * @param callback		Optional: You can specify a callback Function that will get called when the fade is finished.
  * @param data			Optional: You can pass any data to the callback.
- * @return				True on success, otherwise false.
  */
-stock Effect_FadeIn(entity, fast=true, EffectCallback:callback=INVALID_FUNCTION, any:data=0)
+stock void Effect_FadeIn(int entity, bool fast=true, EffectCallback callback=INVALID_FUNCTION, any data=0)
 {
 	Effect_Fade(entity, false, false, fast, callback, data);
 }
@@ -152,23 +146,18 @@ stock Effect_FadeIn(entity, fast=true, EffectCallback:callback=INVALID_FUNCTION,
  * @param fast			Optional: Fade the entity fast (~0.7 secs) or slow (~3 secs)
  * @param callback		Optional: You can specify a callback Function that will get called when the fade is finished.
  * @param data			Optional: You can pass any data to the callback.
- * @return				True on success, otherwise false.
  */
-stock Effect_FadeOut(entity, kill=false, fast=true, EffectCallback:callback=INVALID_FUNCTION, any:data=0)
+stock void Effect_FadeOut(int entity, bool kill=false, bool fast=true, EffectCallback callback=INVALID_FUNCTION, any data=0)
 {
 	Effect_Fade(entity, true, kill, fast, callback, data);
 }
 
-public Action:_smlib_Timer_Effect_Fade(Handle:Timer, Handle:dataPack)
+public Action _smlib_Timer_Effect_Fade(Handle Timer, DataPack dataPack)
 {
-	new entity = ReadPackCell(dataPack);
-	new kill = ReadPackCell(dataPack);
-#if SOURCEMOD_V_MAJOR >= 1 && SOURCEMOD_V_MINOR >= 7
-	new Function:callback = ReadPackFunction(dataPack);
-#else
-	new Function:callback = Function:ReadPackCell(dataPack);
-#endif
-	new any:data = any:ReadPackCell(dataPack);
+	int entity = ReadPackCell(dataPack);
+	int kill = ReadPackCell(dataPack);
+	Function callback = ReadPackFunction(dataPack);
+	any data = ReadPackCell(dataPack);
 
 	if (callback != INVALID_FUNCTION) {
 		Call_StartFunction(INVALID_HANDLE, callback);
@@ -203,25 +192,24 @@ public Action:_smlib_Timer_Effect_Fade(Handle:Timer, Handle:dataPack)
  * @param amplitude		Beam amplitude.
  * @param color			Color array (r, g, b, a).
  * @param speed			Speed of the beam.
- * @noreturn
  */
-stock Effect_DrawBeamBoxToClient(
-	client,
-	const Float:bottomCorner[3],
-	const Float:upperCorner[3],
-	modelIndex,
-	haloIndex,
-	startFrame=0,
-	frameRate=30,
-	Float:life=5.0,
-	Float:width=5.0,
-	Float:endWidth=5.0,
-	fadeLength=2,
-	Float:amplitude=1.0,
-	const color[4]={ 255, 0, 0, 255 },
-	speed=0
+stock void Effect_DrawBeamBoxToClient(
+	int client,
+	const float bottomCorner[3],
+	const float upperCorner[3],
+	int modelIndex,
+	int haloIndex,
+	int startFrame=0,
+	int frameRate=30,
+	float life=5.0,
+	float width=5.0,
+	float endWidth=5.0,
+	int fadeLength=2,
+	float amplitude=1.0,
+	const int color[4]={ 255, 0, 0, 255 },
+	int speed=0
 ) {
-    new clients[1];
+    int clients[1];
     clients[0] = client;
     Effect_DrawBeamBox(clients, 1, bottomCorner, upperCorner, modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, color, speed);
 }
@@ -244,26 +232,25 @@ stock Effect_DrawBeamBoxToClient(
  * @param amplitude		Beam amplitude.
  * @param color			Color array (r, g, b, a).
  * @param speed			Speed of the beam.
- * @noreturn
  */
-stock Effect_DrawBeamBoxToAll(
-	const Float:bottomCorner[3],
-	const Float:upperCorner[3],
-	modelIndex,
-	haloIndex,
-	startFrame=0,
-	frameRate=30,
-	Float:life=5.0,
-	Float:width=5.0,
-	Float:endWidth=5.0,
-	fadeLength=2,
-	Float:amplitude=1.0,
-	const color[4]={ 255, 0, 0, 255 },
-	speed=0
+stock void Effect_DrawBeamBoxToAll(
+	const float bottomCorner[3],
+	const float upperCorner[3],
+	int modelIndex,
+	int haloIndex,
+	int startFrame=0,
+	int frameRate=30,
+	float life=5.0,
+	float width=5.0,
+	float endWidth=5.0,
+	int fadeLength=2,
+	float amplitude=1.0,
+	const int color[4]={ 255, 0, 0, 255 },
+	int speed=0
 )
 {
-	new clients[MaxClients];
-	new numClients = Client_Get(clients, CLIENTFILTER_INGAME);
+	int[] clients = new int[MaxClients];
+	int numClients = Client_Get(clients, CLIENTFILTER_INGAME);
 
 	Effect_DrawBeamBox(clients, numClients, bottomCorner, upperCorner, modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, color, speed);
 }
@@ -288,29 +275,28 @@ stock Effect_DrawBeamBoxToAll(
  * @param amplitude		Beam amplitude.
  * @param color			Color array (r, g, b, a).
  * @param speed			Speed of the beam.
- * @noreturn
  */
-stock Effect_DrawBeamBox(
-	clients[],
-	numClients,
-	const Float:bottomCorner[3],
-	const Float:upperCorner[3],
-	modelIndex,
-	haloIndex,
-	startFrame=0,
-	frameRate=30,
-	Float:life=5.0,
-	Float:width=5.0,
-	Float:endWidth=5.0,
-	fadeLength=2,
-	Float:amplitude=1.0,
-	const color[4]={ 255, 0, 0, 255 },
-	speed=0
+stock void Effect_DrawBeamBox(
+	int[] clients,
+	int numClients,
+	const float bottomCorner[3],
+	const float upperCorner[3],
+	int modelIndex,
+	int haloIndex,
+	int startFrame=0,
+	int frameRate=30,
+	float life=5.0,
+	float width=5.0,
+	float endWidth=5.0,
+	int fadeLength=2,
+	float amplitude=1.0,
+	const int color[4]={ 255, 0, 0, 255 },
+	int speed=0
 ) {
 	// Create the additional corners of the box
-	decl Float:corners[8][3];
+	float corners[8][3];
 
-	for (new i=0; i < 4; i++) {
+	for (int i=0; i < 4; i++) {
 		Array_Copy(bottomCorner,	corners[i],		3);
 		Array_Copy(upperCorner,		corners[i+4],	3);
 	}
@@ -328,21 +314,21 @@ stock Effect_DrawBeamBox(
 
 	// Horizontal Lines
 	// Bottom
-	for (new i=0; i < 4; i++) {
-		new j = ( i == 3 ? 0 : i+1 );
+	for (int i=0; i < 4; i++) {
+		int j = ( i == 3 ? 0 : i+1 );
 		TE_SetupBeamPoints(corners[i], corners[j], modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, color, speed);
 		TE_Send(clients, numClients);
 	}
 
 	// Top
-	for (new i=4; i < 8; i++) {
-		new j = ( i == 7 ? 4 : i+1 );
+	for (int i=4; i < 8; i++) {
+		int j = ( i == 7 ? 4 : i+1 );
 		TE_SetupBeamPoints(corners[i], corners[j], modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, color, speed);
 		TE_Send(clients, numClients);
 	}
 
 	// All Vertical Lines
-	for (new i=0; i < 4; i++) {
+	for (int i=0; i < 4; i++) {
 		TE_SetupBeamPoints(corners[i], corners[i+4], modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, color, speed);
 		TE_Send(clients, numClients);
 	}
@@ -370,27 +356,26 @@ stock Effect_DrawBeamBox(
  * @param amplitude		Beam amplitude.
  * @param color			Color array (r, g, b, a).
  * @param speed			Speed of the beam.
- * @noreturn
  */
-stock Effect_DrawBeamBoxRotatableToClient(
-	client,
-	const Float:origin[3],
-	const Float:mins[3],
-	const Float:maxs[3],
-	const Float:angles[3],
-	modelIndex,
-	haloIndex,
-	startFrame=0,
-	frameRate=30,
-	Float:life=5.0,
-	Float:width=5.0,
-	Float:endWidth=5.0,
-	fadeLength=2,
-	Float:amplitude=1.0,
-	const color[4]={ 255, 0, 0, 255 },
-	speed=0
+stock void Effect_DrawBeamBoxRotatableToClient(
+	int client,
+	const float origin[3],
+	const float mins[3],
+	const float maxs[3],
+	const float angles[3],
+	int modelIndex,
+	int haloIndex,
+	int startFrame=0,
+	int frameRate=30,
+	float life=5.0,
+	float width=5.0,
+	float endWidth=5.0,
+	int fadeLength=2,
+	float amplitude=1.0,
+	const int color[4]={ 255, 0, 0, 255 },
+	int speed=0
 ) {
-    new clients[1];
+    int clients[1];
     clients[0] = client;
     Effect_DrawBeamBoxRotatable(clients, 1, origin, mins, maxs, angles, modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, color, speed);
 }
@@ -417,28 +402,27 @@ stock Effect_DrawBeamBoxRotatableToClient(
  * @param amplitude		Beam amplitude.
  * @param color			Color array (r, g, b, a).
  * @param speed			Speed of the beam.
- * @noreturn
  */
-stock Effect_DrawBeamBoxRotatableToAll(
-	const Float:origin[3],
-	const Float:mins[3],
-	const Float:maxs[3],
-	const Float:angles[3],
-	modelIndex,
-	haloIndex,
-	startFrame=0,
-	frameRate=30,
-	Float:life=5.0,
-	Float:width=5.0,
-	Float:endWidth=5.0,
-	fadeLength=2,
-	Float:amplitude=1.0,
-	const color[4]={ 255, 0, 0, 255 },
-	speed=0
+stock void Effect_DrawBeamBoxRotatableToAll(
+	const float origin[3],
+	const float mins[3],
+	const float maxs[3],
+	const float angles[3],
+	int modelIndex,
+	int haloIndex,
+	int startFrame=0,
+	int frameRate=30,
+	float life=5.0,
+	float width=5.0,
+	float endWidth=5.0,
+	int fadeLength=2,
+	float amplitude=1.0,
+	const int color[4]={ 255, 0, 0, 255 },
+	int speed=0
 )
 {
-	new clients[MaxClients];
-	new numClients = Client_Get(clients, CLIENTFILTER_INGAME);
+	int[] clients = new int[MaxClients];
+	int numClients = Client_Get(clients, CLIENTFILTER_INGAME);
 
 	Effect_DrawBeamBoxRotatable(clients, numClients, origin, mins, maxs, angles, modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, color, speed);
 }
@@ -465,29 +449,28 @@ stock Effect_DrawBeamBoxRotatableToAll(
  * @param amplitude		Beam amplitude.
  * @param color			Color array (r, g, b, a).
  * @param speed			Speed of the beam.
- * @noreturn
  */
-stock Effect_DrawBeamBoxRotatable(
-	clients[],
-	numClients,
-	const Float:origin[3],
-	const Float:mins[3],
-	const Float:maxs[3],
-	const Float:angles[3],
-	modelIndex,
-	haloIndex,
-	startFrame=0,
-	frameRate=30,
-	Float:life=5.0,
-	Float:width=5.0,
-	Float:endWidth=5.0,
-	fadeLength=2,
-	Float:amplitude=1.0,
-	const color[4]={ 255, 0, 0, 255 },
-	speed=0
+stock void Effect_DrawBeamBoxRotatable(
+	int[] clients,
+	int numClients,
+	const float origin[3],
+	const float mins[3],
+	const float maxs[3],
+	const float angles[3],
+	int modelIndex,
+	int haloIndex,
+	int startFrame=0,
+	int frameRate=30,
+	float life=5.0,
+	float width=5.0,
+	float endWidth=5.0,
+	int fadeLength=2,
+	float amplitude=1.0,
+	const int color[4]={ 255, 0, 0, 255 },
+	int speed=0
 ) {
 	// Create the additional corners of the box
-	decl Float:corners[8][3];
+	float corners[8][3];
 	Array_Copy(mins, corners[0], 3);
 	Math_MakeVector(maxs[0], mins[1], mins[2], corners[1]);
 	Math_MakeVector(maxs[0], maxs[1], mins[2], corners[2]);
@@ -498,33 +481,33 @@ stock Effect_DrawBeamBoxRotatable(
 	Math_MakeVector(mins[0], maxs[1], maxs[2], corners[7]);
 
 	// Rotate all edges
-	for (new i=0; i < sizeof(corners); i++) {
+	for (int i=0; i < sizeof(corners); i++) {
 		Math_RotateVector(corners[i], angles, corners[i]);
 	}
 
 	// Apply world offset (after rotation)
-	for (new i=0; i < sizeof(corners); i++) {
+	for (int i=0; i < sizeof(corners); i++) {
 		AddVectors(origin, corners[i], corners[i]);
 	}
 
     // Draw all the edges
 	// Horizontal Lines
 	// Bottom
-	for (new i=0; i < 4; i++) {
-		new j = ( i == 3 ? 0 : i+1 );
+	for (int i=0; i < 4; i++) {
+		int j = ( i == 3 ? 0 : i+1 );
 		TE_SetupBeamPoints(corners[i], corners[j], modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, color, speed);
 		TE_Send(clients, numClients);
 	}
 
 	// Top
-	for (new i=4; i < 8; i++) {
-		new j = ( i == 7 ? 4 : i+1 );
+	for (int i=4; i < 8; i++) {
+		int j = ( i == 7 ? 4 : i+1 );
 		TE_SetupBeamPoints(corners[i], corners[j], modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, color, speed);
 		TE_Send(clients, numClients);
 	}
 
 	// All Vertical Lines
-	for (new i=0; i < 4; i++) {
+	for (int i=0; i < 4; i++) {
 		TE_SetupBeamPoints(corners[i], corners[i+4], modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, color, speed);
 		TE_Send(clients, numClients);
 	}
@@ -548,25 +531,24 @@ stock Effect_DrawBeamBoxRotatable(
  * @param amplitude		Beam amplitude.
  * @param color			Color array (r, g, b, a).
  * @param speed			Speed of the beam.
- * @noreturn
  */
-stock Effect_DrawAxisOfRotationToClient(
-	client,
-	const Float:origin[3],
-	const Float:angles[3],
-	const Float:length[3],
-	modelIndex,
-	haloIndex,
-	startFrame=0,
-	frameRate=30,
-	Float:life=5.0,
-	Float:width=5.0,
-	Float:endWidth=5.0,
-	fadeLength=2,
-	Float:amplitude=1.0,
-	speed=0
+stock void Effect_DrawAxisOfRotationToClient(
+	int client,
+	const float origin[3],
+	const float angles[3],
+	const float length[3],
+	int modelIndex,
+	int haloIndex,
+	int startFrame=0,
+	int frameRate=30,
+	float life=5.0,
+	float width=5.0,
+	float endWidth=5.0,
+	int fadeLength=2,
+	float amplitude=1.0,
+	int speed=0
 ) {
-    new clients[1];
+    int clients[1];
     clients[0] = client;
     Effect_DrawAxisOfRotation(clients, 1, origin, angles, length, modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, speed);
 }
@@ -588,26 +570,25 @@ stock Effect_DrawAxisOfRotationToClient(
  * @param amplitude		Beam amplitude.
  * @param color			Color array (r, g, b, a).
  * @param speed			Speed of the beam.
- * @noreturn
  */
-stock Effect_DrawAxisOfRotationToAll(
-	const Float:origin[3],
-	const Float:angles[3],
-	const Float:length[3],
-	modelIndex,
-	haloIndex,
-	startFrame=0,
-	frameRate=30,
-	Float:life=5.0,
-	Float:width=5.0,
-	Float:endWidth=5.0,
-	fadeLength=2,
-	Float:amplitude=1.0,
-	speed=0
+stock void Effect_DrawAxisOfRotationToAll(
+	const float origin[3],
+	const float angles[3],
+	const float length[3],
+	int modelIndex,
+	int haloIndex,
+	int startFrame=0,
+	int frameRate=30,
+	float life=5.0,
+	float width=5.0,
+	float endWidth=5.0,
+	int fadeLength=2,
+	float amplitude=1.0,
+	int speed=0
 )
 {
-	new clients[MaxClients];
-	new numClients = Client_Get(clients, CLIENTFILTER_INGAME);
+	int[] clients = new int[MaxClients];
+	int numClients = Client_Get(clients, CLIENTFILTER_INGAME);
 
 	Effect_DrawAxisOfRotation(clients, numClients, origin, angles, length, modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, speed);
 }
@@ -631,27 +612,26 @@ stock Effect_DrawAxisOfRotationToAll(
  * @param amplitude		Beam amplitude.
  * @param color			Color array (r, g, b, a).
  * @param speed			Speed of the beam.
- * @noreturn
  */
-stock Effect_DrawAxisOfRotation(
-	clients[],
-	numClients,
-	const Float:origin[3],
-	const Float:angles[3],
-	const Float:length[3],
-	modelIndex,
-	haloIndex,
-	startFrame=0,
-	frameRate=30,
-	Float:life=5.0,
-	Float:width=5.0,
-	Float:endWidth=5.0,
-	fadeLength=2,
-	Float:amplitude=1.0,
-	speed=0
+stock void Effect_DrawAxisOfRotation(
+	int[] clients,
+	int numClients,
+	const float origin[3],
+	const float angles[3],
+	const float length[3],
+	int modelIndex,
+	int haloIndex,
+	int startFrame=0,
+	int frameRate=30,
+	float life=5.0,
+	float width=5.0,
+	float endWidth=5.0,
+	int fadeLength=2,
+	float amplitude=1.0,
+	int speed=0
 ) {
 	// Create the additional corners of the box
-	new Float:xAxis[3], Float:yAxis[3], Float:zAxis[3];
+	float xAxis[3], yAxis[3], zAxis[3];
 	xAxis[0] = length[0];
 	yAxis[1] = length[1];
 	zAxis[2] = length[2];
@@ -695,21 +675,21 @@ stock Effect_DrawAxisOfRotation(
  * @param receiveShadows	When false then this prevents the sprite from receiving shadows.
  * @return					Entity Index of the created Sprite.
  */
-stock Effect_EnvSprite(
-	const Float:origin[3],
-	modelIndex,
-	const color[4]={255, 255, 255, 255},
-	Float:scale=0.25,
-	const String:targetName[MAX_NAME_LENGTH]="",
-	parent=-1,
-	RenderMode:renderMode=RENDER_WORLDGLOW,
-	RenderFx:renderFx=RENDERFX_NONE,
-	Float:glowProxySize=2.0,
-	Float:framerate=10.0,
-	Float:hdrColorScale=1.0,
-	bool:receiveShadows = true
+stock int Effect_EnvSprite(
+	const float origin[3],
+	int modelIndex,
+	const int color[4]={255, 255, 255, 255},
+	float scale=0.25,
+	const char targetName[MAX_NAME_LENGTH]="",
+	int parent=-1,
+	RenderMode renderMode=RENDER_WORLDGLOW,
+	RenderFx renderFx=RENDERFX_NONE,
+	float glowProxySize=2.0,
+	float framerate=10.0,
+	float hdrColorScale=1.0,
+	bool receiveShadows = true
 ) {
-	new entity = Entity_Create("env_sprite");
+	int entity = Entity_Create("env_sprite");
 
 	if (entity == INVALID_ENT_REFERENCE) {
 		return INVALID_ENT_REFERENCE;

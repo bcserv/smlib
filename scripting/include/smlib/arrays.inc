@@ -15,13 +15,13 @@
  * @param start			Optional: Offset where to start (0 - (size-1)).
  * @return				Array index, or -1 if the value couldn't be found.
  */
-stock Array_FindValue(any:array[], size, any:value, start=0)
+stock int Array_FindValue(const any[] array, int size, any value, int start=0)
 {
 	if (start < 0) {
 		start = 0;
 	}
 
-	for (new i=start; i < size; i++) {
+	for (int i=start; i < size; i++) {
 
 		if (array[i] == value) {
 			return i;
@@ -41,13 +41,13 @@ stock Array_FindValue(any:array[], size, any:value, start=0)
  * @param start			Optional: Offset where to start(0 - (size-1)).
  * @return				Array index, or -1 if the value couldn't be found.
  */
-stock Array_FindString(const String:array[][], size, const String:str[], bool:caseSensitive=true, start=0)
+stock int Array_FindString(const char[][] array, int size, const char[] str, bool caseSensitive=true, int start=0)
 {
 	if (start < 0) {
 		start = 0;
 	}
 
-	for (new i=start; i < size; i++) {
+	for (int i=start; i < size; i++) {
 
 		if (StrEqual(array[i], str, caseSensitive)) {
 			return i;
@@ -65,17 +65,17 @@ stock Array_FindString(const String:array[][], size, const String:str[], bool:ca
  * @param start			Optional: Offset where to start (0 - (size-1)).
  * @return				Array index.
  */
-stock Array_FindLowestValue(any:array[], size, start=0)
+stock int Array_FindLowestValue(const any[] array, int size, int start=0)
 {
 	if (start < 0) {
 		start = 0;
 	}
 
-	new any:value = array[start];
-	new any:tempValue;
-	new x = start;
+	any value = array[start];
+	any tempValue;
+	int x = start;
 
-	for (new i=start; i < size; i++) {
+	for (int i=start; i < size; i++) {
 
 		tempValue = array[i];
 
@@ -97,17 +97,17 @@ stock Array_FindLowestValue(any:array[], size, start=0)
  * @param start			Optional: Offset where to start (0 - (size-1)).
  * @return				Array index.
  */
-stock Array_FindHighestValue(any:array[], size, start=0)
+stock int Array_FindHighestValue(const any[] array, int size, int start=0)
 {
 	if (start < 0) {
 		start = 0;
 	}
 
-	new any:value = array[start];
-	new any:tempValue;
-	new x = start;
+	any value = array[start];
+	any tempValue;
+	int x = start;
 
-	for (new i=start; i < size; i++) {
+	for (int i=start; i < size; i++) {
 
 		tempValue = array[i];
 
@@ -129,15 +129,14 @@ stock Array_FindHighestValue(any:array[], size, start=0)
  * @param size			Number of cells to write (eg. the array's size)
  * @param value			Fill value.
  * @param start			Optional: Offset where to start (0 - (size-1)).
- * @noreturn
  */
-stock Array_Fill(any:array[], size, any:value, start=0)
+stock void Array_Fill(any[] array, int size, any value, int start=0)
 {
 	if (start < 0) {
 		start = 0;
 	}
 
-	for (new i=start; i < size; i++) {
+	for (int i=start; i < size; i++) {
 		array[i] = value;
 	}
 }
@@ -150,9 +149,9 @@ stock Array_Fill(any:array[], size, any:value, start=0)
  * @param size			Size of the array (or number of cells to copy)
  * @noreturn
  */
-stock Array_Copy(const any:array[], any:newArray[], size)
+stock void Array_Copy(const any[] array, any[] newArray, int size)
 {
-	for (new i=0; i < size; i++) {
+	for (int i=0; i < size; i++) {
 		newArray[i] = array[i];
 	}
 }
