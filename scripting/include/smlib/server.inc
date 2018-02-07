@@ -17,19 +17,19 @@
  * @param public		Set to true to retrieve the server's public/external IP, false otherwise.
  * @return				Long IP or 0 if the IP couldn't be retrieved.
  */
-stock Server_GetIP(bool:public_=true)
+stock int Server_GetIP(bool public_=true)
 {
-	new ip = 0;
+	int ip = 0;
 
-	static Handle:cvHostip = INVALID_HANDLE;
+	static ConVar cvHostip;
 
-	if (cvHostip == INVALID_HANDLE) {
+	if (cvHostip == null) {
 		cvHostip = FindConVar("hostip");
 		MarkNativeAsOptional("Steam_GetPublicIP");
 	}
 
-	if (cvHostip != INVALID_HANDLE) {
-		ip = GetConVarInt(cvHostip);
+	if (cvHostip != null) {
+		ip = cvHostip.IntValue;
 	}
 
 	if (ip != 0 && IsIPLocal(ip) == public_) {
@@ -39,7 +39,7 @@ stock Server_GetIP(bool:public_=true)
 #if defined _steamtools_included
 	if (ip == 0) {
 		if (CanTestFeatures() && GetFeatureStatus(FeatureType_Native, "Steam_GetPublicIP") == FeatureStatus_Available) {
-			decl octets[4];
+			int octets[4];
 			Steam_GetPublicIP(octets);
 
 			ip =
@@ -72,9 +72,9 @@ stock Server_GetIP(bool:public_=true)
  * @param public		Set to true to retrieve the server's public/external IP, false otherwise.
  * @return				True on success, false otherwise.
  */
-stock bool:Server_GetIPString(String:buffer[], size, bool:public_=true)
+stock bool Server_GetIPString(char[] buffer, int size, bool public_=true)
 {
-	new ip;
+	int ip;
 
 	if ((ip = Server_GetIP(public_)) == 0) {
 		buffer[0] = '\0';
@@ -92,19 +92,19 @@ stock bool:Server_GetIPString(String:buffer[], size, bool:public_=true)
  * @noparam
  * @return			The server's port, 0 if there is no port.
  */
-stock Server_GetPort()
+stock int Server_GetPort()
 {
-	static Handle:cvHostport = INVALID_HANDLE;
+	static ConVar cvHostport;
 
-	if (cvHostport == INVALID_HANDLE) {
+	if (cvHostport == null) {
 		cvHostport = FindConVar("hostport");
 	}
 
-	if (cvHostport == INVALID_HANDLE) {
+	if (cvHostport == null) {
 		return 0;
 	}
 
-	new port = GetConVarInt(cvHostport);
+	int port = cvHostport.IntValue;
 
 	return port;
 }
@@ -116,20 +116,20 @@ stock Server_GetPort()
  * @param size			String buffer size
  * @return				True on success, false otherwise.
  */
-stock bool:Server_GetHostName(String:buffer[], size)
+stock bool Server_GetHostName(char[] buffer, int size)
 {
-	static Handle:cvHostname = INVALID_HANDLE;
+	static ConVar cvHostname;
 
-	if (cvHostname == INVALID_HANDLE) {
+	if (cvHostname == null) {
 		cvHostname = FindConVar("hostname");
 	}
 
-	if (cvHostname == INVALID_HANDLE) {
+	if (cvHostname == null) {
 		buffer[0] = '\0';
 		return false;
 	}
 
-	GetConVarString(cvHostname, buffer, size);
+	cvHostname.GetString(buffer, size);
 
 	return true;
 }

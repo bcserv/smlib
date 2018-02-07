@@ -18,9 +18,9 @@
  * @param material			Path of the material to precache.
  * @return					Returns the material index, INVALID_STRING_INDEX on error.
  */
-stock PrecacheMaterial(const String:material[])
+stock int PrecacheMaterial(const char[] material)
 {
-	static materialNames = INVALID_STRING_TABLE;
+	static int materialNames = INVALID_STRING_TABLE;
 
 	if (materialNames == INVALID_STRING_TABLE) {
 		if ((materialNames = FindStringTable("Materials")) == INVALID_STRING_TABLE) {
@@ -28,9 +28,9 @@ stock PrecacheMaterial(const String:material[])
 		}
 	}
 
-	new index = FindStringIndex2(materialNames, material);
+	int index = FindStringIndex2(materialNames, material);
 	if (index == INVALID_STRING_INDEX) {
-		new numStrings = GetStringTableNumStrings(materialNames);
+		int numStrings = GetStringTableNumStrings(materialNames);
 		if (numStrings >= GetStringTableMaxStrings(materialNames)) {
 			return INVALID_STRING_INDEX;
 		}
@@ -48,9 +48,9 @@ stock PrecacheMaterial(const String:material[])
  * @param material			Path of the material.
  * @return					True if it is precached, false otherwise.
  */
-stock bool:IsMaterialPrecached(const String:material[])
+stock bool IsMaterialPrecached(const char[] material)
 {
-	static materialNames = INVALID_STRING_TABLE;
+	static int materialNames = INVALID_STRING_TABLE;
 
 	if (materialNames == INVALID_STRING_TABLE) {
 		if ((materialNames = FindStringTable("Materials")) == INVALID_STRING_TABLE) {
@@ -69,9 +69,9 @@ stock bool:IsMaterialPrecached(const String:material[])
  * @param particleSystem	Name of the particle system to precache.
  * @return					Returns the particle system index, INVALID_STRING_INDEX on error.
  */
-stock PrecacheParticleSystem(const String:particleSystem[])
+stock int PrecacheParticleSystem(const char[] particleSystem)
 {
-	static particleEffectNames = INVALID_STRING_TABLE;
+	static int particleEffectNames = INVALID_STRING_TABLE;
 
 	if (particleEffectNames == INVALID_STRING_TABLE) {
 		if ((particleEffectNames = FindStringTable("ParticleEffectNames")) == INVALID_STRING_TABLE) {
@@ -79,9 +79,9 @@ stock PrecacheParticleSystem(const String:particleSystem[])
 		}
 	}
 
-	new index = FindStringIndex2(particleEffectNames, particleSystem);
+	int index = FindStringIndex2(particleEffectNames, particleSystem);
 	if (index == INVALID_STRING_INDEX) {
-		new numStrings = GetStringTableNumStrings(particleEffectNames);
+		int numStrings = GetStringTableNumStrings(particleEffectNames);
 		if (numStrings >= GetStringTableMaxStrings(particleEffectNames)) {
 			return INVALID_STRING_INDEX;
 		}
@@ -99,7 +99,7 @@ stock PrecacheParticleSystem(const String:particleSystem[])
  * @param material			Name of the particle system
  * @return					True if it is precached, false otherwise.
  */
-stock bool:IsParticleSystemPrecached(const String:particleSystem[])
+stock bool IsParticleSystemPrecached(const char[] particleSystem)
 {
 	static particleEffectNames = INVALID_STRING_TABLE;
 
@@ -119,9 +119,9 @@ stock bool:IsParticleSystemPrecached(const String:particleSystem[])
  * @param str			String to find.
  * @return				String index if found, INVALID_STRING_INDEX otherwise.
  */
-stock FindStringIndexByTableName(const String:table[], const String:str[])
+stock int FindStringIndexByTableName(const char[] table, const char[] str)
 {
-	new tableIndex = INVALID_STRING_TABLE;
+	int tableIndex = INVALID_STRING_TABLE;
 	if ((tableIndex = FindStringTable("ParticleEffectNames")) == INVALID_STRING_TABLE) {
 		return INVALID_STRING_INDEX;
 	}
@@ -138,12 +138,12 @@ stock FindStringIndexByTableName(const String:table[], const String:str[])
  * @param str			String to find.
  * @return				String index if found, INVALID_STRING_INDEX otherwise.
  */
-stock FindStringIndex2(tableidx, const String:str[])
+stock int FindStringIndex2(int tableidx, const char[] str)
 {
-	decl String:buf[1024];
+	char buf[1024];
 
-	new numStrings = GetStringTableNumStrings(tableidx);
-	for (new i=0; i < numStrings; i++) {
+	int numStrings = GetStringTableNumStrings(tableidx);
+	for (int i=0; i < numStrings; i++) {
 		ReadStringTable(tableidx, i, buf, sizeof(buf));
 
 		if (StrEqual(buf, str)) {
@@ -162,7 +162,7 @@ stock FindStringIndex2(tableidx, const String:str[])
  * @param size			String Buffer size
  * @noreturn
  */
-stock LongToIP(ip, String:buffer[], size)
+stock void LongToIP(int ip, char[] buffer, int size)
 {
 	Format(
 		buffer, size,
@@ -180,9 +180,9 @@ stock LongToIP(ip, String:buffer[], size)
  * @param ip			IP String
  * @return				Long IP
  */
-stock IPToLong(const String:ip[])
+stock int IPToLong(const char[] ip)
 {
-	decl String:pieces[4][4];
+	char pieces[4][4];
 
 	if (ExplodeString(ip, ".", pieces, sizeof(pieces), sizeof(pieces[])) != 4) {
 		return 0;
@@ -196,7 +196,7 @@ stock IPToLong(const String:ip[])
 	);
 }
 
-static localIPRanges[] =
+static int localIPRanges[] =
 {
 	10	<< 24,				// 10.
 	127	<< 24 | 1		,	// 127.0.0.1
@@ -210,16 +210,17 @@ static localIPRanges[] =
  * @param ip			IP Long
  * @return				True if the IP is local, false otherwise.
  */
-stock bool:IsIPLocal(ip)
+stock bool IsIPLocal(int ip)
 {
-	new range, bits, move, bool:matches;
+	int range, bits, move;
+	bool matches;
 
-	for (new i=0; i < sizeof(localIPRanges); i++) {
+	for (int i=0; i < sizeof(localIPRanges); i++) {
 
 		range = localIPRanges[i];
 		matches = true;
 
-		for (new j=0; j < 4; j++) {
+		for (int j=0; j < 4; j++) {
 			move = j * 8;
 			bits = (range >> move) & 0xFF;
 
@@ -237,15 +238,14 @@ stock bool:IsIPLocal(ip)
 }
 
 /*
- * Closes the given hindle and sets it to INVALID_HANDLE.
+ * Closes the given hindle and sets it to null.
  *
  * @param handle   handle
  * @noreturn
  */
-stock ClearHandle(&Handle:handle)
+stock void ClearHandle(Handle &handle)
 {
-	if (handle != INVALID_HANDLE) {
-		CloseHandle(handle);
-		handle = INVALID_HANDLE;
+	if (handle != null) {
+		delete handle;
 	}
 }

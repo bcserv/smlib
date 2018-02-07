@@ -14,13 +14,13 @@
  ***********************************************************************************/
 
 // The Base64 encoding table
-static const String:base64_sTable[] =
+static const char base64_sTable[] =
   // 0000000000111111111122222222223333333333444444444455555555556666
   // 0123456789012345678901234567890123456789012345678901234567890123
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 // The Base64 decoding table
-static const base64_decodeTable[] = {
+static const int base64_decodeTable[] = {
 //  0   1   2   3   4   5   6   7   8   9
     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,   //   0 -   9
     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,   //  10 -  19
@@ -54,11 +54,11 @@ static const base64_decodeTable[] = {
  * For some reason the standard demands a string in 24-bit (3 character) intervals.
  * This fill character is used to identify unused bytes at the end of the string.
  */
-static const base64_cFillChar			= '=';
+static const int base64_cFillChar			= '=';
 
 // The conversion characters between the standard and URL-compliance Base64 protocols
-static const String:base64_mime_chars[]	= "+/=";
-static const String:base64_url_chars[]	= "-_.";
+static const char base64_mime_chars[]	= "+/=";
+static const char base64_url_chars[]	= "-_.";
 
 /*
  * Encodes a string or binary data into Base64
@@ -70,10 +70,10 @@ static const String:base64_url_chars[]	= "-_.";
  *						This is not needed for a text string, but is important for binary data since there is no end-of-line character.
  * @return				The length of the written Base64 string, in bytes.
  */
-stock Crypt_Base64Encode(const String:sString[], String:sResult[], len, sourcelen=0)
+stock int Crypt_Base64Encode(const char[] sString, char[] sResult, int len, int sourcelen=0)
 {
-	new nLength;	// The string length to be read from the input
-	new resPos;		// The string position in the result buffer
+	int nLength;	// The string length to be read from the input
+	int resPos;		// The string position in the result buffer
 
 	// If the read length was specified, use it; otherwise, pull the string length from the input.
 	if (sourcelen > 0) {
@@ -85,8 +85,8 @@ stock Crypt_Base64Encode(const String:sString[], String:sResult[], len, sourcele
 
 	// Loop through and generate the Base64 encoded string
 	// NOTE: This performs the standard encoding process.  Do not manipulate the logic within this loop.
-	for (new nPos = 0; nPos < nLength; nPos++) {
-		new cCode;
+	for (int nPos = 0; nPos < nLength; nPos++) {
+		int cCode;
 
 		cCode = (sString[nPos] >> 2) & 0x3f;
 
@@ -132,16 +132,16 @@ stock Crypt_Base64Encode(const String:sString[], String:sResult[], len, sourcele
  * @param len			The maximum length of the storage buffer, in characters/bytes.
  * @return				The length of the decoded data, in bytes.
  */
-stock Crypt_Base64Decode(const String:sString[], String:sResult[], len)
+stock int Crypt_Base64Decode(const char[] sString, char[] sResult, int len)
 {
-	new nLength = strlen(sString);	// The string length to be read from the input
-	new resPos;						// The string position in the result buffer
+	int nLength = strlen(sString);	// The string length to be read from the input
+	int resPos;						// The string position in the result buffer
 
 	// Loop through and generate the Base64 encoded string
 	// NOTE: This performs the standard encoding process.  Do not manipulate the logic within this loop.
-	for (new nPos = 0; nPos < nLength; nPos++) {
+	for (int nPos = 0; nPos < nLength; nPos++) {
 
-		new c, c1;
+		int c, c1;
 
 		c	= base64_decodeTable[sString[nPos++]];
 		c1	= base64_decodeTable[sString[nPos]];
@@ -190,21 +190,21 @@ stock Crypt_Base64Decode(const String:sString[], String:sResult[], len)
  * @param len			The maximum length of the storage buffer in characters/bytes.
  * @return				Number of cells written.
  */
-stock Crypt_Base64MimeToUrl(const String:sString[], String:sResult[], len)
+stock int Crypt_Base64MimeToUrl(const char[] sString, char[] sResult, int len)
 {
-	new chars_len = sizeof(base64_mime_chars);	// Length of the two standards vs. URL character lists
-	new nLength;								// The string length to be read from the input
-	new temp_char;								// Buffer character
+	int chars_len = sizeof(base64_mime_chars);	// Length of the two standards vs. URL character lists
+	int nLength;								// The string length to be read from the input
+	int temp_char;								// Buffer character
 
 	nLength = strlen(sString);
 
-	new String:sTemp[nLength+1]; // Buffer string
+	char[] sTemp = new char[nLength+1]; // Buffer string
 
 	// Loop through string
-	for (new i = 0; i < nLength; i++) {
+	for (int i = 0; i < nLength; i++) {
 		temp_char = sString[i];
 
-		for (new j = 0; j < chars_len; j++) {
+		for (int j = 0; j < chars_len; j++) {
 
 			if(temp_char == base64_mime_chars[j]) {
 				temp_char = base64_url_chars[j];
@@ -221,7 +221,7 @@ stock Crypt_Base64MimeToUrl(const String:sString[], String:sResult[], len)
 }
 
 /*
- * Base64UrlToMime(String:sResult[], len, const String:sString[], sourcelen)
+ * Base64UrlToMime(char[] sResult, int len, const char[] sString, int sourcelen)
  * Converts a URL-compliant Base64 string to the standards-compliant version.
  * Note: The result will be the same length as the input string as long as the output buffer is large enough.
  *
@@ -230,20 +230,20 @@ stock Crypt_Base64MimeToUrl(const String:sString[], String:sResult[], len)
  * @param len			The maximum length of the storage buffer in characters/bytes.
  * @return				Number of cells written.
  */
-stock Crypt_Base64UrlToMime(const String:sString[], String:sResult[], len)
+stock int Crypt_Base64UrlToMime(const char[] sString, char[] sResult, int len)
 {
-	new chars_len = sizeof(base64_mime_chars);	// Length of the two standards vs. URL character lists
-	new nLength;								// The string length to be read from the input
-	new temp_char;								// Buffer character
+	int chars_len = sizeof(base64_mime_chars);	// Length of the two standards vs. URL character lists
+	int nLength;								// The string length to be read from the input
+	int temp_char;								// Buffer character
 
 	nLength = strlen(sString);
 
-	new String:sTemp[nLength+1]; // Buffer string
+	char[] sTemp = new char[nLength+1]; // Buffer string
 
 	// Loop through string
-	for (new i = 0; i < nLength; i++) {
+	for (int i = 0; i < nLength; i++) {
 		temp_char = sString[i];
-		for (new j = 0; j < chars_len; j++) {
+		for (int j = 0; j < chars_len; j++) {
 			if (temp_char == base64_url_chars[j]) {
 				temp_char = base64_mime_chars[j];
 				break;
@@ -275,14 +275,14 @@ stock Crypt_Base64UrlToMime(const String:sString[], String:sResult[], len)
  * @param maxlen		Size of the Output String Buffer
  * @noreturn
  */
-stock Crypt_MD5(const String:str[], String:output[], maxlen)
+stock void Crypt_MD5(const char[] str, char[] output, int maxlen)
 {
-	decl x[2];
-	decl buf[4];
-	decl input[64];
-	new i, ii;
+	int x[2];
+	int buf[4];
+	int input[64];
+	int i, ii;
 
-	new len = strlen(str);
+	int len = strlen(str);
 
 	// MD5Init
 	x[0] = x[1] = 0;
@@ -292,12 +292,12 @@ stock Crypt_MD5(const String:str[], String:output[], maxlen)
 	buf[3] = 0x10325476;
 
 	// MD5Update
-	new update[16];
+	int update[16];
 
 	update[14] = x[0];
 	update[15] = x[1];
 
-	new mdi = (x[0] >>> 3) & 0x3F;
+	int mdi = (x[0] >>> 3) & 0x3F;
 
 	if ((x[0] + (len << 3)) < x[0]) {
 		x[1] += 1;
@@ -306,7 +306,7 @@ stock Crypt_MD5(const String:str[], String:output[], maxlen)
 	x[0] += len << 3;
 	x[1] += len >>> 29;
 
-	new c = 0;
+	int c = 0;
 	while (len--) {
 		input[mdi] = str[c];
 		mdi += 1;
@@ -327,7 +327,7 @@ stock Crypt_MD5(const String:str[], String:output[], maxlen)
 	}
 
 	// MD5Final
-	new padding[64] = {
+	int padding[64] = {
 		0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -338,7 +338,7 @@ stock Crypt_MD5(const String:str[], String:output[], maxlen)
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 	};
 
-	new inx[16];
+	int inx[16];
 	inx[14] = x[0];
 	inx[15] = x[1];
 
@@ -382,7 +382,7 @@ stock Crypt_MD5(const String:str[], String:output[], maxlen)
 
 	MD5Transform(buf, inx);
 
-	new digest[16];
+	int digest[16];
 	for (i = 0, ii = 0; i < 4; ++i, ii += 4) {
 		digest[ii] = (buf[i]) & 0xFF;
 		digest[ii + 1] = (buf[i] >>> 8) & 0xFF;
@@ -395,39 +395,39 @@ stock Crypt_MD5(const String:str[], String:output[], maxlen)
 		digest[8], digest[9], digest[10], digest[11], digest[12], digest[13], digest[14], digest[15]);
 }
 
-static stock MD5Transform_FF(&a, &b, &c, &d, x, s, ac)
-	{
+static stock void MD5Transform_FF(int &a, int &b, int &c, int &d, int x, int s, int ac)
+{
 	a += (((b) & (c)) | ((~b) & (d))) + x + ac;
 	a = (((a) << (s)) | ((a) >>> (32-(s))));
 	a += b;
 }
 
-static stock MD5Transform_GG(&a, &b, &c, &d, x, s, ac)
-	{
+static stock void MD5Transform_GG(int &a, int &b, int &c, int &d, int x, int s, int ac)
+{
 	a += (((b) & (d)) | ((c) & (~d))) + x + ac;
 	a = (((a) << (s)) | ((a) >>> (32-(s))));
 	a += b;
 }
 
-static stock MD5Transform_HH(&a, &b, &c, &d, x, s, ac)
-	{
+static stock void MD5Transform_HH(int &a, int &b, int &c, int &d, int x, int s, int ac)
+{
 	a += ((b) ^ (c) ^ (d)) + x + ac;
 	a = (((a) << (s)) | ((a) >>> (32-(s))));
 	a += b;
 }
 
-static stock MD5Transform_II(&a, &b, &c, &d, x, s, ac)
+static stock void MD5Transform_II(int &a, int &b, int &c, int &d, int x, int s, int ac)
 {
 	a += ((c) ^ ((b) | (~d))) + x + ac;
 	a = (((a) << (s)) | ((a) >>> (32-(s))));
 	a += b;
 }
 
-static stock MD5Transform(buf[], input[]){
-	new a = buf[0];
-	new b = buf[1];
-	new c = buf[2];
-	new d = buf[3];
+static stock void MD5Transform(int[] buf, int[] input){
+	int a = buf[0];
+	int b = buf[1];
+	int c = buf[2];
+	int d = buf[3];
 
 	MD5Transform_FF(a, b, c, d, input[0], 7, 0xd76aa478);
 	MD5Transform_FF(d, a, b, c, input[1], 12, 0xe8c7b756);
@@ -523,12 +523,12 @@ static stock MD5Transform(buf[], input[]){
  *
  * @noreturn
  */
-stock Crypt_RC4Encode(const String:input[], const String:pwd[], String:output[], maxlen)
+stock void Crypt_RC4Encode(const char[] input, const char[] pwd, char[] output, int maxlen)
 {
-	decl pwd_len,str_len,i,j,a,k;
-	decl key[256];
-	decl box[256];
-	decl tmp;
+	int pwd_len,str_len,i,j,a,k;
+	int key[256];
+	int box[256];
+	int tmp;
 
 	pwd_len = strlen(pwd);
 	str_len = strlen(input);
@@ -573,12 +573,12 @@ stock Crypt_RC4Encode(const String:input[], const String:pwd[], String:output[],
  * @param maxlen		The maximum length of the output buffer.
  * @noreturn
  */
-stock Crypt_RC4EncodeBinary(const String:input[], str_len, const String:pwd[], String:output[], maxlen)
+stock void Crypt_RC4EncodeBinary(const char[] input, int str_len, const char[] pwd, char[] output, int maxlen)
 {
-	decl pwd_len,i,j,a,k;
-	decl key[256];
-	decl box[256];
-	decl tmp;
+	int pwd_len,i,j,a,k;
+	int key[256];
+	int box[256];
+	int tmp;
 
 	pwd_len = strlen(pwd);
 

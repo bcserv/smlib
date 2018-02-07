@@ -12,11 +12,11 @@
  * @param size		Size of the Array.
  * @noreturn
  */
-stock Debug_FloatArray(const Float:array[], size=3)
+stock void Debug_FloatArray(const float[] array, int size=3)
 {
-	new String:output[64] = "";
+	char output[64] = "";
 
-	for (new i=0; i < size; ++i) {
+	for (int i=0; i < size; ++i) {
 
 		if (i > 0 && i < size) {
 			StrCat(output, sizeof(output), ", ");

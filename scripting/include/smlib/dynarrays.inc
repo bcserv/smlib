@@ -10,15 +10,15 @@
  * This is a wrapper around the Sourcemod Function GetArrayCell,
  * but it casts the result as bool
  *
- * @param array			Array Handle.
+ * @param array			ArrayList.
  * @param index			Index in the array.
  * @param block			Optionally specify which block to read from
  *						(useful if the blocksize > 0).
  * @param asChar		Optionally read as a byte instead of a cell.
  * @return				Value read.
- * @error				Invalid Handle, invalid index, or invalid block.
+ * @error				Invalid array, invalid index, or invalid block.
  */
-stock bool:DynArray_GetBool(Handle:array, index, block=0, bool:asChar=false)
+stock bool DynArray_GetBool(ArrayList array, int index, int block=0, bool asChar=false)
 {
-	return bool:GetArrayCell(array, index, block, asChar);
+	return view_as<bool>(array.Get(index, block, asChar));
 }
