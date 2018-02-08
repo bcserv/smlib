@@ -1739,9 +1739,8 @@ stock int Entity_GetParent(int entity)
  * Clears the parent of an entity.
  *
  * @param entity		Entity Index.
- * @noreturn
  */
-stock void Entity_RemoveParent(int entity)
+stock void Entity_ClearParent(int entity)
 {
 	SetVariantString("");
 	AcceptEntityInput(entity, "ClearParent");
