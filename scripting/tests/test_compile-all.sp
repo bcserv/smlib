@@ -362,7 +362,7 @@ public void OnPluginStart() {
 	Entity_GetGroundEntity(0);
 	Entity_Hurt(0, 0);
 	Entity_GetParent(0);
-	Entity_ClearParent(0);
+//	Entity_ClearParent(0);
 	Entity_SetParent(0, 0);
 	Entity_ChangeOverTime(0, 0.1, INVALID_FUNCTION);
 	Entity_GetNextChild(0);
@@ -495,7 +495,7 @@ public void OnPluginStart() {
 	Weapon_IsValid(0);
 	Weapon_Create("", vec, vec);
 	Weapon_CreateForOwner(0, "");
-	Weapon_GetSubType(0);
+	Weapon_GetSubType(0, 0);
 	Weapon_IsReloading(0);
 	Weapon_GetState(0);
 	Weapon_FiresUnderWater(0);
