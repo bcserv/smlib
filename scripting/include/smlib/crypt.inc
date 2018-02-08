@@ -571,9 +571,9 @@ stock void Crypt_RC4Encode(const char[] input, const char[] pwd, char[] output, 
  * @param pwd			The password/key used to encode and decode the data.
  * @param output		The encoded result.
  * @param maxlen		The maximum length of the output buffer.
- * @noreturn
+ * @return				Number of written bits, -1 if unsuccessful
  */
-stock void Crypt_RC4EncodeBinary(const char[] input, int str_len, const char[] pwd, char[] output, int maxlen)
+stock int Crypt_RC4EncodeBinary(const char[] input, int str_len, const char[] pwd, char[] output, int maxlen)
 {
 	int pwd_len,i,j,a,k;
 	int key[256];

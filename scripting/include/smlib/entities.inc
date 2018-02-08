@@ -6,6 +6,8 @@
 #include <sourcemod>
 #include <sdktools_entinput>
 #include <sdktools_functions>
+// Sourcemod 1.9+ compatibility
+#tryinclude <sdktools_variant_t>
 
 /**
  * Macro for iterating trough all children (entities it is parent of) of an entity.
@@ -151,7 +153,7 @@ stock bool Entity_ClassNameMatches(int entity, const char[] className, bool part
  * @param class			Name String.
  * @return				True if the name matches, false otherwise.
  */
-stock bool Entity_NameMatches(int intentity, const char[] name)
+stock bool Entity_NameMatches(int entity, const char[] name)
 {
 	char entity_name[128];
 	Entity_GetName(entity, entity_name, sizeof(entity_name));
@@ -531,7 +533,7 @@ stock void Entity_AddSpawnFlags(int entity, int flags)
  */
 stock void Entity_RemoveSpawnFlags(int entity, int flags)
 {
-	int spawnFlags = Entity_GetSpawnFlags(int entity);
+	int spawnFlags = Entity_GetSpawnFlags(entity);
 	spawnFlags &= ~flags;
 	Entity_SetSpawnFlags(entity, spawnFlags);
 }
@@ -720,7 +722,7 @@ stock int Entity_GetFlags(int entity)
  */
 stock void Entity_SetFlags(int entity, int flags)
 {
-	SetEntProp(int entity, Prop_Data, "m_fFlags", flags);
+	SetEntProp(entity, Prop_Data, "m_fFlags", flags);
 }
 
 /**
@@ -949,7 +951,7 @@ stock bool Entity_IsSolid(int entity)
  * @param size			max size of buffer string
  * @return				Number of non-null bytes written.
  */
-stock void Entity_GetModel(int entity, char[] buffer, int size)
+stock int Entity_GetModel(int entity, char[] buffer, int size)
 {
 	return GetEntPropString(entity, Prop_Data, "m_ModelName", buffer, size);
 }
@@ -1336,9 +1338,9 @@ stock int Entity_GetMaxHealth(int entity)
  *
  * @param entity		Entity index
  * @param value			Max health to set (anything above 511 will overload)
- * @noreturn
+ * @return				Value max health was set to
  */
-stock void Entity_SetMaxHealth(int entity, int value)
+stock int Entity_SetMaxHealth(int entity, int value)
 {
 	SetEntProp(entity, Prop_Data, "m_iMaxHealth", value);
 	return value;

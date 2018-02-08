@@ -29,7 +29,7 @@ enum VecAngle
  * @param number		A number that can be positive or negative.
  * @return				Positive number.
  */
-stock any Math_Abs(any number)
+stock any Math_Abs(any value)
 {
 	return (value ^ (value >> 31)) - (value >> 31);
 }

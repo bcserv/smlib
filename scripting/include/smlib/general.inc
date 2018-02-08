@@ -101,7 +101,7 @@ stock int PrecacheParticleSystem(const char[] particleSystem)
  */
 stock bool IsParticleSystemPrecached(const char[] particleSystem)
 {
-	static particleEffectNames = INVALID_STRING_TABLE;
+	static int particleEffectNames = INVALID_STRING_TABLE;
 
 	if (particleEffectNames == INVALID_STRING_TABLE) {
 		if ((particleEffectNames = FindStringTable("ParticleEffectNames")) == INVALID_STRING_TABLE) {

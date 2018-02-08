@@ -269,7 +269,7 @@ stock void File_ReadDownloadList(const char[] path)
  * @param setFailState	If true, it sets the failstate if the translations file doesn't exist
  * @return				True on success, false otherwise (only if setFailState is set to false)
  */
-stock bool File_LoadTranslations(const char[] file)
+stock bool File_LoadTranslations(const char[] file, const bool setFailState=false)
 {
 	char path[PLATFORM_MAX_PATH];
 

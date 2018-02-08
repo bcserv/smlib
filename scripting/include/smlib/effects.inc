@@ -598,7 +598,7 @@ stock void Effect_DrawAxisOfRotationToAll(
 	int speed=0
 )
 {
-	int clients[MaxClients];
+	int[] clients = new int[MaxClients];
 	int numClients = Client_Get(clients, CLIENTFILTER_INGAME);
 
 	Effect_DrawAxisOfRotation(clients, numClients, origin, angles, length, modelIndex, haloIndex, startFrame, frameRate, life, width, endWidth, fadeLength, amplitude, speed);
@@ -688,7 +688,7 @@ stock void Effect_DrawAxisOfRotation(
  * @return					Entity Index of the created Sprite.
  */
 stock int Effect_EnvSprite(
-	const float origin[3],
+	float origin[3],
 	int modelIndex,
 	const int color[4]={255, 255, 255, 255},
 	float scale=0.25,

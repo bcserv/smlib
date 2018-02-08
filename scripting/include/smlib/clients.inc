@@ -619,7 +619,7 @@ stock void Client_SetSuitSprintPower(int client, float power)
  * @param countBots		If true bots will be counted too.
  * @return				Client count in the server.
  */
-stock void Client_GetCount(bool countInGameOnly=true, bool countFakeClients=true)
+stock int Client_GetCount(bool countInGameOnly=true, bool countFakeClients=true)
 {
 	int numClients = 0;
 
@@ -1369,7 +1369,7 @@ stock int Client_GetWeapon(int client, const char[] className)
 	for (int i=0; i < MAX_WEAPONS; i++) {
 		offset += 4;
 
-		int weapon = GetEntDataEnt2(client, offset);
+		weapon = GetEntDataEnt2(client, offset);
 
 		if (!Weapon_IsValid(weapon)) {
 			continue;
@@ -1471,7 +1471,7 @@ stock int Client_GetWeaponCount(int client)
 
 	int offset = Client_GetWeaponsOffset(client) - 4;
 
-	for (new i=0; i < MAX_WEAPONS; i++) {
+	for (int i=0; i < MAX_WEAPONS; i++) {
 		offset += 4;
 
 		int weapon = GetEntDataEnt2(client, offset);
@@ -2882,10 +2882,10 @@ stock int Client_GetPlayerManager()
  * Should be called OnGameFrame.
  *
  * @param client		Client Index
- * @param start			New ping value.
+ * @param value			New ping value.
  * @return				True on sucess, false otherwise.
  */
-stock bool Client_SetPing(client, value)
+stock bool Client_SetPing(int client, int value)
 {
 	int player_manager = Client_GetPlayerManager();
 
