@@ -1728,7 +1728,7 @@ stock void Entity_SetParent(int entity, int parent)
  * @param currentCall	The current call number (0 is the 1st call at 0.0 seconds, 1 the 2nd call at tick*1 seconds, ...).
  * @return				When true this callback will be called again at the next defined tick, otherwise it won't.
  */
-typedef Entity_ChangeOverTimeCallback = function bool (int &entity, float &interval, int &currentCall)
+typedef Entity_ChangeOverTimeCallback = function bool (int &entity, float &interval, int &currentCall);
 
 /*
  * Creates a timer and provides a callback to change various things about an entity over time.
