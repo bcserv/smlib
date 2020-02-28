@@ -66,7 +66,7 @@ stock bool:Effect_DissolvePlayerRagDoll(client, DissolveType:dissolveType=DISSOL
 	return Effect_DissolveEntity(m_hRagdoll, dissolveType);
 }
 
-functag EffectCallback public(entity, any:data);
+typedef  EffectCallback=function Action(int entity, any data);
 
 /**
  * Fades an entity in our out.
