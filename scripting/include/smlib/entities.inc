@@ -2026,7 +2026,7 @@ stock void Entity_GetRenderColor(int entity, int color[4])
 	}
 
 	for (int i=0; i < 4; i++) {
-		color[i] = GetEntData(entity, offset + i + 1, 1);
+		color[i] = GetEntData(entity, offset + i, 1);
 	}
 }
 
