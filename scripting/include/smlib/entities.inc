@@ -1667,6 +1667,9 @@ stock bool Entity_Hurt(int entity, int damage, int attacker=0, int damageType=DM
 	AcceptEntityInput(point_hurt, "TurnOn");
 	SetEntProp(point_hurt, Prop_Data, "m_nDamage", damage);
 	SetEntProp(point_hurt, Prop_Data, "m_bitsDamageType", damageType);
+	
+	char orignalTargetName[128];
+	Entity_GetName(entity, orignalTargetName, sizeof(orignalTargetName));
 	Entity_PointHurtAtTarget(point_hurt, entity);
 
 	if (fakeClassName[0] != '\0') {
@@ -1679,7 +1682,8 @@ stock bool Entity_Hurt(int entity, int damage, int attacker=0, int damageType=DM
 	if (fakeClassName[0] != '\0') {
 		Entity_SetClassName(point_hurt, "point_hurt");
 	}
-
+	
+	DispatchKeyValue(entity, "targetname", orignalTargetName);
 	return true;
 }
 
@@ -1713,7 +1717,7 @@ stock void Entity_ClearParent(int entity)
  */
 stock void Entity_SetParent(int entity, int parent)
 {
-	//SetVariantString("!activator");
+	SetVariantString("!activator");
 	AcceptEntityInput(entity, "SetParent", parent);
 }
 
