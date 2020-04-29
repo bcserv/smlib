@@ -1713,7 +1713,7 @@ stock void Entity_ClearParent(int entity)
  */
 stock void Entity_SetParent(int entity, int parent)
 {
-	//SetVariantString("!activator");
+	SetVariantString("!activator");
 	AcceptEntityInput(entity, "SetParent", parent);
 }
 
