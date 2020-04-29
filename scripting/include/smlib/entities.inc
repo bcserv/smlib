@@ -1683,7 +1683,7 @@ stock bool Entity_Hurt(int entity, int damage, int attacker=0, int damageType=DM
 		Entity_SetClassName(point_hurt, "point_hurt");
 	}
 	
-	Entity_SetName(entity, orignalTargetName);
+	DispatchKeyValue(entity, "targetname", orignalTargetName);
 	return true;
 }
 
