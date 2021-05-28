@@ -2093,6 +2093,6 @@ stock void Entity_SetRenderColor(int entity, int r=-1, int g=-1, int b=-1, int a
  */
 stock bool Entity_AddOutput(int entity, const char[] input, int activator=-1, int caller=-1, int outputid=0)
 {
-	//SetVariantString(input);
+	SetVariantString(input);
 	return AcceptEntityInput(entity, "addoutput", activator, caller, outputid);
 }
