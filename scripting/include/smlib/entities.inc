@@ -1648,9 +1648,11 @@ stock int Entity_GetGroundEntity(int entity)
  * @param damageType		Use the DMG_ definations.
  * @param fakeClassName	Classname to fake, you can set this if you
  * 						want a specific weapon to be shown in the HUD kill message.
+ * @param customOrigin		Teleport point_hurt to origin before triggering hurt
+ * 						useful for damage force calculations e.g. explosions, gun fire direction, ect.
  * @return 				True on success, false otherwise.
  */
-stock bool Entity_Hurt(int entity, int damage, int attacker=0, int damageType=DMG_GENERIC, const char[] fakeClassName="")
+stock bool Entity_Hurt(int entity, int damage, int attacker=0, int damageType=DMG_GENERIC, const char[] fakeClassName="", float customOrigin[3]={0.0, 0.0, 0.0})
 {
 	static int point_hurt = INVALID_ENT_REFERENCE;
 
@@ -1675,6 +1677,8 @@ stock bool Entity_Hurt(int entity, int damage, int attacker=0, int damageType=DM
 	if (fakeClassName[0] != '\0') {
 		Entity_SetClassName(point_hurt, fakeClassName);
 	}
+
+	TeleportEntity(point_hurt, customOrigin, NULL_VECTOR, NULL_VECTOR);
 
 	AcceptEntityInput(point_hurt, "Hurt", attacker);
 	AcceptEntityInput(point_hurt, "TurnOff");
@@ -2089,6 +2093,6 @@ stock void Entity_SetRenderColor(int entity, int r=-1, int g=-1, int b=-1, int a
  */
 stock bool Entity_AddOutput(int entity, const char[] input, int activator=-1, int caller=-1, int outputid=0)
 {
-	//SetVariantString(input);
+	SetVariantString(input);
 	return AcceptEntityInput(entity, "addoutput", activator, caller, outputid);
 }
