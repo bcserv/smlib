@@ -1,3 +1,5 @@
+**This project is not actively maintained anymore, please fork this**
+
 # smlib
 [![Build Status](https://travis-ci.org/bcserv/smlib.svg)](https://travis-ci.org/bcserv/smlib)
 
