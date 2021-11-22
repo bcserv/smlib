@@ -117,7 +117,7 @@ stock bool Vehicle_IsValid(int vehicle)
  * @param size				String Buffer size.
  * @noreturn
  */
-stock bool Vehicle_GetScript(int vehicle, char[] buffer, int size)
+stock void Vehicle_GetScript(int vehicle, char[] buffer, int size)
 {
 	GetEntPropString(vehicle, Prop_Data, "m_vehicleScript", buffer, size);
 }
@@ -131,7 +131,7 @@ stock bool Vehicle_GetScript(int vehicle, char[] buffer, int size)
  * @param buffer			Vehicle Script path.
  * @noreturn
  */
-stock bool Vehicle_SetScript(int vehicle, char[] script)
+stock void Vehicle_SetScript(int vehicle, char[] script)
 {
 	DispatchKeyValue(vehicle, "vehiclescript", script);
 }

@@ -37,7 +37,7 @@ stock int Weapon_GetOwner(int weapon)
  * @param entity		Entity Index.
  * @noreturn
  */
-stock int Weapon_SetOwner(int weapon, int entity)
+stock void Weapon_SetOwner(int weapon, int entity)
 {
 	SetEntPropEnt(weapon, Prop_Data, "m_hOwner", entity);
 }
