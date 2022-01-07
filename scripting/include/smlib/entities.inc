@@ -720,7 +720,7 @@ stock void Entity_AddFlags(int entity, int flags)
 {
 	int setFlags = Entity_GetFlags(entity);
 	setFlags |= flags;
-	Entity_SetFlags(entity, flags);
+	Entity_SetFlags(entity, setFlags);
 }
 
 /**
