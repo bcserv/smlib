@@ -257,7 +257,7 @@ stock void Client_SetObserverMode(int client, Obs_Mode mode, bool updateMoveType
 		ConVar mp_forcecamera = FindConVar("mp_forcecamera");
 
 		if (mp_forcecamera != INVALID_HANDLE) {
-			switch (mp_forcecamera.IntValue)
+			switch (view_as<Obs_Allow>(mp_forcecamera.IntValue))
 			{
 				case OBS_ALLOW_TEAM: {
 					mode = OBS_MODE_IN_EYE;
@@ -715,7 +715,7 @@ stock int Client_GetScore(int client)
  * @param value				Score.
  * @noreturn
  */
-stock int Client_SetScore(int client, int value)
+stock void Client_SetScore(int client, int value)
 {
 	SetEntProp(client, Prop_Data, "m_iFrags", value);
 }
